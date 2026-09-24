@@ -30,7 +30,7 @@ const COPY: Record<
   de: {
     title: "Ratgeber",
     sub: "Praktische Hinweise für Montage, Umzug, Räumung und Reinigung. Inhalte werden fachlich geprüft, bevor sie veröffentlicht werden.",
-    clustersTitle: "Geplante SEO-Themen",
+    clustersTitle: "Kommende Themen",
     published: "Veröffentlicht",
     planned: "Geplant",
     emptyTitle: "Artikel werden vorbereitet",
@@ -42,7 +42,7 @@ const COPY: Record<
   en: {
     title: "Guides",
     sub: "Practical guidance for assembly, moving, clearance and cleaning. Content is reviewed before publication.",
-    clustersTitle: "Planned SEO topics",
+    clustersTitle: "Upcoming topics",
     published: "Published",
     planned: "Planned",
     emptyTitle: "Articles are being prepared",
@@ -130,7 +130,7 @@ export default async function RatgeberPage({ params }: { params: Promise<{ local
               <div className="mt-16 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
                 <div className="rounded-2xl bg-(--color-bg-primary) p-8 text-(--color-text-primary) lg:p-10">
                   <p className="text-xs font-medium tracking-[0.08em] text-(--color-accent) uppercase">
-                    CMS ready
+                    {locale === "de" ? "In Vorbereitung" : "In progress"}
                   </p>
                   <h2 className="mt-6 max-w-md text-4xl font-light">{copy.emptyTitle}</h2>
                   <p className="mt-6 max-w-xl text-sm leading-6 text-(--color-text-muted)">{copy.emptyBody}</p>

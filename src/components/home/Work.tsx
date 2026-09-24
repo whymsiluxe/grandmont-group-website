@@ -46,7 +46,7 @@ export async function Work({ locale }: { locale: Locale }) {
             <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
               <div className="rounded-2xl border border-white/10 bg-(--color-bg-surface) p-8 lg:p-10">
                 <p className="text-xs font-medium tracking-[0.08em] text-(--color-accent) uppercase">
-                  CMS ready
+                  {locale === "de" ? "In Kürze" : "Coming soon"}
                 </p>
                 <h3 className="mt-6 max-w-lg text-4xl font-light text-(--color-text-primary)">
                   {copy.emptyTitle}

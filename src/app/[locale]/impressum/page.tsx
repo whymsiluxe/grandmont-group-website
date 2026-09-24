@@ -5,25 +5,94 @@ import { FadeIn } from "@/components/motion/FadeIn";
 import { isLocale, type Locale } from "@/i18n/config";
 import { siteConfig } from "@/lib/seo/site-config";
 
-const COPY: Record<Locale, { title: string; sub: string; pending: string; sections: { title: string; body: string }[] }> = {
+const PLACEHOLDER = "—";
+
+const COPY: Record<
+  Locale,
+  {
+    title: string;
+    sub: string;
+    sections: { title: string; rows: { label: string; value: string }[] }[];
+  }
+> = {
   de: {
     title: "Impressum",
-    sub: "Pflichtangaben nach deutschem Recht werden vor Veröffentlichung final geprüft und ergänzt.",
-    pending: "Entwurf: Diese Seite ist strukturell vorbereitet, aber rechtlich noch nicht final.",
+    sub: "Angaben gemäß § 5 DDG (Digitale-Dienste-Gesetz).",
     sections: [
-      { title: "Angaben zum Unternehmen", body: `${siteConfig.legalName} — finale Rechtsform, Registerdaten und Anschrift werden vor Launch eingetragen.` },
-      { title: "Kontakt", body: "Telefon, E-Mail und vertretungsberechtigte Person werden nach Freigabe ergänzt." },
-      { title: "Hinweis", body: "Keine rechtlichen Pflichtangaben veröffentlichen, bevor Notar/IHK/Steuerberater die finalen Daten bestätigt haben." },
+      {
+        title: "Anbieter",
+        rows: [
+          { label: "Firma", value: siteConfig.legalName },
+          { label: "Rechtsform", value: PLACEHOLDER },
+          { label: "Anschrift", value: PLACEHOLDER },
+          { label: "Vertretungsberechtigt", value: PLACEHOLDER },
+        ],
+      },
+      {
+        title: "Kontakt",
+        rows: [
+          { label: "Telefon", value: PLACEHOLDER },
+          { label: "E-Mail", value: PLACEHOLDER },
+        ],
+      },
+      {
+        title: "Register",
+        rows: [
+          { label: "Registergericht", value: PLACEHOLDER },
+          { label: "Registernummer", value: PLACEHOLDER },
+          { label: "Umsatzsteuer-ID (§ 27a UStG)", value: PLACEHOLDER },
+        ],
+      },
+      {
+        title: "Streitschlichtung",
+        rows: [
+          {
+            label: "EU-Streitschlichtung",
+            value:
+              "Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: https://ec.europa.eu/consumers/odr/. Wir sind nicht verpflichtet und nicht bereit, an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.",
+          },
+        ],
+      },
     ],
   },
   en: {
     title: "Legal notice",
-    sub: "Mandatory German legal information will be reviewed and completed before publication.",
-    pending: "Draft: this page is structurally prepared, but not legally final yet.",
+    sub: "Information pursuant to § 5 DDG (German Digital Services Act).",
     sections: [
-      { title: "Company information", body: `${siteConfig.legalName} — final legal form, registry data and address will be added before launch.` },
-      { title: "Contact", body: "Phone, email and authorized representative will be added after approval." },
-      { title: "Note", body: "Do not publish mandatory legal information before notary/IHK/tax advisor confirms the final data." },
+      {
+        title: "Provider",
+        rows: [
+          { label: "Company", value: siteConfig.legalName },
+          { label: "Legal form", value: PLACEHOLDER },
+          { label: "Address", value: PLACEHOLDER },
+          { label: "Represented by", value: PLACEHOLDER },
+        ],
+      },
+      {
+        title: "Contact",
+        rows: [
+          { label: "Phone", value: PLACEHOLDER },
+          { label: "Email", value: PLACEHOLDER },
+        ],
+      },
+      {
+        title: "Register",
+        rows: [
+          { label: "Register court", value: PLACEHOLDER },
+          { label: "Register number", value: PLACEHOLDER },
+          { label: "VAT ID (§ 27a UStG)", value: PLACEHOLDER },
+        ],
+      },
+      {
+        title: "Dispute resolution",
+        rows: [
+          {
+            label: "EU dispute resolution",
+            value:
+              "The European Commission provides a platform for online dispute resolution (ODR): https://ec.europa.eu/consumers/odr/. We are not obliged and not willing to participate in dispute resolution proceedings before a consumer arbitration board.",
+          },
+        ],
+      },
     ],
   },
 };
@@ -34,10 +103,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: COPY[locale].title,
     description: COPY[locale].sub,
-    robots: {
-      index: false,
-      follow: false,
-    },
+    robots: { index: false, follow: false },
     alternates: {
       canonical: `/${locale}/impressum`,
       languages: { de: "/de/impressum", en: "/en/impressum", "x-default": "/de/impressum" },
@@ -69,12 +135,18 @@ export default async function ImpressumPage({ params }: { params: Promise<{ loca
       <section className="bg-(--color-bg-light) py-20 text-(--color-text-on-light) lg:py-28">
         <Container>
           <FadeIn>
-            <p className="mb-10 rounded-2xl border border-black/10 bg-white p-5 text-sm text-black/60">{copy.pending}</p>
-            <div className="grid gap-px overflow-hidden rounded-2xl bg-black/10">
+            <div className="space-y-10">
               {copy.sections.map((section) => (
-                <div key={section.title} className="bg-(--color-bg-light) p-6">
-                  <h2 className="mb-3 text-2xl font-light">{section.title}</h2>
-                  <p className="max-w-3xl text-sm text-black/60">{section.body}</p>
+                <div key={section.title}>
+                  <h2 className="mb-4 text-2xl font-light">{section.title}</h2>
+                  <dl className="grid gap-px overflow-hidden rounded-2xl bg-black/10">
+                    {section.rows.map((row) => (
+                      <div key={row.label} className="grid gap-1 bg-(--color-bg-light) p-5 sm:grid-cols-[220px_1fr] sm:gap-6">
+                        <dt className="text-sm font-medium text-black/50">{row.label}</dt>
+                        <dd className="text-sm text-black/70">{row.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
                 </div>
               ))}
             </div>

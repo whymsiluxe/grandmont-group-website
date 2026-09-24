@@ -34,9 +34,9 @@ const COPY: Record<
     title: "Projekte",
     sub: "Echte Arbeiten, echte Fotos, echte Freigaben. Portfolio-Inhalte werden erst veröffentlicht, wenn Bildrechte und Kundendaten sauber geklärt sind.",
     filters: "Kategorien",
-    emptyTitle: "Portfolio wird vorbereitet",
+    emptyTitle: "Echte Projekte folgen in Kürze",
     emptyBody: "Die Struktur ist bereit: Projekt, Ort, Leistung, Dauer, Fotos, Herausforderung, Lösung und Ergebnis. Keine erfundenen Referenzen.",
-    cmsNote: "Projektkarten werden später aus Payload CMS geladen.",
+    cmsNote: "Wir veröffentlichen erst, wenn Fotos und Kundenfreigaben vollständig sind.",
     cta: "Projekt anfragen",
     published: "Veröffentlicht",
     qualityChecks: "Checks",
@@ -49,9 +49,9 @@ const COPY: Record<
     title: "Projects",
     sub: "Real work, real photos, real permissions. Portfolio content appears only after image rights and client data are properly cleared.",
     filters: "Categories",
-    emptyTitle: "Portfolio is being prepared",
+    emptyTitle: "Real projects are coming soon",
     emptyBody: "The structure is ready: project, location, service, duration, photos, challenge, solution and result. No invented references.",
-    cmsNote: "Project cards will later load from Payload CMS.",
+    cmsNote: "We publish only once photos and client approvals are fully in place.",
     cta: "Request a project",
     published: "Published",
     qualityChecks: "Checks",
@@ -171,7 +171,7 @@ export default async function ProjektePage({ params }: { params: Promise<{ local
 
                 <div className="rounded-2xl border border-black/10 bg-white p-8 lg:p-10">
                   <p className="text-xs font-medium tracking-[0.08em] text-(--color-accent) uppercase">
-                    CMS ready
+                    {locale === "de" ? "Unser Standard" : "Our standard"}
                   </p>
                   <h2 className="mt-5 text-3xl font-light text-black">{copy.modelTitle}</h2>
                   <p className="mt-5 text-sm leading-6 text-black/60">{copy.modelBody}</p>
