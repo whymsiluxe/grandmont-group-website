@@ -31,3 +31,31 @@ jobs:
           # No CMS/DB in CI — content-source falls back to empty results,
           # which is enough to prove the build itself doesn't break.
           CMS_URL: http://127.0.0.1:3010
+
+  cms:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cms
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cms/package-lock.json
+
+      - run: npm ci
+
+      # Payload's buildConfig doesn't open a DB connection at build time —
+      # only collection/field definitions are validated — so fake creds
+      # are enough to prove the CMS config and route handlers compile.
+      # This exists because root CI only builds the main Next app (cms/ is
+      # excluded from its tsconfig) — a broken payload.config.ts could ship
+      # with a fully green root CI otherwise.
+      - name: Build
+        run: npm run build
+        env:
+          DATABASE_URI: postgresql://ci:ci@localhost:5432/ci
+          PAYLOAD_SECRET: ci-only-not-a-real-secret

@@ -47,9 +47,9 @@ const COPY: Record<
         title: "Streitschlichtung",
         rows: [
           {
-            label: "EU-Streitschlichtung",
+            label: "Verbraucherstreitbeilegung (§ 36 VSBG)",
             value:
-              "Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: https://ec.europa.eu/consumers/odr/. Wir sind nicht verpflichtet und nicht bereit, an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.",
+              "Wir sind nicht verpflichtet und nicht bereit, an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.",
           },
         ],
       },
@@ -87,9 +87,9 @@ const COPY: Record<
         title: "Dispute resolution",
         rows: [
           {
-            label: "EU dispute resolution",
+            label: "Consumer dispute resolution (§ 36 VSBG)",
             value:
-              "The European Commission provides a platform for online dispute resolution (ODR): https://ec.europa.eu/consumers/odr/. We are not obliged and not willing to participate in dispute resolution proceedings before a consumer arbitration board.",
+              "We are not obliged and not willing to participate in dispute resolution proceedings before a consumer arbitration board.",
           },
         ],
       },

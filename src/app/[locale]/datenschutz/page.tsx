@@ -20,7 +20,7 @@ const COPY: Record<
       {
         title: "Kontakt-/Angebotsformular",
         body: [
-          "Wenn Sie über das Formular eine Anfrage stellen, verarbeiten wir die von Ihnen eingegebenen Daten: Kontaktangabe (Telefon oder E-Mail), Postleitzahl/Ort, gewünschte Leistung, Freitextbeschreibung sowie optional hochgeladene Fotos.",
+          "Wenn Sie über das Formular eine Anfrage stellen, verarbeiten wir die von Ihnen eingegebenen Daten: Kontaktangabe (Telefon oder E-Mail), Postleitzahl/Ort, gewünschte Leistung, Freitextbeschreibung sowie mindestens ein hochgeladenes Foto (bis zu 10 Fotos).",
           "Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche Maßnahme auf Ihre Anfrage hin).",
           "Hochgeladene Fotos werden serverseitig neu kodiert; dabei werden Metadaten (u. a. EXIF/GPS-Standortdaten) entfernt. Die Dateien werden nicht öffentlich zugänglich abgelegt, sondern in einem privaten Speicherbereich mit eingeschränkten Zugriffsrechten.",
           "Anfragedaten werden für die Dauer der Bearbeitung sowie eine Aufbewahrungsfrist von 90 Tagen gespeichert und danach automatisiert gelöscht, sofern keine gesetzliche Aufbewahrungspflicht entgegensteht.",
@@ -58,7 +58,7 @@ const COPY: Record<
       {
         title: "Contact / quote request form",
         body: [
-          "When you submit a request via the form, we process the data you provide: contact detail (phone or email), postcode/location, requested service, free-text description, and optionally uploaded photos.",
+          "When you submit a request via the form, we process the data you provide: contact detail (phone or email), postcode/location, requested service, free-text description, and at least one uploaded photo (up to 10 photos).",
           "The legal basis is Art. 6(1)(b) GDPR (pre-contractual measures taken at your request).",
           "Uploaded photos are re-encoded server-side, which strips metadata (including EXIF/GPS location data). Files are not stored in a publicly accessible location, but in a private storage area with restricted access.",
           "Request data is retained for the duration of processing plus a 90-day retention period, after which it is automatically deleted unless a legal retention obligation applies.",

@@ -8,8 +8,30 @@ import type { Access } from 'payload'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-const publicRead: Access = () => true
 const authenticatedOnly: Access = ({ req: { user } }) => Boolean(user)
+
+// Document-level access control via a query constraint, not a post-read
+// hook. Payload's own guidance is that access.read should express "which
+// rows may this request see" as a where-clause the DB applies — an
+// afterRead hook only filters documents *after* they've already been
+// fetched, which is the wrong layer for a publication gate (and doesn't
+// help query performance/pagination counts either). Authenticated admin
+// users see everything; anonymous requests only see rows matching the
+// constraint.
+const publishedServiceRead: Access = ({ req: { user } }) => {
+  if (user) return true
+  return { status: { equals: 'published' }, ownerApproved: { equals: true }, legalApproved: { equals: true } }
+}
+
+const publishedFlagRead: Access = ({ req: { user } }) => {
+  if (user) return true
+  return { published: { equals: true } }
+}
+
+const clearedPortfolioRead: Access = ({ req: { user } }) => {
+  if (user) return true
+  return { published: { equals: true }, clientApproved: { equals: true }, imageRightsCleared: { equals: true } }
+}
 
 const localizedText = (name: string, opts: Record<string, unknown> = {}) => ({
   name,
@@ -60,22 +82,10 @@ export default buildConfig({
       slug: 'services',
       admin: { useAsTitle: 'slug' },
       access: {
-        // Public read only sees rows that already passed the legal gate —
-        // enforced in the read hook below, not just at the query layer,
-        // so a slug never leaks via direct-ID lookup either.
-        read: publicRead,
+        read: publishedServiceRead,
         create: authenticatedOnly,
         update: authenticatedOnly,
         delete: authenticatedOnly,
-      },
-      hooks: {
-        afterRead: [
-          ({ req, doc }) => {
-            if (req.user) return doc
-            if (doc.status !== 'published' || !doc.ownerApproved || !doc.legalApproved) return null
-            return doc
-          },
-        ],
       },
       fields: [
         { name: 'slug', type: 'text', required: true, unique: true },
@@ -122,23 +132,26 @@ export default buildConfig({
       slug: 'portfolio',
       admin: { useAsTitle: 'title' },
       access: {
-        read: publicRead,
+        read: clearedPortfolioRead,
         create: authenticatedOnly,
         update: authenticatedOnly,
         delete: authenticatedOnly,
       },
-      hooks: {
-        afterRead: [
-          ({ req, doc }) => {
-            if (req.user) return doc
-            if (!doc.published) return null
-            return doc
-          },
-        ],
-      },
       fields: [
         { name: 'slug', type: 'text', required: true, unique: true },
         { name: 'published', type: 'checkbox', defaultValue: false },
+        {
+          name: 'clientApproved',
+          type: 'checkbox',
+          defaultValue: false,
+          label: 'Client approved (written permission for photos/reference text)',
+        },
+        {
+          name: 'imageRightsCleared',
+          type: 'checkbox',
+          defaultValue: false,
+          label: 'Image rights cleared',
+        },
         localizedText('title', { required: true }),
         { name: 'city', type: 'text' },
         { name: 'service', type: 'relationship', relationTo: 'services' },
@@ -153,12 +166,13 @@ export default buildConfig({
       slug: 'faq',
       admin: { useAsTitle: 'question' },
       access: {
-        read: publicRead,
+        read: publishedFlagRead,
         create: authenticatedOnly,
         update: authenticatedOnly,
         delete: authenticatedOnly,
       },
       fields: [
+        { name: 'published', type: 'checkbox', defaultValue: false },
         localizedText('question', { required: true }),
         {
           name: 'answer',
@@ -173,19 +187,10 @@ export default buildConfig({
       slug: 'ratgeber',
       admin: { useAsTitle: 'title' },
       access: {
-        read: publicRead,
+        read: publishedFlagRead,
         create: authenticatedOnly,
         update: authenticatedOnly,
         delete: authenticatedOnly,
-      },
-      hooks: {
-        afterRead: [
-          ({ req, doc }) => {
-            if (req.user) return doc
-            if (!doc.published) return null
-            return doc
-          },
-        ],
       },
       fields: [
         { name: 'slug', type: 'text', required: true, unique: true },
@@ -199,7 +204,11 @@ export default buildConfig({
       slug: 'media',
       upload: true,
       access: {
-        read: publicRead,
+        // Media rows are only reachable via an approved services/portfolio
+        // relationship in practice, but the collection itself has no
+        // publish flag of its own — anonymous read stays open (needed to
+        // actually serve the files), write is admin-only.
+        read: () => true,
         create: authenticatedOnly,
         update: authenticatedOnly,
         delete: authenticatedOnly,

@@ -20,12 +20,16 @@ export function ServiceHero({
   eyebrow,
   title,
   statement,
+  locale,
+  serviceSlug,
   photoSrc,
   photoAlt,
 }: {
   eyebrow: string;
   title: string;
   statement: string;
+  locale: string;
+  serviceSlug: string;
   photoSrc?: string;
   photoAlt?: string;
 }) {
@@ -90,7 +94,7 @@ export function ServiceHero({
             Fotos senden, in zwei Sätzen beschreiben — wir melden uns mit einem Angebot.
           </p>
           <a
-            href="#kontakt"
+            href={`/${locale}/kontakt?service=${serviceSlug}`}
             className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-(--color-display)"
           >
             Anfragen <span aria-hidden>→</span>

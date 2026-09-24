@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Separate project (own package.json/tsconfig/CI job) — Payload
+    // migration files in particular are CLI-generated, not hand-written.
+    "cms/**",
   ]),
 ]);
 

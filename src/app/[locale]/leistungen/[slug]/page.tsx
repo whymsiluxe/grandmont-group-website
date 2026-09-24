@@ -90,7 +90,13 @@ export default async function ServicePage({
       />
       <JsonLd data={faqSchema(service.faq[locale])} />
 
-      <ServiceHero eyebrow={service.eyebrow[locale]} title={service.title[locale]} statement={service.statement[locale]} />
+      <ServiceHero
+        eyebrow={service.eyebrow[locale]}
+        title={service.title[locale]}
+        statement={service.statement[locale]}
+        locale={locale}
+        serviceSlug={service.slug}
+      />
 
       <ServiceSection title={copy.included} light>
         <BulletList items={service.included[locale]} light />
