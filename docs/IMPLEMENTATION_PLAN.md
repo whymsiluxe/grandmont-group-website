@@ -60,6 +60,8 @@ Service template параметризован; страницы ТОЛЬКО д�
 
 **Progress 2026-09-24:** lead form/API сохраняют базовую attribution metadata (`landingPath`, `referrer`, UTM, `gclid`, `fbclid`) без cookies/third-party trackers, готово для будущего CRM adapter.
 
+**Progress 2026-09-24:** stored lead metadata now includes retention days/delete-after timestamp via `LEAD_RETENTION_DAYS` (default 90); scheduled cleanup remains production task.
+
 ## Phase 4 — Lead system
 Foto-Anfrage; progressive form; upload security; Lead API; email confirmation; internal notification.
 

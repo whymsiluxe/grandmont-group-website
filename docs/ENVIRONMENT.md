@@ -11,6 +11,10 @@ Do not commit real secrets. Production values live on the VPS or hosting provide
 # If unset, /api/leads validates requests but does not store them.
 LEAD_STORAGE_DIR=/var/lib/grandmont-group-website/leads
 
+# Optional retention metadata for stored leads/photos.
+# Default: 90. Cleanup job is a separate production task.
+LEAD_RETENTION_DAYS=90
+
 # Optional internal notification.
 # If either value is missing, lead storage still works and notificationSent=false.
 TELEGRAM_BOT_TOKEN=
@@ -20,6 +24,7 @@ TELEGRAM_CHAT_ID=
 Security notes:
 - `LEAD_STORAGE_DIR` must be absolute.
 - It must not be inside a `public/` directory.
+- Stored lead metadata includes `retention.days` and `retention.deleteAfter`; production still needs a scheduled cleanup job.
 - Uploaded photos are converted to JPEG through `sharp`, stripping metadata/EXIF.
 - Stored lead folders and metadata are written with private filesystem permissions.
 - `/api/leads` also applies request size, field length, magic-byte image checks, honeypot spam filtering and a basic in-memory IP rate limit.

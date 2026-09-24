@@ -17,6 +17,8 @@ const MAX_CONTACT_LENGTH = 160;
 const MAX_DESCRIPTION_LENGTH = 1800;
 const MAX_ATTRIBUTION_LENGTH = 500;
 const MIN_PHONE_DIGITS = 6;
+const DEFAULT_LEAD_RETENTION_DAYS = 90;
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 12;
 const EMAIL_PATTERN = /[^\s@]+@[^\s@]+\.[^\s@]+/i;
@@ -123,6 +125,16 @@ function configuredStorageDir() {
   return dir;
 }
 
+function leadRetentionDays() {
+  const raw = process.env.LEAD_RETENTION_DAYS?.trim();
+  if (!raw) return DEFAULT_LEAD_RETENTION_DAYS;
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value < 1 || value > 3650) {
+    throw new Error("LEAD_RETENTION_DAYS must be an integer between 1 and 3650");
+  }
+  return value;
+}
+
 async function storeLead(params: {
   locale: string;
   service: string;
@@ -137,6 +149,8 @@ async function storeLead(params: {
 
   const leadId = `lead_${Date.now()}_${randomUUID()}`;
   const leadDir = path.join(storageDir, leadId);
+  const retentionDays = leadRetentionDays();
+  const deleteAfter = new Date(Date.now() + retentionDays * MS_PER_DAY).toISOString();
   await mkdir(leadDir, { recursive: true, mode: 0o700 });
 
   try {
@@ -171,6 +185,10 @@ async function storeLead(params: {
           description: params.description,
           contact: params.contact,
           attribution: compactAttribution(params.attribution),
+          retention: {
+            days: retentionDays,
+            deleteAfter,
+          },
           photos: savedPhotos,
           storage: "private-filesystem",
         },
