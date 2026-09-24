@@ -17,7 +17,10 @@ test.describe("homepage smoke", () => {
 
   test("locale switcher preserves the current path", async ({ page }) => {
     await page.goto("/de/leistungen/moebelmontage");
-    const enLink = page.getByRole("link", { name: "EN" });
+    // Text is lowercase "en" in markup (uppercase is CSS text-transform).
+    // Desktop and mobile nav both render in the DOM (mobile hidden via CSS,
+    // not unmounted) — two matches, take the visible one.
+    const enLink = page.locator('a[hreflang="en"]').first();
     await enLink.click();
     await expect(page).toHaveURL(/\/en\/leistungen\/moebelmontage/);
   });
