@@ -20,6 +20,12 @@ const COPY: Record<
     error: string;
     storagePending: string;
     servicePlaceholder: string;
+    hints: {
+      postcode: string;
+      description: string;
+      photos: string;
+      contact: string;
+    };
   }
 > = {
   de: {
@@ -34,6 +40,12 @@ const COPY: Record<
     error: "Bitte prüfen Sie die Angaben.",
     storagePending: "Hinweis: Lead-Speicherung und Benachrichtigungen sind noch nicht aktiviert.",
     servicePlaceholder: "Leistung auswählen",
+    hints: {
+      postcode: "PLZ oder Ort im Einsatzgebiet, z. B. Chemnitz.",
+      description: "Mindestens 20 Zeichen: Was soll gemacht werden, wo, und gibt es Besonderheiten?",
+      photos: "1 bis 10 Fotos, je max. 8 MB. JPG, PNG, WebP, HEIC/HEIF.",
+      contact: "Telefonnummer oder E-Mail, damit wir Rückfragen stellen können.",
+    },
   },
   en: {
     service: "Service",
@@ -47,6 +59,12 @@ const COPY: Record<
     error: "Please check the details.",
     storagePending: "Note: lead storage and notifications are not active yet.",
     servicePlaceholder: "Select service",
+    hints: {
+      postcode: "Postcode or city in the service area, e.g. Chemnitz.",
+      description: "At least 20 characters: what needs to be done, where, and any special details?",
+      photos: "1 to 10 photos, max. 8 MB each. JPG, PNG, WebP, HEIC/HEIF.",
+      contact: "Phone number or email so we can ask follow-up questions.",
+    },
   },
 };
 
@@ -122,8 +140,14 @@ export function ContactForm({
             required
             minLength={3}
             maxLength={80}
+            autoComplete="postal-code"
+            inputMode="text"
+            aria-describedby="lead-postcode-hint"
             className="rounded-xl border border-black/15 bg-(--color-bg-light) px-4 py-3 text-base font-normal"
           />
+          <span id="lead-postcode-hint" className="text-xs font-normal text-black/45">
+            {copy.hints.postcode}
+          </span>
         </label>
 
         <label className="grid gap-2 text-sm font-medium">
@@ -133,8 +157,12 @@ export function ContactForm({
             required
             minLength={20}
             maxLength={1800}
+            aria-describedby="lead-description-hint"
             className="min-h-36 rounded-xl border border-black/15 bg-(--color-bg-light) px-4 py-3 text-base font-normal"
           />
+          <span id="lead-description-hint" className="text-xs font-normal text-black/45">
+            {copy.hints.description}
+          </span>
         </label>
 
         <label className="grid gap-2 text-sm font-medium">
@@ -145,8 +173,12 @@ export function ContactForm({
             multiple
             required
             accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+            aria-describedby="lead-photos-hint"
             className="rounded-xl border border-black/15 bg-(--color-bg-light) px-4 py-3 text-base font-normal"
           />
+          <span id="lead-photos-hint" className="text-xs font-normal text-black/45">
+            {copy.hints.photos}
+          </span>
         </label>
 
         <label className="grid gap-2 text-sm font-medium">
@@ -156,8 +188,13 @@ export function ContactForm({
             required
             minLength={5}
             maxLength={160}
+            inputMode="text"
+            aria-describedby="lead-contact-hint"
             className="rounded-xl border border-black/15 bg-(--color-bg-light) px-4 py-3 text-base font-normal"
           />
+          <span id="lead-contact-hint" className="text-xs font-normal text-black/45">
+            {copy.hints.contact}
+          </span>
         </label>
 
         <input
@@ -168,7 +205,6 @@ export function ContactForm({
           aria-hidden="true"
           className="sr-only"
         />
-        <input type="hidden" name="acceptedServices" value={acceptedServices.join(",")} />
 
         <button
           type="submit"
