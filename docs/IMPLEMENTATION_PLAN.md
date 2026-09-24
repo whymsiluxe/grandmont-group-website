@@ -56,6 +56,8 @@ Service template параметризован; страницы ТОЛЬКО д�
 
 **Progress 2026-09-24:** homepage testimonials block преобразован в честный trust/review-policy блок без фейковых отзывов, звёзд и неподтверждённых цифр.
 
+**Progress 2026-09-24:** добавлен локализованный app error boundary для неожиданных runtime ошибок с retry, contact и home actions.
+
 ## Phase 4 — Lead system
 Foto-Anfrage; progressive form; upload security; Lead API; email confirmation; internal notification.
 
