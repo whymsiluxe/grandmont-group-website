@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/lib/seo/site-config";
 import { locales } from "@/i18n/config";
+import { getPublishedProjects } from "@/lib/projects/projects";
 import { approvedServices } from "@/lib/services/approved-services";
 
 /**
@@ -10,6 +11,7 @@ import { approvedServices } from "@/lib/services/approved-services";
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
+  const publishedProjects = getPublishedProjects();
 
   return locales.flatMap((locale) => [
     {
@@ -47,6 +49,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
         languages: Object.fromEntries(
           locales.map((l) => [l, `${siteConfig.url}/${l}/leistungen/${service.slug}`]),
         ),
+      },
+    })),
+    ...publishedProjects.map((project) => ({
+      url: `${siteConfig.url}/${locale}/projekte/${project.slug}`,
+      lastModified,
+      alternates: {
+        languages: Object.fromEntries(locales.map((l) => [l, `${siteConfig.url}/${l}/projekte/${project.slug}`])),
       },
     })),
   ]);
