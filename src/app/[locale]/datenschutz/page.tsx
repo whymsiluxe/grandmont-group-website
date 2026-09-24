@@ -20,11 +20,19 @@ const COPY: Record<
       {
         title: "Kontakt-/Angebotsformular",
         body: [
-          "Wenn Sie über das Formular eine Anfrage stellen, verarbeiten wir die von Ihnen eingegebenen Daten: Kontaktangabe (Telefon oder E-Mail), Postleitzahl/Ort, gewünschte Leistung, Freitextbeschreibung sowie mindestens ein hochgeladenes Foto (bis zu 10 Fotos).",
+          "Wenn Sie über das Formular eine Anfrage stellen, verarbeiten wir die von Ihnen eingegebenen Daten: optional Ihr Name, Kontaktangabe (Telefon oder E-Mail), Postleitzahl/Ort, gewünschte Leistung, Freitextbeschreibung sowie mindestens ein hochgeladenes Foto (bis zu 10 Fotos).",
           "Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche Maßnahme auf Ihre Anfrage hin).",
           "Hochgeladene Fotos werden serverseitig neu kodiert; dabei werden Metadaten (u. a. EXIF/GPS-Standortdaten) entfernt. Die Dateien werden nicht öffentlich zugänglich abgelegt, sondern in einem privaten Speicherbereich mit eingeschränkten Zugriffsrechten.",
-          "Anfragedaten werden für die Dauer der Bearbeitung sowie eine Aufbewahrungsfrist von 90 Tagen gespeichert und danach automatisiert gelöscht, sofern keine gesetzliche Aufbewahrungspflicht entgegensteht.",
           "Zur internen Benachrichtigung über neue Anfragen kann eine Übermittlung an einen Messenger-Dienst (Telegram) erfolgen. Es werden dabei nur die von Ihnen im Formular angegebenen Daten übertragen.",
+        ],
+      },
+      {
+        title: "Aufbewahrung & Weitergabe an unser CRM-System",
+        body: [
+          "Die im Formular übermittelten Daten werden zunächst in einem privaten Speicherbereich auf unserem Server abgelegt und dort für maximal 90 Tage aufbewahrt, danach automatisiert gelöscht, sofern keine gesetzliche Aufbewahrungspflicht entgegensteht.",
+          "Zusätzlich werden diese Daten automatisiert an unser internes Kundenverwaltungssystem (CRM) übermittelt, damit wir Ihre Anfrage bearbeiten und Ihnen ein Angebot erstellen können. Die 90-Tage-Frist bezieht sich ausschließlich auf die Formular-Zwischenspeicherung auf dem Server, nicht auf das CRM-System.",
+          "Im CRM-System werden Ihre Daten für die Dauer der Geschäftsbeziehung sowie darüber hinaus entsprechend den gesetzlichen handels- und steuerrechtlichen Aufbewahrungsfristen (i. d. R. 6 bzw. 10 Jahre gemäß §§ 147 AO, 257 HGB, sofern es zu einem Auftrag kommt) gespeichert. Kommt es zu keinem Auftrag, werden die Daten im CRM nach einer angemessenen Nachverfolgungsfrist gelöscht.",
+          "Rechtsgrundlage für die Übermittlung an das CRM ist ebenfalls Art. 6 Abs. 1 lit. b DSGVO.",
         ],
       },
       {
@@ -58,11 +66,19 @@ const COPY: Record<
       {
         title: "Contact / quote request form",
         body: [
-          "When you submit a request via the form, we process the data you provide: contact detail (phone or email), postcode/location, requested service, free-text description, and at least one uploaded photo (up to 10 photos).",
+          "When you submit a request via the form, we process the data you provide: optionally your name, contact detail (phone or email), postcode/location, requested service, free-text description, and at least one uploaded photo (up to 10 photos).",
           "The legal basis is Art. 6(1)(b) GDPR (pre-contractual measures taken at your request).",
           "Uploaded photos are re-encoded server-side, which strips metadata (including EXIF/GPS location data). Files are not stored in a publicly accessible location, but in a private storage area with restricted access.",
-          "Request data is retained for the duration of processing plus a 90-day retention period, after which it is automatically deleted unless a legal retention obligation applies.",
           "For internal notification of new requests, data may be forwarded to a messaging service (Telegram). Only the data you provided in the form is transmitted.",
+        ],
+      },
+      {
+        title: "Retention & transfer to our CRM system",
+        body: [
+          "Data submitted via the form is first stored in a private storage area on our server for a maximum of 90 days, after which it is automatically deleted unless a legal retention obligation applies.",
+          "In addition, this data is automatically transferred to our internal customer relationship management system (CRM) so we can process your request and prepare a quote. The 90-day period applies only to the form's server-side staging storage, not to the CRM system.",
+          "In the CRM system, your data is retained for the duration of the business relationship and beyond, in line with statutory commercial and tax retention periods (typically 6 or 10 years under German law, §§ 147 AO, 257 HGB, if an order results). If no order results, the data in the CRM is deleted after a reasonable follow-up period.",
+          "The legal basis for the transfer to the CRM is likewise Art. 6(1)(b) GDPR.",
         ],
       },
       {
