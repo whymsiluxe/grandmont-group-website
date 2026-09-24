@@ -62,7 +62,7 @@ export async function generateMetadata({
 
   return {
     title: project.title[locale],
-    description: project.summary[locale],
+    description: project.challenge[locale],
     alternates: {
       canonical: `/${locale}/projekte/${project.slug}`,
       languages: {
@@ -102,7 +102,7 @@ export default async function ProjectDetailPage({
               {project.title[locale]}
             </h1>
             <p className="mt-8 max-w-3xl text-base leading-7 text-(--color-text-muted) lg:text-xl">
-              {project.summary[locale]}
+              {project.challenge[locale]}
             </p>
           </FadeIn>
         </Container>

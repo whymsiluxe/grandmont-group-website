@@ -20,7 +20,10 @@ export type Project = {
   location: string;
   serviceSlug: string;
   duration: Record<Locale, string>;
-  summary: Record<Locale, string>;
+  // No `summary` field exists in the Payload `portfolio` collection (only
+  // title/city/duration/challenge/solution/result) — removed rather than
+  // fabricated. See ProjectCard.tsx and the project detail page, which now
+  // render `challenge` where a short summary used to appear.
   challenge: Record<Locale, string>;
   solution: Record<Locale, string>;
   result: Record<Locale, string>;

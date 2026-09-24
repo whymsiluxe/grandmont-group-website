@@ -15,7 +15,6 @@ const COPY: Record<
   {
     back: string;
     service: string;
-    readingTime: string;
     ctaTitle: string;
     cta: string;
   }
@@ -23,14 +22,12 @@ const COPY: Record<
   de: {
     back: "Alle Ratgeber",
     service: "Passende Leistung",
-    readingTime: "Lesezeit",
     ctaTitle: "Direkt ein Angebot anfragen?",
     cta: "Anfrage senden",
   },
   en: {
     back: "All guides",
     service: "Related service",
-    readingTime: "Reading time",
     ctaTitle: "Want to request a quote?",
     cta: "Send request",
   },
@@ -105,10 +102,7 @@ export default async function ArticlePage({
             <Link href={`/${locale}/ratgeber`} className="text-sm font-medium text-(--color-accent)">
               ← {copy.back}
             </Link>
-            <p className="mt-10 text-xs font-medium tracking-[0.08em] text-(--color-accent) uppercase">
-              {article.category[locale]}
-            </p>
-            <h1 className="mt-6 max-w-5xl text-5xl font-light leading-[1.02] lg:text-8xl">
+            <h1 className="mt-10 max-w-5xl text-5xl font-light leading-[1.02] lg:text-8xl">
               {article.title[locale]}
             </h1>
             <p className="mt-8 max-w-3xl text-base leading-7 text-(--color-text-muted) lg:text-xl">
@@ -124,14 +118,6 @@ export default async function ArticlePage({
             <div className="grid gap-6 lg:grid-cols-[0.75fr_1.25fr]">
               <aside className="rounded-2xl border border-black/10 bg-white p-6">
                 <dl className="space-y-4">
-                  <div>
-                    <dt className="text-xs font-medium tracking-[0.08em] text-black/40 uppercase">
-                      {copy.readingTime}
-                    </dt>
-                    <dd className="mt-2 text-lg text-black">
-                      {article.readingMinutes} {locale === "de" ? "Min." : "min"}
-                    </dd>
-                  </div>
                   {service ? (
                     <div>
                       <dt className="text-xs font-medium tracking-[0.08em] text-black/40 uppercase">
@@ -151,12 +137,16 @@ export default async function ArticlePage({
               </aside>
 
               <article className="rounded-2xl border border-black/10 bg-white p-8 lg:p-10">
-                <div className="space-y-10">
-                  {article.sections[locale].map((section) => (
-                    <section key={section.heading}>
-                      <h2 className="text-3xl font-light text-black">{section.heading}</h2>
-                      <p className="mt-5 text-base leading-8 text-black/65">{section.body}</p>
-                    </section>
+                <div className="space-y-6">
+                  {/* Payload's ratgeber.body is a single Lexical richText blob with no
+                      heading/body structure — each entry here is one flattened block of
+                      the document (see lib/cms/lexical-to-paragraphs.ts), not a titled
+                      section, so there's no stable heading text to key on; index is
+                      stable because this list is only ever rendered once per page. */}
+                  {article.paragraphs[locale].map((paragraph, index) => (
+                    <p key={index} className="text-base leading-8 text-black/65">
+                      {paragraph}
+                    </p>
                   ))}
                 </div>
               </article>

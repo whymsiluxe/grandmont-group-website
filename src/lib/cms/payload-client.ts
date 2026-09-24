@@ -5,7 +5,9 @@ async function fetchCollection<T>(
   locale: "de" | "en",
   params: Record<string, string> = {},
 ): Promise<T[]> {
-  const query = new URLSearchParams({ locale, limit: "100", ...params });
+  // depth=1 so relationships/uploads (portfolio.service, portfolio.images[].image)
+  // come back as populated objects (with slug/url) instead of bare numeric ids.
+  const query = new URLSearchParams({ locale, limit: "100", depth: "1", ...params });
   try {
     const res = await fetch(`${CMS_URL}/api/${collection}?${query}`, {
       // Content changes only via CMS edits, not per-request — safe to cache
@@ -49,16 +51,42 @@ export type PayloadService = {
   faq: { question: string; answer: string }[];
 };
 
+// A Payload "upload" relationship at depth=1 comes back populated; without
+// enough depth (or if the referenced doc no longer exists) it can still be
+// a bare id — keep both possibilities honest rather than assuming shape.
+export type PayloadMedia = {
+  id: number;
+  url?: string;
+  filename?: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+  published: boolean;
+};
+
+export type PayloadServiceRef =
+  | number
+  | {
+      id: number;
+      slug: string;
+    };
+
 export type PayloadPortfolioItem = {
   id: number;
   slug: string;
   published: boolean;
+  clientApproved: boolean;
+  imageRightsCleared: boolean;
   title: string;
   city?: string;
+  service?: PayloadServiceRef;
   duration?: string;
+  images?: { image?: number | PayloadMedia }[];
   challenge?: string;
   solution?: string;
   result?: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export async function fetchPortfolioBothLocales() {
@@ -74,7 +102,13 @@ export type PayloadArticle = {
   slug: string;
   published: boolean;
   title: string;
+  // Lexical richText JSON (Payload's @payloadcms/richtext-lexical shape).
+  // Typed loosely here — see lib/cms/lexical-to-html.ts for the shape this
+  // is actually walked as.
+  body?: unknown;
   seoDescription?: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export async function fetchArticlesBothLocales() {
@@ -83,4 +117,12 @@ export async function fetchArticlesBothLocales() {
     fetchCollection<PayloadArticle>("ratgeber", "en"),
   ]);
   return { de, en };
+}
+
+// Payload upload docs return a URL relative to the CMS origin
+// (e.g. "/api/media/file/foo.jpg") — the frontend renders on a different
+// origin, so it must be resolved against CMS_URL to be a usable <img src>.
+export function resolveMediaUrl(url: string): string {
+  if (/^https?:\/\//.test(url)) return url;
+  return `${CMS_URL}${url.startsWith("/") ? "" : "/"}${url}`;
 }

@@ -35,7 +35,7 @@ export function ProjectCard({ project, locale }: { project: Project; locale: Loc
           <span className="rounded-full bg-black/[0.04] px-3 py-1">{project.location}</span>
           <span className="rounded-full bg-black/[0.04] px-3 py-1">{project.duration[locale]}</span>
         </div>
-        <p className="mt-5 text-sm leading-6 text-black/60">{project.summary[locale]}</p>
+        <p className="mt-5 text-sm leading-6 text-black/60">{project.challenge[locale]}</p>
         <Link
           href={`/${locale}/projekte/${project.slug}`}
           className="mt-6 inline-flex text-sm font-medium text-(--color-accent)"

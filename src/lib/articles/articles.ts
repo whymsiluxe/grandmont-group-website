@@ -8,12 +8,22 @@ export type Article = {
   status: ArticleStatus;
   title: Record<Locale, string>;
   description: Record<Locale, string>;
-  category: Record<Locale, string>;
+  // No `category` or `readingMinutes` field exists in the Payload
+  // `ratgeber` collection — removed rather than fabricated (see
+  // ArticleCard.tsx and the article detail page, both purely decorative
+  // uses that were dropped along with the fields).
   serviceSlug?: string;
-  readingMinutes: number;
+  // Payload doesn't track a separate "published at" date — only the
+  // standard `createdAt`/`updatedAt` every collection gets automatically.
+  // `publishedAt` uses `createdAt` as the more honest analog of "when this
+  // went live" (updatedAt changes on every edit, including typo fixes).
   publishedAt: string;
   updatedAt: string;
-  sections: Record<Locale, { heading: string; body: string }[]>;
+  // Payload's `ratgeber.body` is a single Lexical richText blob, not a
+  // heading/body array — `sections` now holds the body flattened into
+  // plain-text paragraphs (see lib/cms/lexical-to-paragraphs.ts) rather
+  // than the structured heading+body pairs the old static shape implied.
+  paragraphs: Record<Locale, string[]>;
 };
 
 export type PlannedArticleTopic = {
