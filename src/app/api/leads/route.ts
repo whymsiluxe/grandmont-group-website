@@ -15,8 +15,10 @@ const MAX_REQUEST_SIZE = MAX_TOTAL_SIZE + 512 * 1024;
 const MAX_POSTCODE_LENGTH = 80;
 const MAX_CONTACT_LENGTH = 160;
 const MAX_DESCRIPTION_LENGTH = 1800;
+const MIN_PHONE_DIGITS = 6;
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 12;
+const EMAIL_PATTERN = /[^\s@]+@[^\s@]+\.[^\s@]+/i;
 const VALID_IMAGE_PREFIXES = [
   [0xff, 0xd8, 0xff],
   [0x89, 0x50, 0x4e, 0x47],
@@ -59,6 +61,12 @@ function isRateLimited(ip: string) {
 function requestSizeTooLarge(request: Request) {
   const contentLength = Number(request.headers.get("content-length") || 0);
   return Number.isFinite(contentLength) && contentLength > MAX_REQUEST_SIZE;
+}
+
+function hasPlausibleContact(value: string) {
+  if (EMAIL_PATTERN.test(value)) return true;
+  const digits = value.replace(/\D/g, "");
+  return digits.length >= MIN_PHONE_DIGITS;
 }
 
 async function hasValidImageSignature(file: File) {
@@ -217,7 +225,8 @@ export async function POST(request: Request) {
     description.length < 20 ||
     description.length > MAX_DESCRIPTION_LENGTH ||
     contact.length < 5 ||
-    contact.length > MAX_CONTACT_LENGTH
+    contact.length > MAX_CONTACT_LENGTH ||
+    !hasPlausibleContact(contact)
   ) {
     return NextResponse.json({ ok: false, message: errorMessage }, { status: 400 });
   }
