@@ -89,16 +89,18 @@ export function ServiceHero({
           className="absolute right-6 top-28 z-10 hidden w-56 border border-white/15 bg-black/40 p-5 backdrop-blur-sm lg:right-10 lg:block"
         >
           <p className="text-xs font-medium tracking-[0.08em] text-(--color-accent) uppercase">
-            Direktanfrage
+            {locale === "de" ? "Direktanfrage" : "Direct inquiry"}
           </p>
           <p className="mt-3 text-sm leading-5 text-(--color-text-body-dark)">
-            Fotos senden, in zwei Sätzen beschreiben — wir melden uns mit einem Angebot.
+            {locale === "de"
+              ? "Fotos senden, in zwei Sätzen beschreiben — wir melden uns mit einem Angebot."
+              : "Send photos, describe it in two sentences — we'll get back to you with a quote."}
           </p>
           <a
             href={`/${locale}/kontakt?service=${serviceSlug}`}
             className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-(--color-display)"
           >
-            Anfragen <span aria-hidden>→</span>
+            {locale === "de" ? "Anfragen" : "Request"} <span aria-hidden>→</span>
           </a>
         </motion.div>
       </section>
