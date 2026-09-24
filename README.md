@@ -8,7 +8,10 @@ Project documentation: `docs/`
 
 ## Status
 
-Phase 1 foundation is complete. Phase 3 public site structure is in progress:
+Phase 1 (Foundation), Phase 2 (Design proof — owner GO 2026-09-24) and
+Phase 3 (Content system) are complete. Content is Payload-CMS-backed
+(`cms/`, not static arrays) with a publish/owner/legal approval gate
+enforced server-side. Public site structure:
 
 - `/[locale]` homepage
 - `/[locale]/leistungen`

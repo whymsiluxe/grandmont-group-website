@@ -10,8 +10,10 @@ Next.js/TS init; роутинг DE/EN; SEO-metadata база; design tokens; ш�
 
 **Progress 2026-09-24:** header/home service links подключены к реальным approved routes; sitemap расширен approved service routes; `npm run lint` и `npm run build` проходят.
 
-## Phase 2 — Design proof
+## Phase 2 — Design proof — ЗАВЕРШЕНА (2026-09-24)
 Homepage + Möbelmontage service-page собраны; проверка desktop/iPhone/Android; анимации + reduced-motion; черновой Lighthouse; go/no-go решение юзера «выглядит дорого».
+
+**Progress 2026-09-24:** Space Grotesk display font (ThoughtLab-направление), pure white/warm ivory hierarchy; Homepage Hero без CSS pseudo-3D placeholder-сцены, монументальная типографика (Sequel/Vivid+Co) + Lusion scroll-depth момент на типографике; ServiceHero (Aker Block1/Block2) переписан с floating card, готов принять реальное фото через опциональный проп; новая Hyper Tria sticky-image/scroll-text секция на Homepage (`ServiceStory.tsx`); `rounded-2xl` → `rounded-none` на homepage card wrappers. Lighthouse после редизайна: Desktop 100/100/100/100 (было 94-95), Mobile Perf 92 (было 73), LCP 3.3s (было 7.5s). **Юзер подтвердил GO по всем пунктам (typography/hero/Hyper Tria/overall) 2026-09-24.**
 
 ## Phase 3 — Content system
 Service template параметризован; страницы ТОЛЬКО для услуг с Owner approved=yes; Portfolio; B2B; Über uns; Kontakt; Ratgeber (структура).
@@ -65,6 +67,12 @@ Service template параметризован; страницы ТОЛЬКО д�
 **Progress 2026-09-24:** added `npm run leads:cleanup` script with `--dry-run` for deleting expired stored lead folders according to metadata retention.
 
 **Progress 2026-09-24:** separated site metadata title templates from localized meta descriptions and added OpenGraph description at locale layout level.
+
+**Progress 2026-09-24 (Payload CMS cutover):** `cms/` — полная Payload schema переписана под реальную структуру сервисов (не generic title/excerpt/body): eyebrow/title/statement/included[]/scopeNote/forWhom[]/outcomes[]/pricing/faq[] все per-locale + status(draft/review/published)/ownerApproved/legalApproved. `content-source.ts` переключён на живой Payload REST fetch, статичные массивы заменены. 6 approved-услуг засижены. `cms/migrations/` в git — БД воспроизводима из репо.
+
+**Progress 2026-09-24 (P1 security/correctness cleanup, после внешнего аудита):** access-control переделан с `afterRead` hook на `access.read` query-constraint (Payload-рекомендованный паттерн) для services/portfolio/faq/ratgeber/media; `portfolio` получил `clientApproved`/`imageRightsCleared`, `faq`/`media` получили `published` — media больше не полностью публична для любого загруженного файла. Broken ServiceHero CTA (`#kontakt` не существовал как anchor) исправлен на `/kontakt?service=slug`. Impressum: устаревшая EU-ODR ссылка убрана (платформа закрыта Комиссией 2025-07-20). Datenschutz: "optional Fotos" исправлено на факт (минимум 1 фото требуется). Lead-retention systemd timer добавлен (скрипт существовал, но не был подключён ни к чему). `/projekte`/`/ratgeber` — noindex + исключены из sitemap пока 0 published items, автоматически вернутся при появлении контента. Sitemap `lastModified` теперь реальный CMS `updatedAt`, не fake `new Date()` на каждой сборке. `sharp` — direct dependency (была транзитивной через Next). Payload `PAYLOAD_SECRET` — fail-fast при отсутствии, не тихий пустой fallback. CI: отдельный `cms` job + GitHub branch protection на `main` (оба CI check обязательны).
+
+**Phase 3 (Content system) статус:** approved service-страницы, Kontakt, Über uns, Unternehmen (B2B), FAQ, Portfolio/Ratgeber структуры — все реализованы. Portfolio/Ratgeber остаются на пустом CMS-источнике (честно, без выдуманного контента) до первого реального материала.
 
 ## Phase 4 — Lead system
 Foto-Anfrage; progressive form; upload security; Lead API; email confirmation; internal notification.

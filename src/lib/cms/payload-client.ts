@@ -32,6 +32,7 @@ export async function fetchServicesBothLocales() {
 
 export type PayloadService = {
   id: number;
+  updatedAt: string;
   slug: string;
   group: "montage" | "objektservice";
   status: "draft" | "review" | "published";

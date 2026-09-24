@@ -60,9 +60,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
+  const articles = await listPublishedArticles();
   return {
     title: COPY[locale].title,
     description: COPY[locale].sub,
+    robots: articles.length > 0 ? { index: true, follow: true } : { index: false, follow: true },
     alternates: {
       canonical: `/${locale}/ratgeber`,
       languages: { de: "/de/ratgeber", en: "/en/ratgeber", "x-default": "/de/ratgeber" },

@@ -69,9 +69,14 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
+  const projects = await listPublishedProjects();
   return {
     title: COPY[locale].title,
     description: COPY[locale].sub,
+    // No SEO value in indexing a "coming soon" overview page — noindex
+    // until at least one real project is published, then it re-indexes
+    // automatically (no manual flag to remember to flip back).
+    robots: projects.length > 0 ? { index: true, follow: true } : { index: false, follow: true },
     alternates: {
       canonical: `/${locale}/projekte`,
       languages: { de: "/de/projekte", en: "/en/projekte", "x-default": "/de/projekte" },

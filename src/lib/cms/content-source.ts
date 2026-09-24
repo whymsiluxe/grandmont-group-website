@@ -13,6 +13,7 @@ function toApprovedService(deRow: PayloadService, enRow: PayloadService | undefi
   const pick = <T,>(deVal: T, enVal: T): Record<Locale, T> => ({ de: deVal, en: enVal });
   return {
     slug: deRow.slug,
+    updatedAt: deRow.updatedAt,
     group: deRow.group,
     eyebrow: pick(deRow.eyebrow, en.eyebrow),
     title: pick(deRow.title, en.title),

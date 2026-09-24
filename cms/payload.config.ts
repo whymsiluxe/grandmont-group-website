@@ -57,8 +57,16 @@ const localizedStringList = (name: string) => ({
   fields: [{ name: 'value', type: 'text' as const, required: true }],
 })
 
+const payloadSecret = process.env.PAYLOAD_SECRET
+if (!payloadSecret) {
+  throw new Error(
+    'PAYLOAD_SECRET is required — refusing to start with a falsy secret (an empty string would make every ' +
+      'signed session/token trivially forgeable).',
+  )
+}
+
 export default buildConfig({
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: payloadSecret,
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URI,
@@ -204,16 +212,28 @@ export default buildConfig({
       slug: 'media',
       upload: true,
       access: {
-        // Media rows are only reachable via an approved services/portfolio
-        // relationship in practice, but the collection itself has no
-        // publish flag of its own — anonymous read stays open (needed to
-        // actually serve the files), write is admin-only.
-        read: () => true,
+        // Anonymous read only sees files explicitly marked published. A
+        // file being used in a services/portfolio array doesn't imply
+        // permission to serve it publicly — an uploaded original might
+        // sit unpublished while awaiting client sign-off or a web-size
+        // derivative, and there was previously no gate at all here (any
+        // uploaded file was reachable by ID/URL regardless of whether
+        // anything approved referenced it). Explicit flag, not an
+        // inference from relationships.
+        read: publishedFlagRead,
         create: authenticatedOnly,
         update: authenticatedOnly,
         delete: authenticatedOnly,
       },
-      fields: [{ name: 'alt', type: 'text' }],
+      fields: [
+        { name: 'alt', type: 'text' },
+        {
+          name: 'published',
+          type: 'checkbox',
+          defaultValue: false,
+          label: 'Published (publicly servable — check only after client/rights approval on anything it depicts)',
+        },
+      ],
     },
   ],
   localization: {

@@ -4,6 +4,7 @@ export type ServiceGroupId = "montage" | "objektservice";
 
 export type ApprovedService = {
   slug: string;
+  updatedAt?: string;
   group: ServiceGroupId;
   eyebrow: Record<Locale, string>;
   title: Record<Locale, string>;
