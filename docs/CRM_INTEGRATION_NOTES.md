@@ -1,10 +1,10 @@
 # CRM_INTEGRATION_NOTES.md — интеграция реализована (Phase 5)
 
 Status 2026-09-25: adapter написан и задеплоен (`src/lib/crm/client.ts`),
-подтверждён end-to-end тестовым лидом на живом стеке. Client/Object
-creation работает полностью. Photo upload на CRM-стороне был сломан,
-**пофикшен в тот же день** (см. ниже) — осталось повторно прогнать
-тестовый лид с фото сквозь весь пайплайн.
+подтверждён end-to-end тестовым лидом на живом стеке, **включая фото**
+(см. ниже) — полный пайплайн website→local storage→CRM client→CRM
+object→CRM photo подтверждён рабочим. Тестовые данные удалены после
+проверки.
 
 ## Auth
 
@@ -64,6 +64,15 @@ Emergent-managed. Backup старого файла:
 реально лежит на диске, путь записан в объект. `GET /api/files/{path}`
 → 200, содержимое совпадает байт-в-байт с загруженным.
 
+**Полный E2E повторно прогнан 2026-09-25 (после фикса)** через реальный
+`POST /api/leads` на живом website: lead сохранён локально → CRM login →
+client создан (`name` теперь из формы, не `contact` — см. ниже) →
+object создан (`status: "Anfrage"`) → фото загружено (`photosUploaded:
+1, photosFailed: 0`) → `GET /api/files/{path}` скачал файл, byte-count
+совпал с сохранённым. Тестовые lead/client/object удалены после
+проверки (VPS `rm -rf` на lead-директории + CRM `DELETE` на
+client/object, оба вернули 404 при повторном GET).
+
 ## Открытые вопросы — закрыты
 
 - ~~Website lead → client сразу или после ревью человеком?~~ → сразу,
@@ -75,7 +84,11 @@ Emergent-managed. Backup старого файла:
 
 ## Что дальше
 
-- Дождаться фикса `EMERGENT_LLM_KEY`/storage на CRM-стороне, повторно
-  прогнать тестовый лид с фото.
 - `/api/quotes` (создание Angebot) — вне scope intake-adapter, отдельная
   downstream-задача (REQ: финальная цена контролируется человеком).
+- Идемпотентность: adapter пока не умеет искать существующий lead в CRM
+  по external ID — повторная отправка той же формы может создать
+  дубль client/object. Терпимо для старта, нужен upsert/lookup позже.
+- Security: service-аккаунт сейчас admin-level в CRM — для продакшна
+  стоит завести отдельную роль с доступом только к
+  create/read Client, create/read/update Object, upload Object photos.
