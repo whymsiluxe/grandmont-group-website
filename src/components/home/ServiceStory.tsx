@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Container } from "@/components/layout/Container";
+import { ServiceScene } from "@/components/home/ServiceScene";
 import type { Locale } from "@/i18n/config";
 import type { ApprovedService } from "@/lib/services/approved-services";
 import { motion, useMotionValueEvent, useReducedMotion, useScroll, type Transition } from "motion/react";
@@ -53,7 +54,9 @@ export function ServiceStory({ locale, services }: { locale: Locale; services: A
           <div className="space-y-16">
             {services.map((service, i) => (
               <div key={service.slug} className="grid gap-8 border-t border-white/10 pt-10 lg:grid-cols-2">
-                <StoryPanel service={service} locale={locale} index={i} />
+                <div className="relative aspect-4/3 w-full lg:aspect-square">
+                  <StoryPanel service={service} locale={locale} index={i} active />
+                </div>
                 <StoryText service={service} locale={locale} />
               </div>
             ))}
@@ -76,7 +79,7 @@ export function ServiceStory({ locale, services }: { locale: Locale; services: A
                 animate={{ opacity: active === i ? 1 : 0, scale: active === i ? 1 : 1.04 }}
                 transition={{ duration: 0.5, ease: EASE }}
               >
-                <StoryPanel service={service} locale={locale} index={i} />
+                <StoryPanel service={service} locale={locale} index={i} active={active === i} />
               </motion.div>
             ))}
           </div>
@@ -100,13 +103,24 @@ export function ServiceStory({ locale, services }: { locale: Locale; services: A
   );
 }
 
-function StoryPanel({ service, locale, index }: { service: ApprovedService; locale: Locale; index: number }) {
+function StoryPanel({
+  service,
+  locale,
+  index,
+  active,
+}: {
+  service: ApprovedService;
+  locale: Locale;
+  index: number;
+  active: boolean;
+}) {
   return (
-    <div className="flex size-full flex-col justify-between border border-white/10 bg-(--color-bg-surface) p-8 lg:p-10">
-      <span className="text-xs font-medium tracking-[0.08em] text-(--color-accent) uppercase">
+    <div className="relative flex size-full flex-col justify-between overflow-hidden border border-white/10 bg-(--color-bg-surface) p-8 lg:p-10">
+      <ServiceScene slug={service.slug} active={active} />
+      <span className="relative text-xs font-medium tracking-[0.08em] text-(--color-accent) uppercase">
         {String(index + 1).padStart(2, "0")}
       </span>
-      <span className="text-4xl font-light leading-[0.95] text-(--color-display) lg:text-5xl">
+      <span className="relative text-4xl font-light leading-[0.95] text-(--color-display) lg:text-5xl">
         {service.title[locale]}
       </span>
     </div>
