@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { locales, type Locale } from "@/i18n/config";
+import type { Locale } from "@/i18n/config";
 import { getGroupedApprovedServices } from "@/lib/services/approved-services";
 import { Container } from "./Container";
+import { LocaleSwitcher } from "./LocaleSwitcher";
 
 const CONTACT_LABEL: Record<Locale, string> = {
   de: "Angebot anfragen",
@@ -34,7 +35,7 @@ export function Header({ locale }: { locale: Locale }) {
       <Container className="flex items-center justify-between py-4">
         <Link
           href={`/${locale}`}
-          className="text-lg font-semibold tracking-tight text-(--color-text-primary)"
+          className="text-lg font-semibold text-(--color-text-primary)"
         >
           Grandmont Group
         </Link>
@@ -58,17 +59,10 @@ export function Header({ locale }: { locale: Locale }) {
           {CONTACT_LABEL[locale]}
         </Link>
 
-        <div className="hidden items-center gap-2 text-xs font-medium tracking-[0.08em] text-(--color-text-muted) uppercase lg:flex">
-          {locales.map((item) => (
-            <Link
-              key={item}
-              href={`/${item}`}
-              className={item === locale ? "text-(--color-text-primary)" : "transition-colors hover:text-(--color-text-primary)"}
-            >
-              {item}
-            </Link>
-          ))}
-        </div>
+        <LocaleSwitcher
+          locale={locale}
+          className="hidden items-center gap-2 text-xs font-medium tracking-[0.08em] text-(--color-text-muted) uppercase lg:flex"
+        />
 
         <details className="group relative lg:hidden">
           <summary
@@ -88,17 +82,10 @@ export function Header({ locale }: { locale: Locale }) {
                 {item.label}
               </Link>
             ))}
-            <div className="mt-2 flex gap-2 border-t border-white/10 px-4 pt-3 text-xs font-medium tracking-[0.08em] uppercase">
-              {locales.map((item) => (
-                <Link
-                  key={item}
-                  href={`/${item}`}
-                  className={item === locale ? "text-(--color-text-primary)" : "text-(--color-text-muted)"}
-                >
-                  {item}
-                </Link>
-              ))}
-            </div>
+            <LocaleSwitcher
+              locale={locale}
+              className="mt-2 flex gap-2 border-t border-white/10 px-4 pt-3 text-xs font-medium tracking-[0.08em] text-(--color-text-muted) uppercase"
+            />
           </nav>
         </details>
       </Container>
