@@ -22,7 +22,6 @@ const EMAIL_PATTERN = /[^\s@]+@[^\s@]+\.[^\s@]+/i;
 const VALID_IMAGE_PREFIXES = [
   [0xff, 0xd8, 0xff],
   [0x89, 0x50, 0x4e, 0x47],
-  [0x52, 0x49, 0x46, 0x46],
 ];
 
 type RateLimitEntry = {
@@ -72,8 +71,10 @@ function hasPlausibleContact(value: string) {
 async function hasValidImageSignature(file: File) {
   const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
   if (VALID_IMAGE_PREFIXES.some((prefix) => prefix.every((byte, index) => bytes[index] === byte))) return true;
-  const box = new TextDecoder("latin1").decode(bytes);
-  return box.includes("ftypheic") || box.includes("ftypheif") || box.includes("ftypmif1");
+  const signature = new TextDecoder("latin1").decode(bytes);
+  const isWebp = signature.startsWith("RIFF") && signature.slice(8, 12) === "WEBP";
+  const isHeic = signature.includes("ftypheic") || signature.includes("ftypheif") || signature.includes("ftypmif1");
+  return isWebp || isHeic;
 }
 
 function configuredStorageDir() {
