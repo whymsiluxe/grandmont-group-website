@@ -2,7 +2,7 @@
 
 ## Базовые требования [REQ]
 
-Impressum + Datenschutzerklärung обязательны. Не заявлять «100% rechtssicher» — финальная юридическая проверка перед production обязательна, это НЕ юридическая консультация от Claude [REQ].
+Impressum + Datenschutzerklärung обязательны. Не заявлять «100% rechtssicher» — финальная юридическая проверка перед production обязательна, это НЕ юридическая консультация [REQ].
 
 **Current implementation note 2026-09-24:** `/impressum` and `/datenschutz` exist as visible draft pages, but are marked `noindex,nofollow` and excluded from `sitemap.xml` until final legal data and privacy wording are approved. Before launch, either finalize and allow indexing or keep them accessible but intentionally noindex per SEO/legal decision.
 
@@ -66,4 +66,4 @@ Google запрещает (Google Business Profile / Google Reviews policy):
 
 ## Итоговый статус документа
 
-Черновик для Phase 0. Финальная юридическая проверка (реальный юрист/Impressum-generator с проверкой) — обязательна перед Phase 9 (Release), это явно вне возможностей Claude как AI-инструмента.
+Черновик для Phase 0. Финальная юридическая проверка (реальный юрист/Impressum-generator с проверкой) — обязательна перед Phase 9 (Release).

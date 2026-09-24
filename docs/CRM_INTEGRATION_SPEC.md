@@ -28,7 +28,7 @@ id; created_at; клиент; телефон; email; PLZ; услуга; опис
 
 ## Отслеживание источника / Analytics [REQ]
 
-Источники: Google; Google Ads; Instagram; Facebook; TikTok; Referral; Direct; Flyer; Website. Хранить: first/last landing; UTM; referrer; campaign — «примерно как делали в Промонта» [REQ, прямая ссылка юзера на существующий паттерн].
+Источники: Google; Google Ads; Instagram; Facebook; TikTok; Referral; Direct; Flyer; Website. Хранить: first/last landing; UTM; referrer; campaign [REQ].
 
 **Implemented baseline 2026-09-24:** website lead form sends current `landingPath`, `referrer`, `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`, `gclid`, `fbclid` together with `/api/leads`; backend stores non-empty values in lead metadata with length caps. No cookies or third-party trackers are added at this stage.
 
@@ -36,7 +36,7 @@ Ads-ready: Google Ads, Meta Ads, local campaigns, remarketing — без тре�
 
 Отслеживать [REQ]: формы (отправки), звонки, WhatsApp-клики, источники трафика.
 
-[REC] Event-taxonomy (имена событий придуманы Claude/ChatGPT, не юзером): `cta_offer_click`; `form_start`; `service_selected`; `photo_upload`; `form_step_complete`; `lead_submit`; `whatsapp_click`; `phone_click`; `portfolio_open`; `before_after_interaction`.
+[REC] Event-taxonomy: `cta_offer_click`; `form_start`; `service_selected`; `photo_upload`; `form_step_complete`; `lead_submit`; `whatsapp_click`; `phone_click`; `portfolio_open`; `before_after_interaction`.
 
 **Implemented baseline 2026-09-24:** key public CTA/form elements now expose `data-event` and `data-event-location` attributes for future analytics wiring: `cta_offer_click`, `phone_click`, `whatsapp_click`, `email_click`, `service_selected`, `photo_upload`, `lead_submit`. No analytics provider or third-party script is loaded yet.
 

@@ -34,3 +34,8 @@ export const titleTemplates = {
     default: "Grandmont Group — Assembly & Craft Services in Chemnitz, Germany",
   },
 } as const;
+
+export const siteDescriptions = {
+  de: "Grandmont Group bietet Montage, Möbelmontage, Küchenmontage, Innenausbau und Objektservice in Chemnitz und Umgebung.",
+  en: "Grandmont Group provides assembly, furniture assembly, kitchen installation, interior fit-out and property services in Chemnitz and the surrounding region.",
+} as const;

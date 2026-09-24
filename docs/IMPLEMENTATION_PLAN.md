@@ -1,6 +1,6 @@
 # IMPLEMENTATION_PLAN.md (Phase 0.4)
 
-Полный чеклист по фазам — источник истины: `~/.claude/plans/elegant-booping-wren.md` (секция CHECKLIST в конце). Копия здесь для удобства в репозитории.
+Публичный пошаговый план разработки сайта Grandmont Group.
 
 ## Phase 0 — Research/Art Direction — ЗАВЕРШЕНА (2026-09-24)
 Все документы этой папки, SERVICE_MATRIX.md, REFERENCE_ANALYSIS.md — готовы. STOP для ревью владельца.
@@ -64,6 +64,8 @@ Service template параметризован; страницы ТОЛЬКО д�
 
 **Progress 2026-09-24:** added `npm run leads:cleanup` script with `--dry-run` for deleting expired stored lead folders according to metadata retention.
 
+**Progress 2026-09-24:** separated site metadata title templates from localized meta descriptions and added OpenGraph description at locale layout level.
+
 ## Phase 4 — Lead system
 Foto-Anfrage; progressive form; upload security; Lead API; email confirmation; internal notification.
 
@@ -84,4 +86,4 @@ SERVICE_MATRIX все approved=yes; CONTENT_VERIFY закрыт; review-policy �
 
 ---
 
-Детальные подпункты каждой фазы — см. мастер-план напрямую, не дублируется здесь во избежание рассинхронизации.
+Детальные подпункты держатся в профильных документах внутри `docs/`.

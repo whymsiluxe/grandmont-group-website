@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { locales, isLocale, type Locale } from "@/i18n/config";
 import { SetHtmlLang } from "./set-html-lang";
-import { titleTemplates, siteConfig } from "@/lib/seo/site-config";
+import { siteDescriptions, titleTemplates, siteConfig } from "@/lib/seo/site-config";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MobileStickyCTA } from "@/components/layout/MobileStickyCTA";
@@ -25,11 +25,12 @@ export async function generateMetadata({
   if (!isLocale(locale)) return {};
 
   const titles = titleTemplates[locale];
+  const description = siteDescriptions[locale];
 
   return {
     metadataBase: new URL(siteConfig.url),
     title: titles,
-    description: titles.default,
+    description,
     alternates: {
       canonical: `/${locale}`,
       languages: {
@@ -40,6 +41,8 @@ export async function generateMetadata({
     },
     openGraph: {
       siteName: siteConfig.name,
+      title: titles.default,
+      description,
       locale: locale === "de" ? "de_DE" : "en_US",
       type: "website",
     },

@@ -14,7 +14,7 @@
 
 [REQ] Минимум обязательных полей, не 20 полей сразу.
 
-[REC] Шаговый порядок (предложение Claude/ChatGPT, юзер сам порядок не расписывал):
+[REC] Шаговый порядок:
 1. Service + PLZ
 2. Fotos + Kurzbeschreibung
 3. Service-specific вопросы (conditional)
@@ -29,9 +29,9 @@
 
 Телефон [REQ]: «Jetzt anrufen» — реальный `tel:` линк, единый canonical номер везде (см. FINDING в SEO_PLAN.md).
 
-## 4. Текущая форма Promonta (референс от юзера, другой его бизнес) — взята за основу [REQ]
+## 4. Референсный wizard заявки [REQ]
 
-Юзер прямо просил свериться с текущей формой. Разбор текущего wizard: Standort → Dienstleistung → Detail → Projektgröße+Fotos → Zeitraum → Budget → Kontaktdaten/Objektart.
+За основу взят проверенный flow: Standort → Dienstleistung → Detail → Projektgröße+Fotos → Zeitraum → Budget → Kontaktdaten/Objektart.
 
 Вывод [REC]: основа правильная, улучшить conditional-полями (см. п.2), не переделывать с нуля.
 

@@ -21,7 +21,7 @@ export function localBusinessSchema() {
 }
 
 /**
- * Organization schema [REC-дополнение, план блок 19.4] — не REQ юзера, добавлено ChatGPT/Claude.
+ * Organization schema [REC-дополнение, план блок 19.4].
  */
 export function organizationSchema() {
   return {

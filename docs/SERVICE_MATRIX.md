@@ -2,7 +2,7 @@
 
 **[REQ, план блок 5.3]** — юзер сам явно потребовал отдельную юридическую проверку услуг до публикации. Эта таблица блокирует попадание услуги в навигацию/production, пока `Owner approved = no`.
 
-**⚠️ КРИТИЧНО: эту таблицу заполняет и подтверждает ТОЛЬКО владелец (юзер), при необходимости — совместно с HWK/IHK (Handwerkskammer/Industrie- und Handelskammer). Claude не может и не должен самостоятельно решать, что публиковать.** Статусы "Legal status" ниже — это предварительная оценка на основе Anlage A HwO и §1 HwO (см. источник ниже), НЕ юридическая консультация и НЕ финальное решение.
+**⚠️ КРИТИЧНО: эту таблицу заполняет и подтверждает ТОЛЬКО владелец проекта, при необходимости — совместно с HWK/IHK (Handwerkskammer/Industrie- und Handelskammer). Разработчик не должен самостоятельно решать, что публиковать.** Статусы "Legal status" ниже — это предварительная оценка на основе Anlage A HwO и §1 HwO (см. источник ниже), НЕ юридическая консультация и НЕ финальное решение.
 
 **Источник правовой базы (из ChatGPT-брифа, фактическая справка, не проверено юристом):**
 - **Anlage A HwO** — zulassungspflichtige Handwerke (Meisterpflicht): Maler und Lackierer; Tischler; Installateur und Heizungsbauer; Elektrotechniker; Fliesen-, Platten- und Mosaikleger; Estrichleger; Parkettleger.

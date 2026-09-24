@@ -21,15 +21,15 @@
 
 Билд проверен после правок (`npm run build`) — чисто, `/de`/`/en` остались SSG.
 
-## Инфраструктура — ОСТАЁТСЯ ОТКРЫТО
+## Инфраструктура — ЗАВЕРШЕНО (2026-09-24)
 
-- [ ] **GitHub репозиторий** — сейчас `github.com/promonta/promonta-website`, под аккаунтом `promonta`. Решить: переименовать / новый репо под правильным аккаунтом. Пока НЕ коммитить/пушить под старым именем репо наружу до решения.
-- [ ] **Локальная папка проекта** — `~/Projects/promonta-website/` → переименовать в `~/Projects/grandmont-group-website/` (или похоже).
-- [ ] **Домен** — `siteConfig.url` сейчас placeholder `https://grandmont-group.de` — подтвердить/зарегистрировать реальный домен.
-- [ ] **VPS/hosting** — уточнить у юзера: тот же VPS 162.55.53.147, отдельный поддомен/путь, не смешивать с реальным Promonta-инстансом на этом сервере.
-- [ ] **Мастер-план** — `~/.claude/plans/elegant-booping-wren.md` — весь документ под заголовком "Promonta Premium Website" (35+ упоминаний) — переименовать в "Grandmont Group Premium Website" по всему тексту.
-- [ ] **Auto-memory (Claude)** — `~/.claude/projects/-Users-mac/memory/project_promonta_website_new.md` — переписать на Grandmont Group, явно указать что это отдельный от реального Promonta-бизнеса юзера проект.
-- [ ] **paths.md** — обновить запись "Promonta Website (новый)" → "Grandmont Group Website".
+- [x] **GitHub репозиторий** — переименован, перенесён на `github.com/whymsiluxe/grandmont-group-website`.
+- [x] **Локальная папка проекта** — `~/Projects/grandmont-group-website/`.
+- [x] **Домен** — `siteConfig.url` placeholder `https://grandmont-group.de` (реальный домен ещё не зарегистрирован — открытый пункт вне rename-скоупа).
+- [x] **VPS/hosting** — CMS развёрнут на VPS, отдельный сервис/порт от Promonta-инстанса, не смешаны (детали — `~/.claude/server-structure.md`, не в публичном репо).
+- [x] **Мастер-план** — переименован на Grandmont Group.
+- [x] **Auto-memory (Claude)** — переписан на Grandmont Group.
+- [x] **paths.md** — обновлён.
 
 ## Что НЕ трогать
 
@@ -37,10 +37,10 @@
 - Referо-референсы в `docs/REFERENCE_ANALYSIS.md` — названия компаний-референсов (Sequel, Aker, ThoughtLab и т.д.) не менять.
 - Явные упоминания реального Promonta-бизнеса юзера как референса/источника (PROJECT_BRIEF.md блок про происхождение владельца, LEAD_FLOW_SPEC.md текущая форма Promonta, DESIGN_SYSTEM.md старый HEX) — оставлены намеренно с пометкой "другой его бизнес" / "не переносить".
 
-## Процесс — ОСТАЛОСЬ
+## Процесс — ЗАВЕРШЁН
 
 1. ~~Юзер выбирает финальное имя~~ ✅ Grandmont Group.
 2. ~~Проверить финальное имя по Handelsregister.de~~ ✅ свободно на 2026-09-24.
 3. ~~Пройтись по всем текстовым файлам~~ ✅ завершено.
-4. Решить: переименовать существующий репозиторий или начать новый.
-5. Обновить мастер-план, auto-memory, paths.md, локальную папку, домен, VPS-план.
+4. ~~Переименовать репозиторий, перенести на правильный аккаунт~~ ✅ `whymsiluxe/grandmont-group-website`.
+5. ~~Обновить мастер-план, auto-memory, paths.md, локальную папку, VPS-план~~ ✅ завершено. Домен — открытый пункт (не блокирует rename).
