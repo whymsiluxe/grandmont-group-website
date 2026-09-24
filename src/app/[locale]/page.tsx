@@ -1,7 +1,7 @@
 import { isLocale } from "@/i18n/config";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/JsonLd";
-import { localBusinessSchema } from "@/lib/seo/structured-data";
+import { faqSchema, localBusinessSchema, organizationSchema } from "@/lib/seo/structured-data";
 import { Hero } from "@/components/home/Hero";
 import { Services } from "@/components/home/Services";
 import { Advantages } from "@/components/home/Advantages";
@@ -9,7 +9,7 @@ import { Work } from "@/components/home/Work";
 import { Process } from "@/components/home/Process";
 import { ServiceArea } from "@/components/home/ServiceArea";
 import { Testimonials } from "@/components/home/Testimonials";
-import { FAQ } from "@/components/home/FAQ";
+import { FAQ, homeFaqItems } from "@/components/home/FAQ";
 import { ContactCTA } from "@/components/home/ContactCTA";
 
 export default async function HomePage({
@@ -23,6 +23,8 @@ export default async function HomePage({
   return (
     <main>
       <JsonLd data={localBusinessSchema()} />
+      <JsonLd data={organizationSchema()} />
+      <JsonLd data={faqSchema(homeFaqItems[locale].map((item) => ({ question: item.q, answer: item.a })))} />
       <Hero locale={locale} />
       <Services locale={locale} />
       <Advantages locale={locale} />

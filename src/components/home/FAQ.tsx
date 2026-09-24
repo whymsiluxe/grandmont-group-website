@@ -8,7 +8,7 @@ const HEADING: Record<Locale, string> = {
 };
 
 // Starter set per CONTENT_MODEL.md — real FAQ content moves into Payload (faq collection) in Phase 3.
-const QUESTIONS: Record<Locale, { q: string; a: string }[]> = {
+export const homeFaqItems: Record<Locale, { q: string; a: string }[]> = {
   de: [
     {
       q: "Wie schnell bekomme ich einen Termin?",
@@ -44,7 +44,7 @@ const QUESTIONS: Record<Locale, { q: string; a: string }[]> = {
 };
 
 export function FAQ({ locale }: { locale: Locale }) {
-  const items = QUESTIONS[locale];
+  const items = homeFaqItems[locale];
 
   return (
     <section className="bg-(--color-bg-primary) py-24 lg:py-32">
