@@ -18,10 +18,10 @@
 | `--color-bg-surface` | #1a1816 (тёплый matte dark) | Sequel/ThoughtLab-подобный, теплее |
 | `--color-text-primary` | тёплый ivory/cream (не чистый белый) | Sequel |
 | `--color-text-muted` | нейтральный серый (тёплый, не blue-gray) | Sequel |
-| `--color-accent` | тёплый терракотовый/латунный (заменяет terracotta Aker под бренд Promonta) | Aker |
+| `--color-accent` | тёплый терракотовый/латунный (заменяет terracotta Aker под бренд Grandmont Group) | Aker |
 | `--color-bg-light` | тёплый кремовый #f7f5f3 (для light-секций, "Block2"-переходов) | Cosmos/Aker Block2 |
 
-**[DECIDE]** Точный HEX акцентного цвета — синхронизировать с существующим брендом Promonta (`#003060`/`#FF9900` — по данным auto-memory `project_promonta_brand.md`, возможно устарело, проверить с юзером на Phase 1/2).
+**[DECIDE]** Точный HEX акцентного цвета для Grandmont Group — новый бренд, не связан с существующим брендом Promonta юзера (тот HEX `#003060`/`#FF9900` сюда не переносится) — определить на Phase 1/2 design-proof, не по аналогии со старым проектом.
 
 ## 2. Типографика [REC]
 
@@ -37,14 +37,14 @@ Minor Third (1.2) от базы 16-18px — паттерн, повторяющи
 
 ## 4. Spacing & Shape [REC]
 
-- Единый border-radius на систему (не смешивать разные радиусы) — Cosmos использует 16px везде; ThoughtLab/Hyper Tria — 0 (острые углы). Для Promonta — выбрать один режим, не смешивать.
+- Единый border-radius на систему (не смешивать разные радиусы) — Cosmos использует 16px везде; ThoughtLab/Hyper Tria — 0 (острые углы). Для Grandmont Group — выбрать один режим, не смешивать.
 - Comfortable spacing scale, base 4px.
 - Тени — минимальные/функциональные, не декоративные (drop-shadow только где физически логично).
 
 ## 5. Верх страницы услуги — ОБЯЗАТЕЛЬНЫЙ ПАТТЕРН [REQ, план блок 6.1]
 
 **Block 1 (Hero, dark):**
-- Full-bleed фото-фон (реальный объект/архитектура/деталь работы Promonta, НЕ stock)
+- Full-bleed фото-фон (реальный объект/архитектура/деталь работы Grandmont Group, НЕ stock)
 - Короткий tagline вверху слева
 - Крупный service-название внизу слева, обрезанное краем экрана (приём Aker)
 - Справа — floating card с превью+CTA-стрелкой

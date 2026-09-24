@@ -1,6 +1,6 @@
-# Promonta Website (новый)
+# Grandmont Group Website
 
-Новый многостраничный сайт Promonta (строительство/монтаж, Chemnitz/Sachsen). Полная замена текущего шаблонного сайта.
+Новый многостраничный сайт Grandmont Group (строительство/монтаж, Chemnitz/Sachsen, в дальнейшем — другие виды услуг).
 
 Мастер-план и статус: `~/.claude/plans/elegant-booping-wren.md`
 Phase 0 документы: `docs/`

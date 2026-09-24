@@ -15,7 +15,7 @@ export default async function HomePage({
     <main className="flex-1 flex items-center justify-center p-8">
       <JsonLd data={localBusinessSchema()} />
       <p className="text-sm text-neutral-500">
-        Promonta — foundation scaffold ({locale}). Homepage: Phase 2.
+        Grandmont Group — foundation scaffold ({locale}). Homepage: Phase 2.
       </p>
     </main>
   );

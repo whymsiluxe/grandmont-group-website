@@ -1,26 +1,58 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens — draft per docs/DESIGN_SYSTEM.md [REC].
+ * Palette/type NOT final — awaiting Phase 2 design-proof sign-off
+ * ("выглядит дорого" go/no-go). Principles locked: near-black + warm
+ * ivory base (Sequel), explicitly NOT Vivid+Co blue-gray (#101010–#495764
+ * range) — user directly forbade that palette twice.
+ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* base surfaces — warm near-black, not cold blue-black */
+  --color-bg-primary: #14120f;
+  --color-bg-surface: #1a1816;
+  --color-bg-light: #f7f5f3; /* Cosmos/Aker Block2 cream, for light-section cuts */
+
+  /* text */
+  --color-text-primary: #f6f1e7; /* warm ivory, not pure white */
+  --color-text-muted: #a8a29a; /* warm neutral gray, not blue-gray */
+  --color-text-on-light: #1a1816;
+
+  /* accent — draft terracotta/brass, placeholder pending Grandmont Group
+     brand-system sign-off (Phase 2 design proof) */
+  --color-accent: #b5763f;
+  --color-accent-hover: #c98a52;
+
+  /* type scale — Minor Third (1.2) from 16px base, per Sequel/Cosmos pattern */
+  --font-size-body: 1rem;
+  --radius-base: 8px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-bg-primary: var(--color-bg-primary);
+  --color-bg-surface: var(--color-bg-surface);
+  --color-bg-light: var(--color-bg-light);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-on-light: var(--color-text-on-light);
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --font-sans: var(--font-primary);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -29,7 +29,7 @@
 
 Телефон [REQ]: «Jetzt anrufen» — реальный `tel:` линк, единый canonical номер везде (см. FINDING в SEO_PLAN.md).
 
-## 4. Текущая форма Promonta — взята за основу [REQ]
+## 4. Текущая форма Promonta (референс от юзера, другой его бизнес) — взята за основу [REQ]
 
 Юзер прямо просил свериться с текущей формой. Разбор текущего wizard: Standort → Dienstleistung → Detail → Projektgröße+Fotos → Zeitraum → Budget → Kontaktdaten/Objektart.
 

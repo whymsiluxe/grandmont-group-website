@@ -1,6 +1,6 @@
 export const siteConfig = {
-  name: "Promonta",
-  legalName: "Promonta",
+  name: "Grandmont Group",
+  legalName: "Grandmont Group UG",
   defaultLocale: "de" as const,
   locales: ["de", "en"] as const,
   city: "Chemnitz",
@@ -19,16 +19,17 @@ export const siteConfig = {
   // placeholder — canonical phone TBD, see SEO_PLAN.md FINDING (multiple numbers on old site)
   phone: "",
   email: "",
-  url: "https://promonta-bau.de",
+  // placeholder — реальный домен не зарегистрирован, заменить перед деплоем
+  url: "https://grandmont-group.de",
 } as const;
 
 export const titleTemplates = {
   de: {
-    template: "%s | Promonta",
-    default: "Promonta — Montage & Handwerksleistungen in Chemnitz",
+    template: "%s | Grandmont Group",
+    default: "Grandmont Group — Montage & Handwerksleistungen in Chemnitz",
   },
   en: {
-    template: "%s | Promonta",
-    default: "Promonta — Assembly & Craft Services in Chemnitz, Germany",
+    template: "%s | Grandmont Group",
+    default: "Grandmont Group — Assembly & Craft Services in Chemnitz, Germany",
   },
 } as const;
