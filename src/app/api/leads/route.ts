@@ -14,6 +14,7 @@ const MAX_FILE_SIZE = 8 * 1024 * 1024;
 const MAX_TOTAL_SIZE = 40 * 1024 * 1024;
 const MAX_REQUEST_SIZE = MAX_TOTAL_SIZE + 512 * 1024;
 const MAX_POSTCODE_LENGTH = 80;
+const MAX_NAME_LENGTH = 160;
 const MAX_CONTACT_LENGTH = 160;
 const MAX_DESCRIPTION_LENGTH = 1800;
 const MAX_ATTRIBUTION_LENGTH = 500;
@@ -149,6 +150,7 @@ async function storeLead(params: {
   service: string;
   postcode: string;
   description: string;
+  name: string;
   contact: string;
   photos: File[];
   attribution: LeadAttribution;
@@ -192,6 +194,7 @@ async function storeLead(params: {
           service: params.service,
           postcode: params.postcode,
           description: params.description,
+          name: params.name || undefined,
           contact: params.contact,
           attribution: compactAttribution(params.attribution),
           retention: {
@@ -265,6 +268,7 @@ async function pushLeadToCrmAndRecord(params: {
   service: string;
   postcode: string;
   description: string;
+  name: string;
   contact: string;
   photoPaths: string[];
 }) {
@@ -277,6 +281,7 @@ async function pushLeadToCrmAndRecord(params: {
     serviceTitleDe,
     postcode: params.postcode,
     description: params.description,
+    name: params.name || undefined,
     contact: params.contact,
     photoPaths: params.photoPaths,
   }).catch(
@@ -326,6 +331,7 @@ export async function POST(request: Request) {
   const service = textValue(data, "service");
   const postcode = textValue(data, "postcode");
   const description = textValue(data, "description");
+  const name = textValue(data, "name").slice(0, MAX_NAME_LENGTH);
   const contact = textValue(data, "contact");
   const attribution = collectAttribution(data);
   const attributionFields = compactAttribution(attribution);
@@ -375,7 +381,7 @@ export async function POST(request: Request) {
   let storeResult: Awaited<ReturnType<typeof storeLead>> = null;
 
   try {
-    storeResult = await storeLead({ locale, service, postcode, description, contact, photos, attribution });
+    storeResult = await storeLead({ locale, service, postcode, description, name, contact, photos, attribution });
   } catch {
     storeResult = null;
   }
@@ -407,7 +413,7 @@ export async function POST(request: Request) {
   // всякого следа. Лид уже надёжно сохранён локально в любом случае —
   // если CRM недоступна, заявка не теряется, просто требует ручного
   // дослать позже по metadata.json.
-  await pushLeadToCrmAndRecord({ leadId, leadDir, service, postcode, description, contact, photoPaths });
+  await pushLeadToCrmAndRecord({ leadId, leadDir, service, postcode, description, name, contact, photoPaths });
 
   const message =
     locale === "en"

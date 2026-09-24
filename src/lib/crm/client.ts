@@ -21,6 +21,7 @@ export type CrmLeadInput = {
   serviceTitleDe: string;
   postcode: string;
   description: string;
+  name?: string; // опциональное поле формы — если пусто, CRM получает contact как name (fallback)
   contact: string; // телефон или email, как есть с формы
   photoPaths: string[]; // абсолютные пути к уже сохранённым JPEG на диске
 };
@@ -69,9 +70,10 @@ async function createClient(token: string, input: CrmLeadInput): Promise<string>
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
     body: JSON.stringify({
-      // У формы сайта нет отдельного поля "имя" — контакт (телефон/email)
-      // используется как name, честно, не выдумываем имя клиента.
-      name: input.contact,
+      // Форма даёт опциональное поле "имя"; если клиент его не заполнил,
+      // используем contact (телефон/email) как name — честно, не
+      // выдумываем имя клиента.
+      name: input.name || input.contact,
       email,
       phone,
       postal_code: input.postcode,

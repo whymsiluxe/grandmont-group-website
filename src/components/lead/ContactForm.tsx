@@ -22,6 +22,7 @@ const COPY: Record<
     postcode: string;
     description: string;
     photos: string;
+    name: string;
     contact: string;
     submit: string;
     sending: string;
@@ -37,6 +38,7 @@ const COPY: Record<
       postcode: string;
       description: string;
       photos: string;
+      name: string;
       contact: string;
     };
   }
@@ -46,6 +48,7 @@ const COPY: Record<
     postcode: "PLZ / Ort",
     description: "Kurzbeschreibung",
     photos: "Fotos",
+    name: "Name (optional)",
     contact: "Telefon oder E-Mail",
     submit: "Anfrage senden",
     privacyNote: "Mit dem Absenden stimmen Sie der Verarbeitung Ihrer Daten gemäß unserer",
@@ -61,6 +64,7 @@ const COPY: Record<
       postcode: "PLZ oder Ort im Einsatzgebiet, z. B. Chemnitz.",
       description: "Mindestens 20 Zeichen: Was soll gemacht werden, wo, und gibt es Besonderheiten?",
       photos: "1 bis 10 Fotos, je max. 8 MB. JPG, PNG, WebP, HEIC/HEIF.",
+      name: "Damit wir Sie beim Rückruf richtig ansprechen können.",
       contact: "Telefonnummer oder E-Mail, damit wir Rückfragen stellen können.",
     },
   },
@@ -69,6 +73,7 @@ const COPY: Record<
     postcode: "Postcode / city",
     description: "Short description",
     photos: "Photos",
+    name: "Name (optional)",
     contact: "Phone or email",
     submit: "Send request",
     privacyNote: "By submitting, you agree to the processing of your data as described in our",
@@ -84,6 +89,7 @@ const COPY: Record<
       postcode: "Postcode or city in the service area, e.g. Chemnitz.",
       description: "At least 20 characters: what needs to be done, where, and any special details?",
       photos: "1 to 10 photos, max. 8 MB each. JPG, PNG, WebP, HEIC/HEIF.",
+      name: "So we can address you correctly when we call back.",
       contact: "Phone number or email so we can ask follow-up questions.",
     },
   },
@@ -218,6 +224,20 @@ export function ContactForm({
           />
           <span id="lead-photos-hint" className="text-xs font-normal text-black/45">
             {copy.hints.photos}
+          </span>
+        </label>
+
+        <label className="grid gap-2 text-sm font-medium">
+          {copy.name}
+          <input
+            name="name"
+            maxLength={160}
+            autoComplete="name"
+            aria-describedby="lead-name-hint"
+            className="rounded-xl border border-black/15 bg-(--color-bg-light) px-4 py-3 text-base font-normal"
+          />
+          <span id="lead-name-hint" className="text-xs font-normal text-black/45">
+            {copy.hints.name}
           </span>
         </label>
 
