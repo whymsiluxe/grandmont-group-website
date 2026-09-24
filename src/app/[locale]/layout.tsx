@@ -7,6 +7,11 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MobileStickyCTA } from "@/components/layout/MobileStickyCTA";
 
+const SKIP_LABEL: Record<Locale, string> = {
+  de: "Zum Inhalt springen",
+  en: "Skip to content",
+};
+
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
@@ -54,8 +59,14 @@ export default async function LocaleLayout({
   return (
     <>
       <SetHtmlLang locale={locale} />
+      <a
+        href="#main-content"
+        className="sr-only fixed left-4 top-4 z-[100] rounded-full bg-(--color-accent) px-5 py-3 text-sm font-medium text-(--color-bg-primary) focus:not-sr-only"
+      >
+        {SKIP_LABEL[locale]}
+      </a>
       <Header locale={locale} />
-      {children}
+      <div id="main-content">{children}</div>
       <Footer locale={locale} />
       <MobileStickyCTA locale={locale} />
     </>
