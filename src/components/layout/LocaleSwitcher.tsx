@@ -17,11 +17,18 @@ export function LocaleSwitcher({ locale, className = "" }: { locale: Locale; cla
   const pathname = usePathname();
 
   return (
-    <div className={className}>
+    <div
+      aria-label={locale === "de" ? "Sprache wechseln" : "Change language"}
+      className={className}
+      role="group"
+    >
       {locales.map((item) => (
         <Link
           key={item}
+          aria-current={item === locale ? "page" : undefined}
           href={localizedHref(pathname, item)}
+          hrefLang={item}
+          lang={item}
           className={item === locale ? "text-(--color-text-primary)" : "transition-colors hover:text-(--color-text-primary)"}
         >
           {item}

@@ -11,43 +11,56 @@ export function MobileStickyCTA({ locale }: { locale: Locale }) {
   const copy = COPY[locale];
   const hasPhone = siteConfig.phone.length > 0;
   const hasWhatsApp = siteConfig.whatsapp.length > 0;
+  const ctaLabel = locale === "de" ? "Schnellkontakt" : "Quick contact";
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-(--color-bg-light)/95 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-2xl backdrop-blur md:hidden">
+    <nav
+      aria-label={ctaLabel}
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-(--color-bg-light)/95 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-2xl backdrop-blur md:hidden"
+    >
       <div className="mx-auto grid max-w-sm grid-cols-3 gap-2">
         {hasPhone ? (
           <a
+            aria-label={locale === "de" ? "Grandmont Group anrufen" : "Call Grandmont Group"}
             href={`tel:${siteConfig.phone}`}
             className="rounded-full border border-black/15 px-3 py-3 text-center text-xs font-medium text-(--color-text-on-light)"
           >
             {copy.call}
           </a>
         ) : (
-          <span className="rounded-full border border-black/10 px-3 py-3 text-center text-xs font-medium text-black/30">
+          <span
+            aria-disabled="true"
+            className="rounded-full border border-black/10 px-3 py-3 text-center text-xs font-medium text-black/30"
+          >
             {copy.call}
           </span>
         )}
 
         {hasWhatsApp ? (
           <a
+            aria-label={locale === "de" ? "Grandmont Group auf WhatsApp öffnen" : "Open Grandmont Group on WhatsApp"}
             href={`https://wa.me/${siteConfig.whatsapp}`}
             className="rounded-full border border-black/15 px-3 py-3 text-center text-xs font-medium text-(--color-text-on-light)"
           >
             {copy.whatsapp}
           </a>
         ) : (
-          <span className="rounded-full border border-black/10 px-3 py-3 text-center text-xs font-medium text-black/30">
+          <span
+            aria-disabled="true"
+            className="rounded-full border border-black/10 px-3 py-3 text-center text-xs font-medium text-black/30"
+          >
             {copy.whatsapp}
           </span>
         )}
 
         <Link
+          aria-label={locale === "de" ? "Angebot anfragen" : "Request a quote"}
           href={`/${locale}/kontakt`}
           className="rounded-full bg-(--color-accent) px-3 py-3 text-center text-xs font-medium text-(--color-bg-primary)"
         >
           {copy.offer}
         </Link>
       </div>
-    </div>
+    </nav>
   );
 }

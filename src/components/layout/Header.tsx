@@ -9,6 +9,21 @@ const CONTACT_LABEL: Record<Locale, string> = {
   en: "Request a quote",
 };
 
+const NAV_LABEL: Record<Locale, string> = {
+  de: "Hauptnavigation",
+  en: "Main navigation",
+};
+
+const SERVICES_NAV_LABEL: Record<Locale, string> = {
+  de: "Leistungsbereiche",
+  en: "Service categories",
+};
+
+const MENU_LABEL: Record<Locale, string> = {
+  de: "Menü öffnen",
+  en: "Open menu",
+};
+
 const MOBILE_LINKS: Record<Locale, { label: string; href: string }[]> = {
   de: [
     { label: "Leistungen", href: "/leistungen" },
@@ -40,7 +55,7 @@ export async function Header({ locale }: { locale: Locale }) {
           Grandmont Group
         </Link>
 
-        <nav className="hidden items-center gap-8 lg:flex">
+        <nav aria-label={SERVICES_NAV_LABEL[locale]} className="hidden items-center gap-8 lg:flex">
           {groups.map((item) => (
             <Link
               key={item.id}
@@ -66,13 +81,16 @@ export async function Header({ locale }: { locale: Locale }) {
 
         <details className="group relative lg:hidden">
           <summary
-            aria-label="Menu"
+            aria-label={MENU_LABEL[locale]}
             className="flex h-10 w-10 list-none cursor-pointer items-center justify-center text-(--color-text-primary) marker:hidden"
           >
             <span className="block h-px w-5 bg-current transition-transform group-open:rotate-45" />
             <span className="absolute block h-px w-5 translate-y-2 bg-current transition-transform group-open:-translate-y-0 group-open:-rotate-45" />
           </summary>
-          <nav className="absolute right-0 top-12 min-w-64 rounded-2xl border border-white/10 bg-(--color-bg-surface) p-3 shadow-2xl">
+          <nav
+            aria-label={NAV_LABEL[locale]}
+            className="absolute right-0 top-12 min-w-64 rounded-2xl border border-white/10 bg-(--color-bg-surface) p-3 shadow-2xl"
+          >
             {mobileLinks.map((item) => (
               <Link
                 key={item.href}

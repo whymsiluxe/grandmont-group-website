@@ -44,7 +44,10 @@ export function Footer({ locale }: { locale: Locale }) {
             </ul>
           </div>
 
-          <div className="flex flex-col gap-2 text-sm text-(--color-text-muted)">
+          <nav
+            aria-label={locale === "de" ? "Fußnavigation" : "Footer navigation"}
+            className="flex flex-col gap-2 text-sm text-(--color-text-muted)"
+          >
             <Link href={`/${locale}/ueber-uns`} className="transition-colors hover:text-(--color-text-primary)">
               {locale === "de" ? "Über uns" : "About us"}
             </Link>
@@ -66,7 +69,7 @@ export function Footer({ locale }: { locale: Locale }) {
             <Link href={`/${locale}/datenschutz`} className="transition-colors hover:text-(--color-text-primary)">
               {copy.legal.datenschutz}
             </Link>
-          </div>
+          </nav>
         </div>
 
         <p className="mt-16 text-xs text-(--color-text-muted)">
