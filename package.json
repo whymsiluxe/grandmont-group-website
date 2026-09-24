@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "leads:cleanup": "node scripts/cleanup-leads.mjs"
   },
   "dependencies": {
     "motion": "^13.4.2",

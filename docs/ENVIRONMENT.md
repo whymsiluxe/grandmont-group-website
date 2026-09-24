@@ -30,6 +30,16 @@ Security notes:
 - `/api/leads` also applies request size, field length, magic-byte image checks, honeypot spam filtering and a basic in-memory IP rate limit.
 - Add proxy/WAF-level persistent rate limiting before production launch; in-memory limits reset on process restart and are not shared across multiple instances.
 
+Cleanup:
+
+```bash
+# Preview expired lead folders.
+LEAD_STORAGE_DIR=/var/lib/grandmont-group-website/leads npm run leads:cleanup -- --dry-run
+
+# Delete expired lead folders. Run from cron/systemd timer in production.
+LEAD_STORAGE_DIR=/var/lib/grandmont-group-website/leads npm run leads:cleanup
+```
+
 ## Site contact config
 
 Canonical public phone, WhatsApp and email are currently placeholders in `src/lib/seo/site-config.ts`.
