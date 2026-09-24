@@ -5,6 +5,12 @@ import type { Locale } from "@/i18n/config";
 import type { ApprovedService } from "@/lib/services/approved-services";
 
 type FormState = "idle" | "sending" | "success" | "error";
+type LeadResponse = {
+  message?: string;
+  status?: "stored" | "validated" | "ignored";
+  leadId?: string | null;
+  notificationSent?: boolean;
+};
 
 const COPY: Record<
   Locale,
@@ -18,7 +24,9 @@ const COPY: Record<
     sending: string;
     success: string;
     error: string;
-    storagePending: string;
+    stored: string;
+    validated: string;
+    leadId: string;
     servicePlaceholder: string;
     hints: {
       postcode: string;
@@ -34,11 +42,13 @@ const COPY: Record<
     description: "Kurzbeschreibung",
     photos: "Fotos",
     contact: "Telefon oder E-Mail",
-    submit: "Anfrage prüfen",
-    sending: "Prüfe Anfrage...",
-    success: "Anfrage ist technisch valide. Versand/Speicherung wird im nächsten Schritt angeschlossen.",
+    submit: "Anfrage senden",
+    sending: "Anfrage wird gesendet...",
+    success: "Anfrage erhalten. Wir prüfen sie und melden uns.",
     error: "Bitte prüfen Sie die Angaben.",
-    storagePending: "Hinweis: Lead-Speicherung und Benachrichtigungen sind noch nicht aktiviert.",
+    stored: "Die Anfrage wurde sicher gespeichert.",
+    validated: "Die Anfrage wurde geprüft. Speicherung und Benachrichtigung sind in dieser Umgebung noch nicht aktiviert.",
+    leadId: "Anfrage-ID",
     servicePlaceholder: "Leistung auswählen",
     hints: {
       postcode: "PLZ oder Ort im Einsatzgebiet, z. B. Chemnitz.",
@@ -53,11 +63,13 @@ const COPY: Record<
     description: "Short description",
     photos: "Photos",
     contact: "Phone or email",
-    submit: "Check request",
-    sending: "Checking request...",
-    success: "Request is technically valid. Sending/storage will be connected next.",
+    submit: "Send request",
+    sending: "Sending request...",
+    success: "Request received. We will review it and get back to you.",
     error: "Please check the details.",
-    storagePending: "Note: lead storage and notifications are not active yet.",
+    stored: "The request was stored securely.",
+    validated: "The request was checked. Storage and notification are not active in this environment yet.",
+    leadId: "Request ID",
     servicePlaceholder: "Select service",
     hints: {
       postcode: "Postcode or city in the service area, e.g. Chemnitz.",
@@ -80,6 +92,7 @@ export function ContactForm({
   const copy = COPY[locale];
   const [state, setState] = useState<FormState>("idle");
   const [message, setMessage] = useState("");
+  const [result, setResult] = useState<LeadResponse | null>(null);
 
   const acceptedServices = useMemo(() => services.map((service) => service.slug), [services]);
   const initialServiceValue = initialService && acceptedServices.includes(initialService) ? initialService : "";
@@ -88,6 +101,7 @@ export function ContactForm({
     event.preventDefault();
     setState("sending");
     setMessage("");
+    setResult(null);
 
     const form = event.currentTarget;
     const data = new FormData(form);
@@ -95,7 +109,7 @@ export function ContactForm({
 
     try {
       const response = await fetch("/api/leads", { method: "POST", body: data });
-      const payload = (await response.json().catch(() => null)) as { message?: string } | null;
+      const payload = (await response.json().catch(() => null)) as LeadResponse | null;
 
       if (!response.ok) {
         setState("error");
@@ -104,6 +118,7 @@ export function ContactForm({
       }
 
       setState("success");
+      setResult(payload);
       setMessage(payload?.message || copy.success);
     } catch {
       setState("error");
@@ -112,10 +127,14 @@ export function ContactForm({
   }
 
   return (
-    <form onSubmit={submit} className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm lg:p-8">
+    <form
+      aria-busy={state === "sending"}
+      onSubmit={submit}
+      className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm lg:p-8"
+    >
       <h2 className="mb-8 text-3xl font-light">{locale === "de" ? "Foto-Anfrage" : "Photo request"}</h2>
 
-      <div className="grid gap-5">
+      <fieldset className="grid gap-5" disabled={state === "sending"}>
         <label className="grid gap-2 text-sm font-medium">
           {copy.service}
           <select
@@ -214,13 +233,23 @@ export function ContactForm({
           {state === "sending" ? copy.sending : copy.submit}
         </button>
 
-        <p className="text-xs text-black/50">{copy.storagePending}</p>
+        {state === "success" && result?.status ? (
+          <div className="rounded-xl border border-emerald-700/15 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
+            <p className="font-medium">{result.status === "stored" ? copy.stored : copy.validated}</p>
+            {result.leadId ? (
+              <p className="mt-1 text-xs text-emerald-950/70">
+                {copy.leadId}: {result.leadId}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+
         {message ? (
           <p className={state === "error" ? "text-sm text-red-700" : "text-sm text-black/65"} role="status">
             {message}
           </p>
         ) : null}
-      </div>
+      </fieldset>
     </form>
   );
 }
