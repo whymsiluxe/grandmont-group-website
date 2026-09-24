@@ -1,6 +1,7 @@
 "use client";
 
 import { Container } from "@/components/layout/Container";
+import { HeroDepthScene } from "@/components/home/HeroDepthScene";
 import type { Locale } from "@/i18n/config";
 import { motion, useReducedMotion, useScroll, useTransform, type Transition } from "motion/react";
 import { useRef } from "react";
@@ -59,6 +60,8 @@ export function Hero({ locale }: { locale: Locale }) {
         aria-hidden
         className="absolute inset-0 bg-[linear-gradient(160deg,#14120f_0%,#1a1816_55%,#0c0b0a_100%)]"
       />
+
+      {reduceMotion ? null : <HeroDepthScene scrollYProgress={scrollYProgress} />}
 
       <Container className="relative z-10 pb-20 pt-40 lg:pb-28">
         <motion.p
