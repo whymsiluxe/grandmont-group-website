@@ -55,8 +55,16 @@ function textValue(data: FormData, key: string) {
 }
 
 function clientIp(request: Request) {
-  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  return forwarded || request.headers.get("x-real-ip")?.trim() || "unknown";
+  // Trust boundary: this app is only reachable through Caddy (port 3020 is
+  // not in the VPS firewall allow-list — see server-structure.md), and
+  // Caddy's reverse_proxy appends the real connecting IP as the LAST hop
+  // in X-Forwarded-For rather than passing through whatever the client
+  // sent. Taking the first (client-supplied, spoofable) entry would let
+  // anyone bypass rate limiting by sending a fake header; the last entry
+  // is the one Caddy itself set.
+  const forwarded = request.headers.get("x-forwarded-for");
+  const lastHop = forwarded?.split(",").pop()?.trim();
+  return lastHop || request.headers.get("x-real-ip")?.trim() || "unknown";
 }
 
 function isRateLimited(ip: string) {

@@ -6,14 +6,20 @@ async function fetchCollection<T>(
   params: Record<string, string> = {},
 ): Promise<T[]> {
   const query = new URLSearchParams({ locale, limit: "100", ...params });
-  const res = await fetch(`${CMS_URL}/api/${collection}?${query}`, {
-    // Content changes only via CMS edits, not per-request — safe to cache
-    // and revalidate on a short interval rather than refetch every render.
-    next: { revalidate: 60 },
-  });
-  if (!res.ok) return [];
-  const json = await res.json();
-  return json.docs ?? [];
+  try {
+    const res = await fetch(`${CMS_URL}/api/${collection}?${query}`, {
+      // Content changes only via CMS edits, not per-request — safe to cache
+      // and revalidate on a short interval rather than refetch every render.
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.docs ?? [];
+  } catch {
+    // CMS unreachable (down, network error, CI with no CMS running) —
+    // degrade to empty rather than taking the whole build/page down.
+    return [];
+  }
 }
 
 export async function fetchServicesBothLocales() {
