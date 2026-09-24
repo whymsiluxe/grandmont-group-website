@@ -44,6 +44,12 @@ Service template параметризован; страницы ТОЛЬКО д�
 
 **Progress 2026-09-24:** lead intake усилен server-side лимитами и anti-spam baseline; добавлены site-wide security headers в `next.config.ts`.
 
+**Progress 2026-09-24:** homepage hero заменён на premium coded visual без фейковых проектных фото; homepage portfolio-блок стал data-driven и показывает только published projects либо честный empty-state.
+
+**Progress 2026-09-24:** language switcher теперь сохраняет текущий путь `/de/...` ↔ `/en/...`; contact form сохраняет выбранную услугу из CTA и получила понятные field hints/limits.
+
+**Progress 2026-09-24:** draft legal pages оставлены доступными, но помечены `noindex,nofollow` и исключены из sitemap до финальной юридической проверки.
+
 ## Phase 4 — Lead system
 Foto-Anfrage; progressive form; upload security; Lead API; email confirmation; internal notification.
 
