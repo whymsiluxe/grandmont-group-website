@@ -4,6 +4,8 @@ Target CMS: Payload CMS, self-hosted, PostgreSQL.
 
 Status 2026-09-24: implementation bridge exists in `src/lib/cms/content-source.ts`; current source is `static-approved-content`. Payload cutover should replace that adapter first.
 
+Static seed helper: `src/lib/cms/static-seed.ts` returns current approved services, empty public project/article lists and planned article topics in CMS-shaped form. Use it as the first import/seed source when Payload is installed.
+
 ## Global Rules
 
 - Locales: `de`, `en`.
