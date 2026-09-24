@@ -1,19 +1,22 @@
+import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import { siteConfig } from "@/lib/seo/site-config";
 import { Container } from "./Container";
 
 const COPY: Record<
   Locale,
-  { tagline: string; serviceAreaLabel: string; legal: { impressum: string; datenschutz: string } }
+  { tagline: string; serviceAreaLabel: string; contact: string; legal: { impressum: string; datenschutz: string } }
 > = {
   de: {
     tagline: "Montage & Handwerksleistungen in Chemnitz und Umgebung.",
     serviceAreaLabel: "Einsatzgebiet",
+    contact: "Kontakt",
     legal: { impressum: "Impressum", datenschutz: "Datenschutz" },
   },
   en: {
     tagline: "Assembly & craft services in Chemnitz and the surrounding region.",
     serviceAreaLabel: "Service area",
+    contact: "Contact",
     legal: { impressum: "Legal notice", datenschutz: "Privacy policy" },
   },
 };
@@ -42,12 +45,27 @@ export function Footer({ locale }: { locale: Locale }) {
           </div>
 
           <div className="flex flex-col gap-2 text-sm text-(--color-text-muted)">
-            <a href="#" className="transition-colors hover:text-(--color-text-primary)">
+            <Link href={`/${locale}/ueber-uns`} className="transition-colors hover:text-(--color-text-primary)">
+              {locale === "de" ? "Über uns" : "About us"}
+            </Link>
+            <Link href={`/${locale}/unternehmen`} className="transition-colors hover:text-(--color-text-primary)">
+              {locale === "de" ? "Für Unternehmen" : "For businesses"}
+            </Link>
+            <Link href={`/${locale}/projekte`} className="transition-colors hover:text-(--color-text-primary)">
+              {locale === "de" ? "Projekte" : "Projects"}
+            </Link>
+            <Link href={`/${locale}/ratgeber`} className="transition-colors hover:text-(--color-text-primary)">
+              {locale === "de" ? "Ratgeber" : "Guides"}
+            </Link>
+            <Link href={`/${locale}/kontakt`} className="transition-colors hover:text-(--color-text-primary)">
+              {copy.contact}
+            </Link>
+            <Link href={`/${locale}/impressum`} className="transition-colors hover:text-(--color-text-primary)">
               {copy.legal.impressum}
-            </a>
-            <a href="#" className="transition-colors hover:text-(--color-text-primary)">
+            </Link>
+            <Link href={`/${locale}/datenschutz`} className="transition-colors hover:text-(--color-text-primary)">
               {copy.legal.datenschutz}
-            </a>
+            </Link>
           </div>
         </div>
 

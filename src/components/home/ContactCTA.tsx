@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/motion/FadeIn";
@@ -35,12 +36,12 @@ export function ContactCTA({ locale }: { locale: Locale }) {
           <h2 className="mb-4 text-3xl font-light lg:text-5xl">{copy.title}</h2>
           <p className="mb-10 text-sm text-black/60">{copy.sub}</p>
 
-          <a
-            href="#"
+          <Link
+            href={`/${locale}/kontakt`}
             className="mb-8 inline-flex items-center gap-2 rounded-full bg-(--color-accent) px-8 py-4 text-sm font-medium text-(--color-bg-primary) transition-transform hover:scale-[1.03]"
           >
             {copy.cta}
-          </a>
+          </Link>
 
           <div className="flex flex-wrap justify-center gap-6 text-sm text-black/60">
             {hasPhone && (

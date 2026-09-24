@@ -48,6 +48,7 @@
 body {
   background: var(--color-bg-primary);
   color: var(--color-text-primary);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 @media (prefers-reduced-motion: reduce) {

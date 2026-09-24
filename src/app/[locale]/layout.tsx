@@ -5,6 +5,7 @@ import { SetHtmlLang } from "./set-html-lang";
 import { titleTemplates, siteConfig } from "@/lib/seo/site-config";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { MobileStickyCTA } from "@/components/layout/MobileStickyCTA";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -56,6 +57,7 @@ export default async function LocaleLayout({
       <Header locale={locale} />
       {children}
       <Footer locale={locale} />
+      <MobileStickyCTA locale={locale} />
     </>
   );
 }

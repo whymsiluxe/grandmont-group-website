@@ -8,11 +8,35 @@
 ## Phase 1 — Foundation
 Next.js/TS init; роутинг DE/EN; SEO-metadata база; design tokens; шрифты (лицензия проверена); header/footer; responsive grid; motion primitives.
 
+**Progress 2026-09-24:** header/home service links подключены к реальным approved routes; sitemap расширен approved service routes; `npm run lint` и `npm run build` проходят.
+
 ## Phase 2 — Design proof
 Homepage + Möbelmontage service-page собраны; проверка desktop/iPhone/Android; анимации + reduced-motion; черновой Lighthouse; go/no-go решение юзера «выглядит дорого».
 
 ## Phase 3 — Content system
 Service template параметризован; страницы ТОЛЬКО для услуг с Owner approved=yes; Portfolio; B2B; Über uns; Kontakt; Ratgeber (структура).
+
+**Progress 2026-09-24:** сделан approved-services data layer, `/[locale]/leistungen` overview и динамические `/[locale]/leistungen/[slug]` страницы только для approved услуг: Küchenmontage, Möbelmontage, Demontage, Umzug/Möbeltransport, Entrümpelung, Reinigung.
+
+**Progress 2026-09-24:** добавлен `/[locale]/kontakt` frontend-shell с Foto-Anfrage структурой, service select, фото input, Einsatzgebiet и CTA links. Backend отправки намеренно не включён до Phase 4 Lead API.
+
+**Progress 2026-09-24:** добавлены `/[locale]/ueber-uns` и `/[locale]/unternehmen`; footer links и sitemap обновлены.
+
+**Progress 2026-09-24:** добавлены `/[locale]/projekte` и `/[locale]/ratgeber` как CMS-ready структуры без выдуманных кейсов/статей; footer links и sitemap обновлены.
+
+**Progress 2026-09-24:** добавлены draft legal routes `/[locale]/impressum` и `/[locale]/datenschutz`, footer legal links, sitemap entries и DE/EN language switcher. Legal pages явно помечены как не финальные до правовой проверки.
+
+**Progress 2026-09-24:** контактная форма вынесена в client component; добавлен `/api/leads` intake validator для approved service, PLZ/описания/контакта и 1-10 фото с базовой magic-byte проверкой. Storage/notifications намеренно возвращают pending status до настройки Phase 4 backend.
+
+**Progress 2026-09-24:** добавлен mobile sticky CTA `Anrufen / WhatsApp / Angebot` с safe-area; phone/WhatsApp показываются disabled до заполнения canonical контактов в siteConfig.
+
+**Progress 2026-09-24:** `/api/leads` умеет private filesystem storage при `LEAD_STORAGE_DIR`: создаёт приватную папку заявки, конвертирует фото через sharp в JPEG без metadata/EXIF, пишет `metadata.json`; если env не задан — остаётся validation-only без ложного успеха.
+
+**Progress 2026-09-24:** добавлено optional Telegram internal notification через `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID`; отсутствие env не ломает intake и не имитирует отправку.
+
+**Progress 2026-09-24:** добавлен `docs/ENVIRONMENT.md` с runtime env для lead storage/Telegram без секретов.
+
+**Progress 2026-09-24:** добавлен custom 404 page.
 
 ## Phase 4 — Lead system
 Foto-Anfrage; progressive form; upload security; Lead API; email confirmation; internal notification.

@@ -18,6 +18,7 @@ export const siteConfig = {
   ],
   // placeholder — canonical phone TBD, see SEO_PLAN.md FINDING (multiple numbers on old site)
   phone: "",
+  whatsapp: "",
   email: "",
   // placeholder — реальный домен не зарегистрирован, заменить перед деплоем
   url: "https://grandmont-group.de",
