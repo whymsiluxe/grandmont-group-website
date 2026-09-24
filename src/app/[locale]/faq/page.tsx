@@ -125,6 +125,8 @@ export default async function FaqPage({ params }: { params: Promise<{ locale: st
               <div className="flex flex-wrap items-center justify-between gap-4 border-t border-black/15 pt-10">
                 <p className="text-xl font-light">{copy.cta}</p>
                 <Link
+                  data-event="cta_offer_click"
+                  data-event-location="faq"
                   href={`/${locale}/kontakt`}
                   className="inline-flex rounded-full bg-(--color-accent) px-8 py-4 text-sm font-medium text-(--color-bg-primary)"
                 >

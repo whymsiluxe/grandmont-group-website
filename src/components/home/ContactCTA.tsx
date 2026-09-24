@@ -37,6 +37,8 @@ export function ContactCTA({ locale }: { locale: Locale }) {
           <p className="mb-10 text-sm text-black/60">{copy.sub}</p>
 
           <Link
+            data-event="cta_offer_click"
+            data-event-location="home_final_cta"
             href={`/${locale}/kontakt`}
             className="mb-8 inline-flex items-center gap-2 rounded-full bg-(--color-accent) px-8 py-4 text-sm font-medium text-(--color-bg-primary) transition-transform hover:scale-[1.03]"
           >
@@ -46,12 +48,18 @@ export function ContactCTA({ locale }: { locale: Locale }) {
           <div className="flex flex-wrap justify-center gap-6 text-sm text-black/60">
             {hasPhone && (
               <span>
-                {copy.phoneLabel}: <a href={`tel:${siteConfig.phone}`}>{siteConfig.phone}</a>
+                {copy.phoneLabel}:{" "}
+                <a data-event="phone_click" data-event-location="home_final_cta" href={`tel:${siteConfig.phone}`}>
+                  {siteConfig.phone}
+                </a>
               </span>
             )}
             {hasEmail && (
               <span>
-                {copy.emailLabel}: <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+                {copy.emailLabel}:{" "}
+                <a data-event="email_click" data-event-location="home_final_cta" href={`mailto:${siteConfig.email}`}>
+                  {siteConfig.email}
+                </a>
               </span>
             )}
           </div>

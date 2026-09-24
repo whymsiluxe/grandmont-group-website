@@ -131,6 +131,9 @@ export default async function ServicePage({
       <ServiceSection title={copy.cta}>
         <div className="flex flex-wrap gap-4">
           <Link
+            data-event="cta_offer_click"
+            data-event-location="service_detail"
+            data-event-service={service.slug}
             href={`/${locale}/kontakt?service=${service.slug}`}
             className="inline-flex rounded-full bg-(--color-accent) px-8 py-4 text-sm font-medium text-(--color-bg-primary) transition-transform hover:scale-[1.03]"
           >

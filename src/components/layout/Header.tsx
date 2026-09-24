@@ -70,6 +70,8 @@ export async function Header({ locale }: { locale: Locale }) {
         </nav>
 
         <Link
+          data-event="cta_offer_click"
+          data-event-location="header"
           href={`/${locale}/kontakt`}
           className="hidden rounded-full border border-(--color-accent) px-5 py-2 text-sm text-(--color-text-primary) transition-colors hover:bg-(--color-accent) lg:inline-block"
         >

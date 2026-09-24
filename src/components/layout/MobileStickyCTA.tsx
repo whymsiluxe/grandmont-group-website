@@ -22,6 +22,8 @@ export function MobileStickyCTA({ locale }: { locale: Locale }) {
         {hasPhone ? (
           <a
             aria-label={locale === "de" ? "Grandmont Group anrufen" : "Call Grandmont Group"}
+            data-event="phone_click"
+            data-event-location="mobile_sticky_cta"
             href={`tel:${siteConfig.phone}`}
             className="rounded-full border border-black/15 px-3 py-3 text-center text-xs font-medium text-(--color-text-on-light)"
           >
@@ -39,6 +41,8 @@ export function MobileStickyCTA({ locale }: { locale: Locale }) {
         {hasWhatsApp ? (
           <a
             aria-label={locale === "de" ? "Grandmont Group auf WhatsApp öffnen" : "Open Grandmont Group on WhatsApp"}
+            data-event="whatsapp_click"
+            data-event-location="mobile_sticky_cta"
             href={`https://wa.me/${siteConfig.whatsapp}`}
             className="rounded-full border border-black/15 px-3 py-3 text-center text-xs font-medium text-(--color-text-on-light)"
           >
@@ -55,6 +59,8 @@ export function MobileStickyCTA({ locale }: { locale: Locale }) {
 
         <Link
           aria-label={locale === "de" ? "Angebot anfragen" : "Request a quote"}
+          data-event="cta_offer_click"
+          data-event-location="mobile_sticky_cta"
           href={`/${locale}/kontakt`}
           className="rounded-full bg-(--color-accent) px-3 py-3 text-center text-xs font-medium text-(--color-bg-primary)"
         >

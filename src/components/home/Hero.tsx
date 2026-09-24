@@ -92,6 +92,8 @@ export function Hero({ locale }: { locale: Locale }) {
           >
             <p className="mb-6 text-base text-(--color-text-muted)">{copy.sub}</p>
             <a
+              data-event="cta_offer_click"
+              data-event-location="home_hero"
               href="#kontakt"
               className="inline-flex items-center gap-2 rounded-full bg-(--color-accent) px-6 py-3 text-sm font-medium text-(--color-bg-primary) transition-transform hover:scale-[1.03]"
             >
