@@ -21,11 +21,11 @@ const HEADING: Record<Locale, string> = {
  * change — not two independently-scrolling carousels, not a timed
  * slideshow, not an unsynchronized fade.
  *
- * No real project photography exists yet (asset audit, Phase 2). The
- * sticky visual renders the service's own display typography — large
- * number + title — instead of a stock/AI photo standing in for one.
- * When real photos are approved, only the sticky-panel render needs to
- * change; the scroll-driven index logic stays the same.
+ * Per DESIGN_SYSTEM.md §4.1: Homepage is abstract motion + typography by
+ * design, not a photo showcase — real photography stays reserved for
+ * /projekte. The sticky visual renders the service's own display
+ * typography (large number + title) as the actual design, not a
+ * placeholder standing in for a future photo.
  */
 export function ServiceStory({ locale, services }: { locale: Locale; services: ApprovedService[] }) {
   const reduceMotion = useReducedMotion();

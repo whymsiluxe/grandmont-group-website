@@ -7,14 +7,15 @@ const EASE: Transition["ease"] = [0.16, 1, 0.3, 1];
 
 /**
  * Aker top-of-page pattern [REQ, DESIGN_SYSTEM.md §5] — mandatory for every
- * service page. Block 1: dark full-bleed photo hero, tagline top-left,
- * service name bottom-left (screen-edge crop), floating card right.
- * Block 2: hard cut to light canvas, one large value-statement paragraph.
+ * service page. Block 1: dark full-bleed hero, tagline top-left, service
+ * name bottom-left (screen-edge crop), floating card right. Block 2: hard
+ * cut to light canvas, one large value-statement paragraph.
  *
- * No real photography exists yet (asset audit, Phase 2 design-proof) — the
- * `photo` prop is optional so the structure is ready to take a real image
- * without changing this component when one is approved. Until then this
- * renders an honest dark surface, not a gradient standing in for a photo.
+ * Per DESIGN_SYSTEM.md §4.1: real photography is intentionally reserved
+ * for /projekte, not Homepage/service-hero — this is deliberate art
+ * direction, not missing content. `photoSrc` stays optional in case a
+ * future real project's own detail shot is ever used here, but the
+ * default abstract dark surface is the actual design, not a placeholder.
  */
 export function ServiceHero({
   eyebrow,
