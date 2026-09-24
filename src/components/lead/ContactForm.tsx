@@ -50,12 +50,21 @@ const COPY: Record<
   },
 };
 
-export function ContactForm({ locale, services }: { locale: Locale; services: ApprovedService[] }) {
+export function ContactForm({
+  locale,
+  services,
+  initialService,
+}: {
+  locale: Locale;
+  services: ApprovedService[];
+  initialService?: string;
+}) {
   const copy = COPY[locale];
   const [state, setState] = useState<FormState>("idle");
   const [message, setMessage] = useState("");
 
   const acceptedServices = useMemo(() => services.map((service) => service.slug), [services]);
+  const initialServiceValue = initialService && acceptedServices.includes(initialService) ? initialService : "";
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -94,6 +103,7 @@ export function ContactForm({ locale, services }: { locale: Locale; services: Ap
           <select
             name="service"
             required
+            defaultValue={initialServiceValue}
             className="rounded-xl border border-black/15 bg-(--color-bg-light) px-4 py-3 text-base font-normal"
           >
             <option value="">{copy.servicePlaceholder}</option>

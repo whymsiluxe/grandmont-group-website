@@ -6,7 +6,7 @@ import { ContactForm } from "@/components/lead/ContactForm";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { isLocale, type Locale } from "@/i18n/config";
 import { siteConfig } from "@/lib/seo/site-config";
-import { approvedServices } from "@/lib/services/approved-services";
+import { approvedServices, getApprovedService } from "@/lib/services/approved-services";
 
 const COPY: Record<
   Locale,
@@ -56,12 +56,17 @@ export async function generateMetadata({
 
 export default async function KontaktPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams?: Promise<{ service?: string | string[] }>;
 }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const copy = COPY[locale];
+  const query = await searchParams;
+  const serviceParam = Array.isArray(query?.service) ? query.service[0] : query?.service;
+  const initialService = serviceParam && getApprovedService(serviceParam) ? serviceParam : undefined;
 
   return (
     <main className="bg-(--color-bg-primary)">
@@ -83,7 +88,7 @@ export default async function KontaktPage({
         <Container>
           <div className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr]">
             <FadeIn>
-              <ContactForm locale={locale} services={approvedServices} />
+              <ContactForm locale={locale} services={approvedServices} initialService={initialService} />
             </FadeIn>
 
             <FadeIn delay={0.1}>
