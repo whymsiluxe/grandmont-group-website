@@ -22,6 +22,8 @@ Security notes:
 - It must not be inside a `public/` directory.
 - Uploaded photos are converted to JPEG through `sharp`, stripping metadata/EXIF.
 - Stored lead folders and metadata are written with private filesystem permissions.
+- `/api/leads` also applies request size, field length, magic-byte image checks, honeypot spam filtering and a basic in-memory IP rate limit.
+- Add proxy/WAF-level persistent rate limiting before production launch; in-memory limits reset on process restart and are not shared across multiple instances.
 
 ## Site contact config
 

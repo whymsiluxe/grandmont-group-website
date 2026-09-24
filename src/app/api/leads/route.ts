@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
+import { isLocale } from "@/i18n/config";
 import { approvedServices } from "@/lib/services/approved-services";
 
 export const runtime = "nodejs";
@@ -10,15 +11,54 @@ export const runtime = "nodejs";
 const MAX_FILES = 10;
 const MAX_FILE_SIZE = 8 * 1024 * 1024;
 const MAX_TOTAL_SIZE = 40 * 1024 * 1024;
+const MAX_REQUEST_SIZE = MAX_TOTAL_SIZE + 512 * 1024;
+const MAX_POSTCODE_LENGTH = 80;
+const MAX_CONTACT_LENGTH = 160;
+const MAX_DESCRIPTION_LENGTH = 1800;
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 12;
 const VALID_IMAGE_PREFIXES = [
   [0xff, 0xd8, 0xff],
   [0x89, 0x50, 0x4e, 0x47],
   [0x52, 0x49, 0x46, 0x46],
 ];
 
+type RateLimitEntry = {
+  count: number;
+  resetAt: number;
+};
+
+const rateLimitByIp = new Map<string, RateLimitEntry>();
+
 function textValue(data: FormData, key: string) {
   const value = data.get(key);
   return typeof value === "string" ? value.trim() : "";
+}
+
+function clientIp(request: Request) {
+  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return forwarded || request.headers.get("x-real-ip")?.trim() || "unknown";
+}
+
+function isRateLimited(ip: string) {
+  const now = Date.now();
+  for (const [key, entry] of rateLimitByIp.entries()) {
+    if (entry.resetAt <= now) rateLimitByIp.delete(key);
+  }
+
+  const current = rateLimitByIp.get(ip);
+  if (!current) {
+    rateLimitByIp.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+
+  current.count += 1;
+  return current.count > RATE_LIMIT_MAX_REQUESTS;
+}
+
+function requestSizeTooLarge(request: Request) {
+  const contentLength = Number(request.headers.get("content-length") || 0);
+  return Number.isFinite(contentLength) && contentLength > MAX_REQUEST_SIZE;
 }
 
 async function hasValidImageSignature(file: File) {
@@ -137,8 +177,19 @@ async function notifyTeam(params: {
 }
 
 export async function POST(request: Request) {
+  const ip = clientIp(request);
+  if (isRateLimited(ip)) {
+    return NextResponse.json({ ok: false, message: "Too many requests." }, { status: 429 });
+  }
+
+  if (requestSizeTooLarge(request)) {
+    return NextResponse.json({ ok: false, message: "Request is too large." }, { status: 413 });
+  }
+
   const data = await request.formData();
-  const locale = textValue(data, "locale") || "de";
+  const submittedLocale = textValue(data, "locale") || "de";
+  const locale = isLocale(submittedLocale) ? submittedLocale : "de";
+  const website = textValue(data, "website");
   const service = textValue(data, "service");
   const postcode = textValue(data, "postcode");
   const description = textValue(data, "description");
@@ -149,7 +200,23 @@ export async function POST(request: Request) {
   const errorMessage =
     locale === "en" ? "Please check the request fields and photos." : "Bitte prüfen Sie Angaben und Fotos.";
 
-  if (!approvedSlugs.has(service) || postcode.length < 3 || description.length < 20 || contact.length < 5) {
+  if (website) {
+    return NextResponse.json({
+      ok: true,
+      status: "ignored",
+      message: locale === "en" ? "Request received." : "Anfrage erhalten.",
+    });
+  }
+
+  if (
+    !approvedSlugs.has(service) ||
+    postcode.length < 3 ||
+    postcode.length > MAX_POSTCODE_LENGTH ||
+    description.length < 20 ||
+    description.length > MAX_DESCRIPTION_LENGTH ||
+    contact.length < 5 ||
+    contact.length > MAX_CONTACT_LENGTH
+  ) {
     return NextResponse.json({ ok: false, message: errorMessage }, { status: 400 });
   }
 

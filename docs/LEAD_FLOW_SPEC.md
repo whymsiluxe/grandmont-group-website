@@ -43,6 +43,8 @@
 
 Private object storage; non-guessable IDs; signed URLs; role-based access; retention policy; delete process; file type validation (MIME + magic-byte, не только расширение); size limits; malware protection; strip EXIF/GPS; никаких публичных `/uploads/` директорий.
 
+**Implemented baseline 2026-09-24:** `/api/leads` has approved-service validation, locale normalization, request/content-size limits, field max lengths, 1-10 photo limit, magic-byte image validation, EXIF stripping via `sharp` conversion, private filesystem storage when `LEAD_STORAGE_DIR` is configured, honeypot field and an in-memory IP window limit. Remaining production work: persistent/shared rate limiting at proxy/WAF layer, CAPTCHA if spam appears, malware scanning and retention/delete policy.
+
 ## 7. Постоянный CTA [REQ mobile, DECIDE desktop отложено]
 
 **Mobile sticky bar** [REQ, юзер сам предложил]: Anrufen | WhatsApp | Angebot. Уважать iPhone safe-area, не перекрывать контент.

@@ -121,6 +121,7 @@ export function ContactForm({
             name="postcode"
             required
             minLength={3}
+            maxLength={80}
             className="rounded-xl border border-black/15 bg-(--color-bg-light) px-4 py-3 text-base font-normal"
           />
         </label>
@@ -154,10 +155,19 @@ export function ContactForm({
             name="contact"
             required
             minLength={5}
+            maxLength={160}
             className="rounded-xl border border-black/15 bg-(--color-bg-light) px-4 py-3 text-base font-normal"
           />
         </label>
 
+        <input
+          type="text"
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          className="sr-only"
+        />
         <input type="hidden" name="acceptedServices" value={acceptedServices.join(",")} />
 
         <button
