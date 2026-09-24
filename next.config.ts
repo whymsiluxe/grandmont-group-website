@@ -11,8 +11,11 @@ const securityHeaders = [
       "object-src 'none'",
       "img-src 'self' data: blob: https:",
       "font-src 'self' data:",
+      // 'unsafe-inline' on style-src stays: `motion/react` animates via inline
+      // style attributes, not <style> tags — removing this breaks all motion.
       "style-src 'self' 'unsafe-inline'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      // 'unsafe-eval' removed: not required by Next.js production output.
+      "script-src 'self' 'unsafe-inline'",
       "connect-src 'self'",
       "upgrade-insecure-requests",
     ].join("; "),
