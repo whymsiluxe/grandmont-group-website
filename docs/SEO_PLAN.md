@@ -34,6 +34,8 @@ Google Business Profile синхронизация: название; адрес
 
 См. SITE_ARCHITECTURE.md.
 
+**Implemented check 2026-09-24:** i18n proxy excludes `/robots.txt` and `/sitemap.xml`, so crawlers receive canonical technical files instead of locale redirects.
+
 ## Ratgeber/блог — стартовые темы [REQ примеры от юзера]
 
 «Wie viel kostet eine Möbelmontage in Chemnitz?»; «Was kostet eine Küchenmontage?»; «Laminat selbst verlegen oder Fachbetrieb beauftragen?»; «Was muss ich vor einer Möbelmontage vorbereiten?»
