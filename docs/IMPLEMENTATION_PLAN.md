@@ -50,6 +50,8 @@ Service template параметризован; страницы ТОЛЬКО д�
 
 **Progress 2026-09-24:** draft legal pages оставлены доступными, но помечены `noindex,nofollow` и исключены из sitemap до финальной юридической проверки.
 
+**Progress 2026-09-24:** добавлен `src/lib/cms/content-source.ts` как единая точка будущего Payload cutover; routes/sitemap/header/contact/lead validation переведены на этот adapter. Добавлен `docs/PAYLOAD_CMS_SCHEMA.md` с коллекциями и public filters.
+
 ## Phase 4 — Lead system
 Foto-Anfrage; progressive form; upload security; Lead API; email confirmation; internal notification.
 

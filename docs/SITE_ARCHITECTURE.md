@@ -10,6 +10,8 @@ Content-модели в Payload: Services (с локализацией DE/EN, SE
 
 **Implementation bridge 2026-09-24:** public routes, sitemap, header service navigation, contact service select and lead validation now read through `src/lib/cms/content-source.ts`. Current mode is `static-approved-content`; Payload CMS cutover should replace this adapter first, not scatter direct CMS calls through page components.
 
+Detailed collection contract: `docs/PAYLOAD_CMS_SCHEMA.md`.
+
 ## i18n [REQ]
 
 `/de/...` и `/en/...`, единая i18n-архитектура (не копировать компоненты руками). hreflang de-DE/en/x-default [REC-детализация технической реализации REQ юзера].
