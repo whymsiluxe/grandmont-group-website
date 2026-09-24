@@ -38,7 +38,7 @@ Ads-ready: Google Ads, Meta Ads, local campaigns, remarketing — без тре�
 
 [REC] Event-taxonomy (имена событий придуманы Claude/ChatGPT, не юзером): `cta_offer_click`; `form_start`; `service_selected`; `photo_upload`; `form_step_complete`; `lead_submit`; `whatsapp_click`; `phone_click`; `portfolio_open`; `before_after_interaction`.
 
-**Implemented baseline 2026-09-24:** key public CTA elements now expose `data-event` and `data-event-location` attributes for future analytics wiring: `cta_offer_click`, `phone_click`, `whatsapp_click`, `email_click`. No analytics provider or third-party script is loaded yet.
+**Implemented baseline 2026-09-24:** key public CTA/form elements now expose `data-event` and `data-event-location` attributes for future analytics wiring: `cta_offer_click`, `phone_click`, `whatsapp_click`, `email_click`, `service_selected`, `photo_upload`, `lead_submit`. No analytics provider or third-party script is loaded yet.
 
 Call tracking [REQ] — знать откуда звонок, canonical phone стабилен везде (см. FINDING в SEO_PLAN.md).
 

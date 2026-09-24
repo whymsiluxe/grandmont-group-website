@@ -148,6 +148,8 @@ export function ContactForm({
         <label className="grid gap-2 text-sm font-medium">
           {copy.service}
           <select
+            data-event="service_selected"
+            data-event-location="lead_form"
             name="service"
             required
             defaultValue={initialServiceValue}
@@ -197,6 +199,8 @@ export function ContactForm({
         <label className="grid gap-2 text-sm font-medium">
           {copy.photos}
           <input
+            data-event="photo_upload"
+            data-event-location="lead_form"
             name="photos"
             type="file"
             multiple
@@ -236,6 +240,8 @@ export function ContactForm({
         />
 
         <button
+          data-event="lead_submit"
+          data-event-location="lead_form"
           type="submit"
           disabled={state === "sending"}
           className="mt-3 rounded-full bg-(--color-accent) px-8 py-4 text-sm font-medium text-(--color-bg-primary) disabled:opacity-60"
