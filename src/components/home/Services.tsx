@@ -2,15 +2,15 @@ import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/motion/FadeIn";
-import { getGroupedApprovedServices } from "@/lib/services/approved-services";
+import { listGroupedApprovedServices } from "@/lib/cms/content-source";
 
 const HEADING: Record<Locale, string> = {
   de: "Unsere Leistungen",
   en: "Our services",
 };
 
-export function Services({ locale }: { locale: Locale }) {
-  const groups = getGroupedApprovedServices();
+export async function Services({ locale }: { locale: Locale }) {
+  const groups = await listGroupedApprovedServices();
 
   return (
     <section className="bg-(--color-bg-primary) py-24 lg:py-32">

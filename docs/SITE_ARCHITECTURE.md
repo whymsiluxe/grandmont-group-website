@@ -8,6 +8,8 @@
 
 Content-модели в Payload: Services (с локализацией DE/EN, SEO metadata, привязкой к SERVICE_MATRIX approval-статусу), Projects/Portfolio, FAQ, Ratgeber-статьи, Testimonials (если решится публично), B2B-контент. Архитектура остаётся простой — Payload работает как admin+API поверх той же PostgreSQL, не отдельный сервис.
 
+**Implementation bridge 2026-09-24:** public routes, sitemap, header service navigation, contact service select and lead validation now read through `src/lib/cms/content-source.ts`. Current mode is `static-approved-content`; Payload CMS cutover should replace this adapter first, not scatter direct CMS calls through page components.
+
 ## i18n [REQ]
 
 `/de/...` и `/en/...`, единая i18n-архитектура (не копировать компоненты руками). hreflang de-DE/en/x-default [REC-детализация технической реализации REQ юзера].

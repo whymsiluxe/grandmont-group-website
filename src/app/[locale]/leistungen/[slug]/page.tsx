@@ -6,9 +6,9 @@ import { Ablauf } from "@/components/service/Ablauf";
 import { ServiceHero } from "@/components/service/ServiceHero";
 import { BulletList, ProseBlock, ServiceSection } from "@/components/service/ServiceSections";
 import { isLocale, locales, type Locale } from "@/i18n/config";
+import { findApprovedService, listApprovedServices } from "@/lib/cms/content-source";
 import { siteConfig } from "@/lib/seo/site-config";
 import { breadcrumbSchema, faqSchema, serviceSchema } from "@/lib/seo/structured-data";
-import { approvedServices, getApprovedService } from "@/lib/services/approved-services";
 
 const COPY: Record<Locale, { included: string; forWhom: string; outcomes: string; process: string; reference: string; referenceBody: string; pricing: string; faq: string; cta: string; allServices: string }> = {
   de: {
@@ -37,7 +37,8 @@ const COPY: Record<Locale, { included: string; forWhom: string; outcomes: string
   },
 };
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const approvedServices = await listApprovedServices();
   return locales.flatMap((locale) => approvedServices.map((service) => ({ locale, slug: service.slug })));
 }
 
@@ -48,7 +49,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, slug } = await params;
   if (!isLocale(locale)) return {};
-  const service = getApprovedService(slug);
+  const service = await findApprovedService(slug);
   if (!service) return {};
   return {
     title: service.title[locale],
@@ -71,7 +72,7 @@ export default async function ServicePage({
 }) {
   const { locale, slug } = await params;
   if (!isLocale(locale)) notFound();
-  const service = getApprovedService(slug);
+  const service = await findApprovedService(slug);
   if (!service) notFound();
 
   const copy = COPY[locale];

@@ -5,8 +5,12 @@ import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { ProjectCard } from "@/components/project/ProjectCard";
 import { isLocale, type Locale } from "@/i18n/config";
-import { getPublishedProjects, projectContentFields, projectQualityGates } from "@/lib/projects/projects";
-import { approvedServices, getGroupedApprovedServices } from "@/lib/services/approved-services";
+import {
+  listApprovedServices,
+  listGroupedApprovedServices,
+  listPublishedProjects,
+} from "@/lib/cms/content-source";
+import { projectContentFields, projectQualityGates } from "@/lib/projects/projects";
 
 const COPY: Record<
   Locale,
@@ -79,8 +83,9 @@ export default async function ProjektePage({ params }: { params: Promise<{ local
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const copy = COPY[locale];
-  const groups = getGroupedApprovedServices();
-  const projects = getPublishedProjects();
+  const groups = await listGroupedApprovedServices();
+  const approvedServices = await listApprovedServices();
+  const projects = await listPublishedProjects();
 
   return (
     <main>

@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { isLocale, type Locale } from "@/i18n/config";
-import { getGroupedApprovedServices } from "@/lib/services/approved-services";
+import { listGroupedApprovedServices } from "@/lib/cms/content-source";
 
 const COPY: Record<Locale, { title: string; sub: string; cta: string }> = {
   de: {
@@ -44,7 +44,7 @@ export default async function LeistungenPage({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const copy = COPY[locale];
-  const groups = getGroupedApprovedServices();
+  const groups = await listGroupedApprovedServices();
 
   return (
     <main className="bg-(--color-bg-primary)">

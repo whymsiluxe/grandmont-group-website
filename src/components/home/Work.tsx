@@ -3,7 +3,8 @@ import type { Locale } from "@/i18n/config";
 import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { ProjectCard } from "@/components/project/ProjectCard";
-import { getPublishedProjects, projectQualityGates } from "@/lib/projects/projects";
+import { listPublishedProjects } from "@/lib/cms/content-source";
+import { projectQualityGates } from "@/lib/projects/projects";
 
 const HEADING: Record<Locale, { title: string; sub: string; emptyTitle: string; cta: string }> = {
   de: {
@@ -20,9 +21,9 @@ const HEADING: Record<Locale, { title: string; sub: string; emptyTitle: string; 
   },
 };
 
-export function Work({ locale }: { locale: Locale }) {
+export async function Work({ locale }: { locale: Locale }) {
   const copy = HEADING[locale];
-  const projects = getPublishedProjects().slice(0, 3);
+  const projects = (await listPublishedProjects()).slice(0, 3);
 
   return (
     <section className="bg-(--color-bg-primary) py-24 lg:py-32">

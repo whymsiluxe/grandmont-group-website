@@ -5,10 +5,10 @@ import { ArticleCard } from "@/components/article/ArticleCard";
 import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { isLocale, type Locale } from "@/i18n/config";
+import { listPublishedArticles } from "@/lib/cms/content-source";
 import {
   articleQualityGates,
   getArticleService,
-  getPublishedArticles,
   plannedArticleTopics,
 } from "@/lib/articles/articles";
 
@@ -74,7 +74,7 @@ export default async function RatgeberPage({ params }: { params: Promise<{ local
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const copy = COPY[locale];
-  const articles = getPublishedArticles();
+  const articles = await listPublishedArticles();
 
   return (
     <main>

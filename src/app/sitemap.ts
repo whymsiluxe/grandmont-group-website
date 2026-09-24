@@ -1,19 +1,22 @@
 import type { MetadataRoute } from "next";
-import { siteConfig } from "@/lib/seo/site-config";
 import { locales } from "@/i18n/config";
-import { getPublishedArticles } from "@/lib/articles/articles";
-import { getPublishedProjects } from "@/lib/projects/projects";
-import { approvedServices } from "@/lib/services/approved-services";
+import {
+  listApprovedServices,
+  listPublishedArticles,
+  listPublishedProjects,
+} from "@/lib/cms/content-source";
+import { siteConfig } from "@/lib/seo/site-config";
 
 /**
  * Base sitemap — только статичные/foundation-роуты на этом этапе (Phase 1).
  * Service-страницы добавятся динамически в Phase 3, только для
  * SERVICE_MATRIX.md услуг с Owner approved=yes.
  */
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
-  const publishedArticles = getPublishedArticles();
-  const publishedProjects = getPublishedProjects();
+  const approvedServices = await listApprovedServices();
+  const publishedArticles = await listPublishedArticles();
+  const publishedProjects = await listPublishedProjects();
 
   return locales.flatMap((locale) => [
     {

@@ -5,7 +5,8 @@ import { JsonLd } from "@/components/JsonLd";
 import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { isLocale, locales, type Locale } from "@/i18n/config";
-import { getArticleService, getPublishedArticle, getPublishedArticles } from "@/lib/articles/articles";
+import { getArticleService } from "@/lib/articles/articles";
+import { findPublishedArticle, listPublishedArticles } from "@/lib/cms/content-source";
 import { articleSchema, breadcrumbSchema } from "@/lib/seo/structured-data";
 import { siteConfig } from "@/lib/seo/site-config";
 
@@ -35,10 +36,9 @@ const COPY: Record<
   },
 };
 
-export function generateStaticParams() {
-  return locales.flatMap((locale) =>
-    getPublishedArticles().map((article) => ({ locale, slug: article.slug })),
-  );
+export async function generateStaticParams() {
+  const articles = await listPublishedArticles();
+  return locales.flatMap((locale) => articles.map((article) => ({ locale, slug: article.slug })));
 }
 
 export async function generateMetadata({
@@ -48,7 +48,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, slug } = await params;
   if (!isLocale(locale)) return {};
-  const article = getPublishedArticle(slug);
+  const article = await findPublishedArticle(slug);
   if (!article) return {};
 
   return {
@@ -73,7 +73,7 @@ export default async function ArticlePage({
   const { locale, slug } = await params;
   if (!isLocale(locale)) notFound();
 
-  const article = getPublishedArticle(slug);
+  const article = await findPublishedArticle(slug);
   if (!article) notFound();
 
   const copy = COPY[locale];

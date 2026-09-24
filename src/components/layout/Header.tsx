@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Locale } from "@/i18n/config";
-import { getGroupedApprovedServices } from "@/lib/services/approved-services";
+import { listGroupedApprovedServices } from "@/lib/cms/content-source";
 import { Container } from "./Container";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 
@@ -26,8 +26,8 @@ const MOBILE_LINKS: Record<Locale, { label: string; href: string }[]> = {
   ],
 };
 
-export function Header({ locale }: { locale: Locale }) {
-  const groups = getGroupedApprovedServices();
+export async function Header({ locale }: { locale: Locale }) {
+  const groups = await listGroupedApprovedServices();
   const mobileLinks = MOBILE_LINKS[locale];
 
   return (

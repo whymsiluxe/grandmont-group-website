@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { isLocale, locales, type Locale } from "@/i18n/config";
-import { getPublishedProject, getPublishedProjects, getProjectService } from "@/lib/projects/projects";
+import { findPublishedProject, listPublishedProjects } from "@/lib/cms/content-source";
+import { getProjectService } from "@/lib/projects/projects";
 
 const COPY: Record<
   Locale,
@@ -44,10 +45,9 @@ const COPY: Record<
   },
 };
 
-export function generateStaticParams() {
-  return locales.flatMap((locale) =>
-    getPublishedProjects().map((project) => ({ locale, slug: project.slug })),
-  );
+export async function generateStaticParams() {
+  const projects = await listPublishedProjects();
+  return locales.flatMap((locale) => projects.map((project) => ({ locale, slug: project.slug })));
 }
 
 export async function generateMetadata({
@@ -57,7 +57,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, slug } = await params;
   if (!isLocale(locale)) return {};
-  const project = getPublishedProject(slug);
+  const project = await findPublishedProject(slug);
   if (!project) return {};
 
   return {
@@ -82,7 +82,7 @@ export default async function ProjectDetailPage({
   const { locale, slug } = await params;
   if (!isLocale(locale)) notFound();
 
-  const project = getPublishedProject(slug);
+  const project = await findPublishedProject(slug);
   if (!project) notFound();
 
   const copy = COPY[locale];

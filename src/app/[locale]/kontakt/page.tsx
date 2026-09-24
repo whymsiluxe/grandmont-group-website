@@ -5,8 +5,8 @@ import { Container } from "@/components/layout/Container";
 import { ContactForm } from "@/components/lead/ContactForm";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { isLocale, type Locale } from "@/i18n/config";
+import { findApprovedService, listApprovedServices } from "@/lib/cms/content-source";
 import { siteConfig } from "@/lib/seo/site-config";
-import { approvedServices, getApprovedService } from "@/lib/services/approved-services";
 
 const COPY: Record<
   Locale,
@@ -64,9 +64,10 @@ export default async function KontaktPage({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const copy = COPY[locale];
+  const approvedServices = await listApprovedServices();
   const query = await searchParams;
   const serviceParam = Array.isArray(query?.service) ? query.service[0] : query?.service;
-  const initialService = serviceParam && getApprovedService(serviceParam) ? serviceParam : undefined;
+  const initialService = serviceParam && (await findApprovedService(serviceParam)) ? serviceParam : undefined;
 
   return (
     <main className="bg-(--color-bg-primary)">

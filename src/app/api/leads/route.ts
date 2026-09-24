@@ -4,7 +4,7 @@ import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
 import { isLocale } from "@/i18n/config";
-import { approvedServices } from "@/lib/services/approved-services";
+import { listApprovedServices } from "@/lib/cms/content-source";
 
 export const runtime = "nodejs";
 
@@ -151,6 +151,7 @@ async function notifyTeam(params: {
   const chatId = process.env.TELEGRAM_CHAT_ID?.trim();
   if (!token || !chatId) return false;
 
+  const approvedServices = await listApprovedServices();
   const serviceTitle = approvedServices.find((item) => item.slug === params.service)?.title.de || params.service;
   const text = [
     `Neue Anfrage: ${params.leadId}`,
@@ -195,6 +196,7 @@ export async function POST(request: Request) {
   const description = textValue(data, "description");
   const contact = textValue(data, "contact");
   const photos = data.getAll("photos").filter((item): item is File => item instanceof File && item.size > 0);
+  const approvedServices = await listApprovedServices();
   const approvedSlugs = new Set(approvedServices.map((item) => item.slug));
 
   const errorMessage =
