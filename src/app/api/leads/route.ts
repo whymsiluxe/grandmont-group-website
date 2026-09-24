@@ -312,30 +312,35 @@ export async function POST(request: Request) {
   try {
     leadId = await storeLead({ locale, service, postcode, description, contact, photos, attribution });
   } catch {
+    leadId = null;
+  }
+
+  if (!leadId) {
     const message =
       locale === "en"
-        ? "Request is valid, but secure storage is not configured correctly yet."
-        : "Anfrage ist valide, aber sichere Speicherung ist noch nicht korrekt konfiguriert.";
+        ? "Request could not be saved. Secure storage is not configured yet — please contact us by phone or WhatsApp instead."
+        : "Anfrage konnte nicht gespeichert werden. Sichere Speicherung ist noch nicht konfiguriert — bitte per Telefon oder WhatsApp kontaktieren.";
     return NextResponse.json({ ok: false, message }, { status: 503 });
   }
 
-  const notificationSent = leadId
-    ? await notifyTeam({ leadId, locale, service, postcode, description, contact, photoCount: photos.length }).catch(
-        () => false,
-      )
-    : false;
+  const notificationSent = await notifyTeam({
+    leadId,
+    locale,
+    service,
+    postcode,
+    description,
+    contact,
+    photoCount: photos.length,
+  }).catch(() => false);
 
-  const message = leadId
-    ? locale === "en"
+  const message =
+    locale === "en"
       ? "Request received. We will review it and get back to you."
-      : "Anfrage erhalten. Wir prüfen sie und melden uns."
-    : locale === "en"
-      ? "Request is valid. Storage and notifications are not configured yet."
-      : "Anfrage ist valide. Speicherung und Benachrichtigungen sind noch nicht aktiviert.";
+      : "Anfrage erhalten. Wir prüfen sie und melden uns.";
 
   return NextResponse.json({
     ok: true,
-    status: leadId ? "stored" : "validated",
+    status: "stored",
     message,
     leadId,
     notificationSent,

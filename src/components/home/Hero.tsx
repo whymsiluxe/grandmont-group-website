@@ -21,7 +21,7 @@ const COPY: Record<
   de: {
     eyebrow: "Grandmont Group — Chemnitz",
     heading: ["Montage &", "Handwerk mit", "Anspruch."],
-    sub: "Von der Möbelmontage bis zum Innenausbau — saubere Ausführung, klare Kommunikation, verlässliche Termine.",
+    sub: "Von der Möbelmontage bis zum Objektservice — saubere Ausführung, klare Kommunikation, verlässliche Termine.",
     cta: "Kostenloses Angebot anfragen",
     visual: {
       stages: ["Anfrage", "Angebot", "Termin"],
@@ -32,7 +32,7 @@ const COPY: Record<
   en: {
     eyebrow: "Grandmont Group — Chemnitz",
     heading: ["Assembly &", "craftsmanship,", "done right."],
-    sub: "From furniture assembly to full interior fit-out — clean execution, clear communication, reliable schedules.",
+    sub: "From furniture assembly to facility services — clean execution, clear communication, reliable schedules.",
     cta: "Request a free quote",
     visual: {
       stages: ["Request", "Quote", "Date"],

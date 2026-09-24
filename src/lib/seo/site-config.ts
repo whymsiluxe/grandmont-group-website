@@ -36,6 +36,6 @@ export const titleTemplates = {
 } as const;
 
 export const siteDescriptions = {
-  de: "Grandmont Group bietet Montage, Möbelmontage, Küchenmontage, Innenausbau und Objektservice in Chemnitz und Umgebung.",
-  en: "Grandmont Group provides assembly, furniture assembly, kitchen installation, interior fit-out and property services in Chemnitz and the surrounding region.",
+  de: "Grandmont Group bietet Montage, Möbelmontage, Küchenmontage und Objektservice in Chemnitz und Umgebung.",
+  en: "Grandmont Group provides assembly, furniture assembly, kitchen installation and property services in Chemnitz and the surrounding region.",
 } as const;
