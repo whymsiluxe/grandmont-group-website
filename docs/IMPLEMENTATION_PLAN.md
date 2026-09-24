@@ -52,6 +52,8 @@ Service template параметризован; страницы ТОЛЬКО д�
 
 **Progress 2026-09-24:** добавлен `src/lib/cms/content-source.ts` как единая точка будущего Payload cutover; routes/sitemap/header/contact/lead validation переведены на этот adapter. Добавлен `docs/PAYLOAD_CMS_SCHEMA.md` с коллекциями и public filters.
 
+**Progress 2026-09-24:** добавлен публичный `/[locale]/faq` route с агрегированными FAQ из уже существующих homepage/service данных, FAQPage schema, footer/mobile-nav и sitemap integration.
+
 ## Phase 4 — Lead system
 Foto-Anfrage; progressive form; upload security; Lead API; email confirmation; internal notification.
 

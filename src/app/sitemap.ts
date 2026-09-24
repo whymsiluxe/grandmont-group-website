@@ -40,7 +40,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         languages: Object.fromEntries(locales.map((l) => [l, `${siteConfig.url}/${l}/kontakt`])),
       },
     },
-    ...["ueber-uns", "unternehmen", "projekte", "ratgeber"].map((path) => ({
+    ...["ueber-uns", "unternehmen", "projekte", "ratgeber", "faq"].map((path) => ({
       url: `${siteConfig.url}/${locale}/${path}`,
       lastModified,
       alternates: {

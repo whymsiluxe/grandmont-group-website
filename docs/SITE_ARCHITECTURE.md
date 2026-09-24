@@ -46,7 +46,7 @@ Detailed collection contract: `docs/PAYLOAD_CMS_SCHEMA.md`.
 /de/kontakt/
 /de/ratgeber/                                 — SEO-блог
 /de/ratgeber/[slug]/
-/de/faq/                                      — если не встроено в отдельные страницы
+/de/faq/                                      — агрегированные вопросы из homepage/service FAQ
 /de/impressum/
 /de/datenschutz/
 /en/... (зеркально)

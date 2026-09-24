@@ -60,6 +60,9 @@ export function Footer({ locale }: { locale: Locale }) {
             <Link href={`/${locale}/ratgeber`} className="transition-colors hover:text-(--color-text-primary)">
               {locale === "de" ? "Ratgeber" : "Guides"}
             </Link>
+            <Link href={`/${locale}/faq`} className="transition-colors hover:text-(--color-text-primary)">
+              FAQ
+            </Link>
             <Link href={`/${locale}/kontakt`} className="transition-colors hover:text-(--color-text-primary)">
               {copy.contact}
             </Link>
