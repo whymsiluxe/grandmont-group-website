@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
 import { isLocale } from "@/i18n/config";
 import { listApprovedServices } from "@/lib/cms/content-source";
+import { pushLeadToCrm } from "@/lib/crm/client";
 
 export const runtime = "nodejs";
 
@@ -206,7 +207,7 @@ async function storeLead(params: {
       { mode: 0o600 },
     );
 
-    return leadId;
+    return { leadId, leadDir, photoPaths: savedPhotos.map((p) => path.join(leadDir, p.filename)) };
   } catch (error) {
     await rm(leadDir, { recursive: true, force: true });
     throw error;
@@ -250,6 +251,62 @@ async function notifyTeam(params: {
   });
 
   return response.ok;
+}
+
+// Отправляет лид в CRM и дописывает результат в metadata.json того же
+// лида — так в приватном хранилище всегда видно, дошла ли заявка до
+// CRM (crm: { pushed: true, clientId, objectId } либо
+// crm: { pushed: false, stage, error } для ручного дослать позже).
+// Не бросает исключения наружу — вызывается через `void` в основном
+// хендлере, ответ клиенту уже отправлен независимо от результата.
+async function pushLeadToCrmAndRecord(params: {
+  leadId: string;
+  leadDir: string;
+  service: string;
+  postcode: string;
+  description: string;
+  contact: string;
+  photoPaths: string[];
+}) {
+  const approvedServices = await listApprovedServices();
+  const serviceTitleDe = approvedServices.find((item) => item.slug === params.service)?.title.de || params.service;
+
+  const result = await pushLeadToCrm({
+    leadId: params.leadId,
+    service: params.service,
+    serviceTitleDe,
+    postcode: params.postcode,
+    description: params.description,
+    contact: params.contact,
+    photoPaths: params.photoPaths,
+  }).catch(
+    (error): Awaited<ReturnType<typeof pushLeadToCrm>> => ({
+      ok: false,
+      stage: "auth",
+      error: error instanceof Error ? error.message : String(error),
+    }),
+  );
+
+  try {
+    const metadataPath = path.join(params.leadDir, "metadata.json");
+    const raw = await readFile(metadataPath, "utf-8");
+    const metadata = JSON.parse(raw);
+    metadata.crm = result.ok
+      ? {
+          pushed: true,
+          clientId: result.clientId,
+          objectId: result.objectId,
+          photosUploaded: result.photosUploaded,
+          photosFailed: result.photosFailed,
+          pushedAt: new Date().toISOString(),
+        }
+      : { pushed: false, stage: result.stage, error: result.error, attemptedAt: new Date().toISOString() };
+    await writeFile(metadataPath, JSON.stringify(metadata, null, 2), { mode: 0o600 });
+  } catch {
+    // Обновление metadata.json — вторичный шаг (наблюдаемость), не
+    // должен маскировать/ронять сам CRM push, если файл почему-то
+    // недоступен для чтения/записи в моменте.
+  }
 }
 
 export async function POST(request: Request) {
@@ -315,21 +372,23 @@ export async function POST(request: Request) {
     }
   }
 
-  let leadId: string | null = null;
+  let storeResult: Awaited<ReturnType<typeof storeLead>> = null;
 
   try {
-    leadId = await storeLead({ locale, service, postcode, description, contact, photos, attribution });
+    storeResult = await storeLead({ locale, service, postcode, description, contact, photos, attribution });
   } catch {
-    leadId = null;
+    storeResult = null;
   }
 
-  if (!leadId) {
+  if (!storeResult) {
     const message =
       locale === "en"
         ? "Request could not be saved. Secure storage is not configured yet — please contact us by phone or WhatsApp instead."
         : "Anfrage konnte nicht gespeichert werden. Sichere Speicherung ist noch nicht konfiguriert — bitte per Telefon oder WhatsApp kontaktieren.";
     return NextResponse.json({ ok: false, message }, { status: 503 });
   }
+
+  const { leadId, leadDir, photoPaths } = storeResult;
 
   const notificationSent = await notifyTeam({
     leadId,
@@ -340,6 +399,15 @@ export async function POST(request: Request) {
     contact,
     photoCount: photos.length,
   }).catch(() => false);
+
+  // CRM push — best-effort по результату (не роняет ответ клиенту при
+  // ошибке), но awaited: процесс здесь persistent Node (runtime =
+  // "nodejs", не serverless/edge), fire-and-forget рисковал бы обрубить
+  // запрос при рестарте/деплое между storeLead и завершением push без
+  // всякого следа. Лид уже надёжно сохранён локально в любом случае —
+  // если CRM недоступна, заявка не теряется, просто требует ручного
+  // дослать позже по metadata.json.
+  await pushLeadToCrmAndRecord({ leadId, leadDir, service, postcode, description, contact, photoPaths });
 
   const message =
     locale === "en"
