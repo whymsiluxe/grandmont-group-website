@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Locale } from "@/i18n/config";
+import { Container } from "./Container";
 
 const NAV_GROUPS: Record<Locale, { label: string; href: string }[]> = {
   de: [
@@ -24,7 +25,7 @@ export function Header({ locale }: { locale: Locale }) {
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-(--color-bg-primary)/80 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+      <Container className="flex items-center justify-between py-4">
         <Link
           href={`/${locale}`}
           className="text-lg font-semibold tracking-tight text-(--color-text-primary)"
@@ -59,7 +60,7 @@ export function Header({ locale }: { locale: Locale }) {
         >
           <span className="block h-px w-5 bg-current" />
         </button>
-      </div>
+      </Container>
     </header>
   );
 }

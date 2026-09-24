@@ -27,6 +27,10 @@
   /* type scale — Minor Third (1.2) from 16px base, per Sequel/Cosmos pattern */
   --font-size-body: 1rem;
   --radius-base: 8px;
+
+  /* layout — shared page container, matches Header/Footer max-w-7xl (1280px) */
+  --container-max: 80rem;
+  --container-pad: 1.5rem;
 }
 
 @theme inline {

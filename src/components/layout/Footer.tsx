@@ -1,5 +1,6 @@
 import type { Locale } from "@/i18n/config";
 import { siteConfig } from "@/lib/seo/site-config";
+import { Container } from "./Container";
 
 const COPY: Record<
   Locale,
@@ -22,7 +23,7 @@ export function Footer({ locale }: { locale: Locale }) {
 
   return (
     <footer className="border-t border-white/10 bg-(--color-bg-surface)">
-      <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+      <Container className="py-16">
         <div className="grid gap-12 lg:grid-cols-3">
           <div>
             <p className="text-lg font-semibold text-(--color-text-primary)">Grandmont Group</p>
@@ -53,7 +54,7 @@ export function Footer({ locale }: { locale: Locale }) {
         <p className="mt-16 text-xs text-(--color-text-muted)">
           © {new Date().getFullYear()} {siteConfig.legalName}
         </p>
-      </div>
+      </Container>
     </footer>
   );
 }
