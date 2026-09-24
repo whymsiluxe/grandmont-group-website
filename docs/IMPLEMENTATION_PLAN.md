@@ -58,6 +58,8 @@ Service template параметризован; страницы ТОЛЬКО д�
 
 **Progress 2026-09-24:** добавлен локализованный app error boundary для неожиданных runtime ошибок с retry, contact и home actions.
 
+**Progress 2026-09-24:** lead form/API сохраняют базовую attribution metadata (`landingPath`, `referrer`, UTM, `gclid`, `fbclid`) без cookies/third-party trackers, готово для будущего CRM adapter.
+
 ## Phase 4 — Lead system
 Foto-Anfrage; progressive form; upload security; Lead API; email confirmation; internal notification.
 

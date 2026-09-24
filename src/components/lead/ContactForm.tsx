@@ -12,6 +12,8 @@ type LeadResponse = {
   notificationSent?: boolean;
 };
 
+const ATTRIBUTION_PARAMS = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "gclid", "fbclid"];
+
 const COPY: Record<
   Locale,
   {
@@ -106,6 +108,14 @@ export function ContactForm({
     const form = event.currentTarget;
     const data = new FormData(form);
     data.set("locale", locale);
+    data.set("landingPath", `${window.location.pathname}${window.location.search}`);
+    if (document.referrer) data.set("referrer", document.referrer);
+
+    const url = new URL(window.location.href);
+    for (const key of ATTRIBUTION_PARAMS) {
+      const value = url.searchParams.get(key);
+      if (value) data.set(key, value);
+    }
 
     try {
       const response = await fetch("/api/leads", { method: "POST", body: data });

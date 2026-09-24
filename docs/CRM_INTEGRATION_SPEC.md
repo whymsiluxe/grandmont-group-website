@@ -30,6 +30,8 @@ id; created_at; клиент; телефон; email; PLZ; услуга; опис
 
 Источники: Google; Google Ads; Instagram; Facebook; TikTok; Referral; Direct; Flyer; Website. Хранить: first/last landing; UTM; referrer; campaign — «примерно как делали в Промонта» [REQ, прямая ссылка юзера на существующий паттерн].
 
+**Implemented baseline 2026-09-24:** website lead form sends current `landingPath`, `referrer`, `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`, `gclid`, `fbclid` together with `/api/leads`; backend stores non-empty values in lead metadata with length caps. No cookies or third-party trackers are added at this stage.
+
 Ads-ready: Google Ads, Meta Ads, local campaigns, remarketing — без трекеров до consent [REQ].
 
 Отслеживать [REQ]: формы (отправки), звонки, WhatsApp-клики, источники трафика.

@@ -15,6 +15,7 @@ const MAX_REQUEST_SIZE = MAX_TOTAL_SIZE + 512 * 1024;
 const MAX_POSTCODE_LENGTH = 80;
 const MAX_CONTACT_LENGTH = 160;
 const MAX_DESCRIPTION_LENGTH = 1800;
+const MAX_ATTRIBUTION_LENGTH = 500;
 const MIN_PHONE_DIGITS = 6;
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 12;
@@ -28,6 +29,21 @@ type RateLimitEntry = {
   count: number;
   resetAt: number;
 };
+
+type LeadAttribution = Partial<
+  Record<
+    | "landingPath"
+    | "referrer"
+    | "utmSource"
+    | "utmMedium"
+    | "utmCampaign"
+    | "utmTerm"
+    | "utmContent"
+    | "gclid"
+    | "fbclid",
+    string
+  >
+>;
 
 const rateLimitByIp = new Map<string, RateLimitEntry>();
 
@@ -68,6 +84,28 @@ function hasPlausibleContact(value: string) {
   return digits.length >= MIN_PHONE_DIGITS;
 }
 
+function attributionValue(data: FormData, key: string) {
+  return textValue(data, key).slice(0, MAX_ATTRIBUTION_LENGTH);
+}
+
+function collectAttribution(data: FormData): LeadAttribution {
+  return {
+    landingPath: attributionValue(data, "landingPath"),
+    referrer: attributionValue(data, "referrer"),
+    utmSource: attributionValue(data, "utm_source"),
+    utmMedium: attributionValue(data, "utm_medium"),
+    utmCampaign: attributionValue(data, "utm_campaign"),
+    utmTerm: attributionValue(data, "utm_term"),
+    utmContent: attributionValue(data, "utm_content"),
+    gclid: attributionValue(data, "gclid"),
+    fbclid: attributionValue(data, "fbclid"),
+  };
+}
+
+function compactAttribution(attribution: LeadAttribution) {
+  return Object.fromEntries(Object.entries(attribution).filter(([, value]) => Boolean(value)));
+}
+
 async function hasValidImageSignature(file: File) {
   const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
   if (VALID_IMAGE_PREFIXES.some((prefix) => prefix.every((byte, index) => bytes[index] === byte))) return true;
@@ -92,6 +130,7 @@ async function storeLead(params: {
   description: string;
   contact: string;
   photos: File[];
+  attribution: LeadAttribution;
 }) {
   const storageDir = configuredStorageDir();
   if (!storageDir) return null;
@@ -131,6 +170,7 @@ async function storeLead(params: {
           postcode: params.postcode,
           description: params.description,
           contact: params.contact,
+          attribution: compactAttribution(params.attribution),
           photos: savedPhotos,
           storage: "private-filesystem",
         },
@@ -204,6 +244,8 @@ export async function POST(request: Request) {
   const postcode = textValue(data, "postcode");
   const description = textValue(data, "description");
   const contact = textValue(data, "contact");
+  const attribution = collectAttribution(data);
+  const attributionFields = compactAttribution(attribution);
   const photos = data.getAll("photos").filter((item): item is File => item instanceof File && item.size > 0);
   const approvedServices = await listApprovedServices();
   const approvedSlugs = new Set(approvedServices.map((item) => item.slug));
@@ -250,7 +292,7 @@ export async function POST(request: Request) {
   let leadId: string | null = null;
 
   try {
-    leadId = await storeLead({ locale, service, postcode, description, contact, photos });
+    leadId = await storeLead({ locale, service, postcode, description, contact, photos, attribution });
   } catch {
     const message =
       locale === "en"
@@ -286,6 +328,7 @@ export async function POST(request: Request) {
       contactProvided: true,
       photoCount: photos.length,
       totalPhotoBytes: totalSize,
+      attributionCaptured: Object.keys(attributionFields).length > 0,
     },
   });
 }
