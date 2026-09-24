@@ -40,6 +40,8 @@ Service template параметризован; страницы ТОЛЬКО д�
 
 **Progress 2026-09-24:** `/[locale]/projekte` усилен до CMS-ready portfolio module: published-only data layer, будущий detail route `/[locale]/projekte/[slug]`, quality gates для публикации реальных кейсов, проектные поля и sitemap integration без фейковых референсов.
 
+**Progress 2026-09-24:** `/[locale]/ratgeber` усилен до CMS-ready article module: planned SEO topics отдельно от published articles, будущий detail route `/[locale]/ratgeber/[slug]`, Article/Breadcrumb schema helper и sitemap integration только для опубликованных статей.
+
 ## Phase 4 — Lead system
 Foto-Anfrage; progressive form; upload security; Lead API; email confirmation; internal notification.
 
