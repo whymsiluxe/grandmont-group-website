@@ -2,7 +2,15 @@ import { isLocale } from "@/i18n/config";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/JsonLd";
 import { localBusinessSchema } from "@/lib/seo/structured-data";
-import { FadeIn } from "@/components/motion/FadeIn";
+import { Hero } from "@/components/home/Hero";
+import { Services } from "@/components/home/Services";
+import { Advantages } from "@/components/home/Advantages";
+import { Work } from "@/components/home/Work";
+import { Process } from "@/components/home/Process";
+import { ServiceArea } from "@/components/home/ServiceArea";
+import { Testimonials } from "@/components/home/Testimonials";
+import { FAQ } from "@/components/home/FAQ";
+import { ContactCTA } from "@/components/home/ContactCTA";
 
 export default async function HomePage({
   params,
@@ -13,13 +21,17 @@ export default async function HomePage({
   if (!isLocale(locale)) notFound();
 
   return (
-    <main className="flex-1 flex items-center justify-center p-8">
+    <main>
       <JsonLd data={localBusinessSchema()} />
-      <FadeIn>
-        <p className="text-sm text-neutral-500">
-          Grandmont Group — foundation scaffold ({locale}). Homepage: Phase 2.
-        </p>
-      </FadeIn>
+      <Hero locale={locale} />
+      <Services locale={locale} />
+      <Advantages locale={locale} />
+      <Work locale={locale} />
+      <Process locale={locale} />
+      <ServiceArea locale={locale} />
+      <Testimonials locale={locale} />
+      <FAQ locale={locale} />
+      <ContactCTA locale={locale} />
     </main>
   );
 }
