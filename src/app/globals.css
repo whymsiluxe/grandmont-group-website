@@ -15,8 +15,10 @@
   --color-bg-light: #f7f5f3; /* Cosmos/Aker Block2 cream, for light-section cuts */
 
   /* text */
-  --color-text-primary: #f6f1e7; /* warm ivory, not pure white */
+  --color-text-primary: #f6f1e7; /* warm ivory — canvas/secondary text, Sequel */
+  --color-display: #ffffff; /* pure white — main display headings on dark, ThoughtLab hierarchy */
   --color-text-muted: #a8a29a; /* warm neutral gray, not blue-gray */
+  --color-text-body-dark: #cccccc; /* ThoughtLab body-on-dark tone */
   --color-text-on-light: #1a1816;
 
   /* accent — draft terracotta/brass, placeholder pending Grandmont Group
@@ -38,17 +40,30 @@
   --color-bg-surface: var(--color-bg-surface);
   --color-bg-light: var(--color-bg-light);
   --color-text-primary: var(--color-text-primary);
+  --color-display: var(--color-display);
   --color-text-muted: var(--color-text-muted);
+  --color-text-body-dark: var(--color-text-body-dark);
   --color-text-on-light: var(--color-text-on-light);
   --color-accent: var(--color-accent);
   --color-accent-hover: var(--color-accent-hover);
   --font-sans: var(--font-primary);
+  --font-display: var(--font-display);
 }
 
 body {
   background: var(--color-bg-primary);
   color: var(--color-text-primary);
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Space Grotesk on every heading — Inter stays for body copy/UI text.
+   Global rule instead of per-component classes: the display font applies
+   to all headings uniformly by construction, not by remembering to add
+   a class in every new section component. */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
 }
 
 @media (prefers-reduced-motion: reduce) {

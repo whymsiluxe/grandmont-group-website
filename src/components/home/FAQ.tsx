@@ -55,7 +55,7 @@ export function FAQ({ locale }: { locale: Locale }) {
           </h2>
         </FadeIn>
 
-        <div className="grid gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-2">
+        <div className="grid gap-px overflow-hidden rounded-none bg-white/10 sm:grid-cols-2">
           {items.map((item, i) => (
             <FadeIn key={item.q} delay={i * 0.04} className="bg-(--color-bg-surface) p-6">
               <h3 className="mb-2 text-sm font-medium text-(--color-text-primary)">{item.q}</h3>

@@ -44,7 +44,7 @@ export async function Work({ locale }: { locale: Locale }) {
         ) : (
           <FadeIn delay={0.1}>
             <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-              <div className="rounded-2xl border border-white/10 bg-(--color-bg-surface) p-8 lg:p-10">
+              <div className="rounded-none border border-white/10 bg-(--color-bg-surface) p-8 lg:p-10">
                 <p className="text-xs font-medium tracking-[0.08em] text-(--color-accent) uppercase">
                   {locale === "de" ? "In Kürze" : "Coming soon"}
                 </p>
@@ -60,7 +60,7 @@ export async function Work({ locale }: { locale: Locale }) {
                 </Link>
               </div>
 
-              <div className="rounded-2xl border border-white/10 p-8 lg:p-10">
+              <div className="rounded-none border border-white/10 p-8 lg:p-10">
                 <ul className="space-y-4">
                   {projectQualityGates[locale].map((rule) => (
                     <li key={rule} className="flex gap-3 text-sm leading-6 text-(--color-text-muted)">

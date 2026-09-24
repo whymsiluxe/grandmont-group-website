@@ -21,7 +21,7 @@ export async function Services({ locale }: { locale: Locale }) {
           </h2>
         </FadeIn>
 
-        <div className="grid gap-px overflow-hidden rounded-2xl bg-white/10 lg:grid-cols-3">
+        <div className="grid gap-px overflow-hidden rounded-none bg-white/10 lg:grid-cols-3">
           {groups.map((group, i) => (
             <FadeIn key={group.id} delay={i * 0.1} className="bg-(--color-bg-surface) p-8 lg:p-10">
               <h3 className="mb-6 text-xl text-(--color-text-primary)">{group.label[locale]}</h3>

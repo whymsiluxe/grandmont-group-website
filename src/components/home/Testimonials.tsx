@@ -52,7 +52,7 @@ export function Testimonials({ locale }: { locale: Locale }) {
           <p className="max-w-md text-sm text-black/60">{copy.sub}</p>
         </FadeIn>
 
-        <div className="mt-12 grid gap-px overflow-hidden rounded-2xl bg-black/10 md:grid-cols-3">
+        <div className="mt-12 grid gap-px overflow-hidden rounded-none bg-black/10 md:grid-cols-3">
           {copy.principles.map((item, index) => (
             <FadeIn key={item.title} delay={index * 0.05} className="bg-white p-6">
               <h3 className="mb-3 text-sm font-medium">{item.title}</h3>
