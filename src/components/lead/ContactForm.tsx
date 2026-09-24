@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import type { ApprovedService } from "@/lib/services/approved-services";
 
@@ -30,6 +31,8 @@ const COPY: Record<
     validated: string;
     leadId: string;
     servicePlaceholder: string;
+    privacyNote: string;
+    privacyLink: string;
     hints: {
       postcode: string;
       description: string;
@@ -45,6 +48,8 @@ const COPY: Record<
     photos: "Fotos",
     contact: "Telefon oder E-Mail",
     submit: "Anfrage senden",
+    privacyNote: "Mit dem Absenden stimmen Sie der Verarbeitung Ihrer Daten gemäß unserer",
+    privacyLink: "Datenschutzerklärung",
     sending: "Anfrage wird gesendet...",
     success: "Anfrage erhalten. Wir prüfen sie und melden uns.",
     error: "Bitte prüfen Sie die Angaben.",
@@ -66,6 +71,8 @@ const COPY: Record<
     photos: "Photos",
     contact: "Phone or email",
     submit: "Send request",
+    privacyNote: "By submitting, you agree to the processing of your data as described in our",
+    privacyLink: "privacy policy",
     sending: "Sending request...",
     success: "Request received. We will review it and get back to you.",
     error: "Please check the details.",
@@ -248,6 +255,14 @@ export function ContactForm({
         >
           {state === "sending" ? copy.sending : copy.submit}
         </button>
+
+        <p className="mt-3 text-xs text-black/50">
+          {copy.privacyNote}{" "}
+          <Link href={`/${locale}/datenschutz`} className="underline underline-offset-2 hover:text-black/70">
+            {copy.privacyLink}
+          </Link>
+          .
+        </p>
 
         {state === "success" && result?.status ? (
           <div className="rounded-xl border border-emerald-700/15 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
