@@ -37,7 +37,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         languages: Object.fromEntries(locales.map((l) => [l, `${siteConfig.url}/${l}/kontakt`])),
       },
     },
-    ...["ueber-uns", "unternehmen", "projekte", "ratgeber", "impressum", "datenschutz"].map((path) => ({
+    ...["ueber-uns", "unternehmen", "projekte", "ratgeber"].map((path) => ({
       url: `${siteConfig.url}/${locale}/${path}`,
       lastModified,
       alternates: {

@@ -34,6 +34,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: COPY[locale].title,
     description: COPY[locale].sub,
+    robots: {
+      index: false,
+      follow: false,
+    },
     alternates: {
       canonical: `/${locale}/impressum`,
       languages: { de: "/de/impressum", en: "/en/impressum", "x-default": "/de/impressum" },

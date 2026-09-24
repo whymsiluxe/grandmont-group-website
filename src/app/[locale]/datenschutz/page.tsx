@@ -33,6 +33,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: COPY[locale].title,
     description: COPY[locale].sub,
+    robots: {
+      index: false,
+      follow: false,
+    },
     alternates: {
       canonical: `/${locale}/datenschutz`,
       languages: { de: "/de/datenschutz", en: "/en/datenschutz", "x-default": "/de/datenschutz" },

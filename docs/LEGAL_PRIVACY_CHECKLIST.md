@@ -4,6 +4,8 @@
 
 Impressum + Datenschutzerklärung обязательны. Не заявлять «100% rechtssicher» — финальная юридическая проверка перед production обязательна, это НЕ юридическая консультация от Claude [REQ].
 
+**Current implementation note 2026-09-24:** `/impressum` and `/datenschutz` exist as visible draft pages, but are marked `noindex,nofollow` and excluded from `sitemap.xml` until final legal data and privacy wording are approved. Before launch, either finalize and allow indexing or keep them accessible but intentionally noindex per SEO/legal decision.
+
 ## DSGVO-детали [REC-дополнение к REQ юзера про "GDPR/DSGVO, минимизацию данных"]
 
 - **§5 DDG** — доступность Impressum (актуальный закон, заменил §5 TMG).
