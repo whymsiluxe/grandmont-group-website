@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { locales, isLocale, type Locale } from "@/i18n/config";
 import { SetHtmlLang } from "./set-html-lang";
 import { titleTemplates, siteConfig } from "@/lib/seo/site-config";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -51,7 +53,9 @@ export default async function LocaleLayout({
   return (
     <>
       <SetHtmlLang locale={locale} />
+      <Header locale={locale} />
       {children}
+      <Footer locale={locale} />
     </>
   );
 }
