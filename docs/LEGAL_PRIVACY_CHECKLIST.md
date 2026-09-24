@@ -60,6 +60,8 @@ Google запрещает (Google Business Profile / Google Reviews policy):
 
 [REC] Дополнения сверх списка юзера: CSP (Content Security Policy); CSRF protection где применимо; безопасное управление конфиденциальными ключами доступа (не хранить в репозитории).
 
+**Implemented baseline 2026-09-24:** `next.config.ts` sends CSP, Referrer-Policy, X-Content-Type-Options, X-Frame-Options, Permissions-Policy and HSTS headers for all routes. CSP intentionally keeps Next-compatible inline/eval allowances until a nonce-based policy is implemented and verified. Remaining production work: HTTPS proxy validation, firewall/WAF, persistent rate limiting, backup/restore test, admin 2FA/password policy and final legal/privacy review.
+
 ## Итоговый статус документа
 
 Черновик для Phase 0. Финальная юридическая проверка (реальный юрист/Impressum-generator с проверкой) — обязательна перед Phase 9 (Release), это явно вне возможностей Claude как AI-инструмента.

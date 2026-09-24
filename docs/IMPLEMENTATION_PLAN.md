@@ -42,6 +42,8 @@ Service template параметризован; страницы ТОЛЬКО д�
 
 **Progress 2026-09-24:** `/[locale]/ratgeber` усилен до CMS-ready article module: planned SEO topics отдельно от published articles, будущий detail route `/[locale]/ratgeber/[slug]`, Article/Breadcrumb schema helper и sitemap integration только для опубликованных статей.
 
+**Progress 2026-09-24:** lead intake усилен server-side лимитами и anti-spam baseline; добавлены site-wide security headers в `next.config.ts`.
+
 ## Phase 4 — Lead system
 Foto-Anfrage; progressive form; upload security; Lead API; email confirmation; internal notification.
 
