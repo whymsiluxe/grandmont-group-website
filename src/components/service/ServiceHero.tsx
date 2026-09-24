@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion, type Transition } from "motion/react";
 import { Container } from "@/components/layout/Container";
+import { ServiceScene } from "@/components/home/ServiceScene";
 
 const EASE: Transition["ease"] = [0.16, 1, 0.3, 1];
 
@@ -51,10 +52,15 @@ export function ServiceHero({
             <div aria-hidden className="absolute inset-0 bg-black/55" />
           </>
         ) : (
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-[linear-gradient(160deg,#14120f_0%,#1a1816_55%,#0c0b0a_100%)]"
-          />
+          <>
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-[linear-gradient(160deg,#14120f_0%,#1a1816_55%,#0c0b0a_100%)]"
+            />
+            <div aria-hidden className="absolute inset-0 opacity-60 lg:opacity-80">
+              <ServiceScene slug={serviceSlug} active />
+            </div>
+          </>
         )}
 
         <Container className="relative z-10 pb-16 pt-36">
