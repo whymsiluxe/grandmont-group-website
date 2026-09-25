@@ -270,24 +270,30 @@ async function pushLeadToCrmAndRecord(params: {
   description: string;
   name: string;
   contact: string;
+  locale: string;
+  pageUrl?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
   photoPaths: string[];
 }) {
-  const approvedServices = await listApprovedServices();
-  const serviceTitleDe = approvedServices.find((item) => item.slug === params.service)?.title.de || params.service;
-
   const result = await pushLeadToCrm({
     leadId: params.leadId,
     service: params.service,
-    serviceTitleDe,
     postcode: params.postcode,
     description: params.description,
     name: params.name || undefined,
     contact: params.contact,
+    locale: params.locale,
+    pageUrl: params.pageUrl,
+    utmSource: params.utmSource,
+    utmMedium: params.utmMedium,
+    utmCampaign: params.utmCampaign,
     photoPaths: params.photoPaths,
   }).catch(
     (error): Awaited<ReturnType<typeof pushLeadToCrm>> => ({
       ok: false,
-      stage: "auth",
+      stage: "lead",
       error: error instanceof Error ? error.message : String(error),
     }),
   );
@@ -299,10 +305,10 @@ async function pushLeadToCrmAndRecord(params: {
     metadata.crm = result.ok
       ? {
           pushed: true,
-          clientId: result.clientId,
-          objectId: result.objectId,
-          photosUploaded: result.photosUploaded,
-          photosFailed: result.photosFailed,
+          leadId: result.crmLeadId,
+          duplicate: result.duplicate,
+          attachmentsAttached: result.attachmentsAttached,
+          attachmentsDuplicatesSkipped: result.attachmentsDuplicatesSkipped,
           pushedAt: new Date().toISOString(),
         }
       : { pushed: false, stage: result.stage, error: result.error, attemptedAt: new Date().toISOString() };
@@ -413,7 +419,21 @@ export async function POST(request: Request) {
   // всякого следа. Лид уже надёжно сохранён локально в любом случае —
   // если CRM недоступна, заявка не теряется, просто требует ручного
   // дослать позже по metadata.json.
-  await pushLeadToCrmAndRecord({ leadId, leadDir, service, postcode, description, name, contact, photoPaths });
+  await pushLeadToCrmAndRecord({
+    leadId,
+    leadDir,
+    service,
+    postcode,
+    description,
+    name,
+    contact,
+    locale,
+    pageUrl: attribution.landingPath,
+    utmSource: attribution.utmSource,
+    utmMedium: attribution.utmMedium,
+    utmCampaign: attribution.utmCampaign,
+    photoPaths,
+  });
 
   const message =
     locale === "en"

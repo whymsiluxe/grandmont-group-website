@@ -1,62 +1,48 @@
 // Адаптер к CRM (crm.promonta.fun) — отправка website-лидов в реальный
-// pipeline (Neue Anfrage → Kontaktiert → ...). НЕ вторая CRM, просто
-// клиент к уже существующему API (см. docs/CRM_INTEGRATION_NOTES.md).
+// pipeline через публичный webhook (см. docs/CRM_INTEGRATION_NOTES.md).
+// НЕ вторая CRM, просто клиент к уже существующему API.
 //
 // Важно: это best-effort слой поверх уже сохранённого лида. Лид уже
 // надёжно лежит в приватном filesystem (см. storeLead() в
 // /api/leads/route.ts) ДО того, как этот код вообще вызывается — если
 // CRM недоступна/упала, лид всё равно не теряется, просто не попадает
 // в CRM автоматически (можно дослать вручную по metadata.json).
+//
+// Модель: website НЕ логинится в CRM и не создаёт Client/Object
+// напрямую (старая service-account/JWT схема удалена). Вместо этого —
+// два публичных webhook-эндпоинта, защищённых общим секретом:
+//   POST /public/leads/website           → создаёт/находит CRM Lead
+//   POST /public/leads/{lead_id}/attachments → прикрепляет фото к Lead
+// Конверсия Lead → Client/Object делается вручную в самой CRM позже,
+// не автоматически при intake.
 
 const CRM_BASE_URL = process.env.CRM_BASE_URL || "https://crm.promonta.fun/api";
-const CRM_SERVICE_EMAIL = process.env.CRM_SERVICE_EMAIL;
-const CRM_SERVICE_PASSWORD = process.env.CRM_SERVICE_PASSWORD;
-
-type LeadStatus = "Kalt" | "Warm" | "Auftrag";
-type ObjectStatus = "Anfrage" | "Angebot erstellt" | "Beauftragt" | "In Arbeit" | "Abgeschlossen" | "Storniert";
+const CRM_WEBHOOK_SECRET = process.env.CRM_WEBHOOK_SECRET;
 
 export type CrmLeadInput = {
-  leadId: string;
+  leadId: string; // website leadId — передаётся как external_id, ключ идемпотентности на CRM-стороне
   service: string;
-  serviceTitleDe: string;
   postcode: string;
   description: string;
-  name?: string; // опциональное поле формы — если пусто, CRM получает contact как name (fallback)
+  name?: string;
   contact: string; // телефон или email, как есть с формы
-  photoPaths: string[]; // абсолютные пути к уже сохранённым JPEG на диске
+  locale: string;
+  pageUrl?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  photoPaths: string[]; // абсолютные пути к уже сохранённым JPEG (rotate+re-encode+EXIF-stripped) на диске
 };
 
 export type CrmPushResult =
-  | { ok: true; clientId: string; objectId: string; photosUploaded: number; photosFailed: number }
-  | { ok: false; stage: "auth" | "client" | "object" | "photos"; error: string };
-
-let cachedToken: { token: string; expiresAt: number } | null = null;
-
-// Токен кэшируется в памяти процесса на время его жизни (не персистится
-// между рестартами) — избегаем логина на каждый лид, но и не строим
-// отдельное персистентное хранилище токена ради этого.
-async function getAuthToken(): Promise<string> {
-  if (cachedToken && cachedToken.expiresAt > Date.now() + 60_000) {
-    return cachedToken.token;
-  }
-
-  if (!CRM_SERVICE_EMAIL || !CRM_SERVICE_PASSWORD) {
-    throw new Error("CRM_SERVICE_EMAIL/CRM_SERVICE_PASSWORD не заданы");
-  }
-
-  const res = await fetch(`${CRM_BASE_URL}/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email: CRM_SERVICE_EMAIL, password: CRM_SERVICE_PASSWORD }),
-  });
-  if (!res.ok) throw new Error(`CRM login failed: HTTP ${res.status}`);
-  const body = (await res.json()) as { access_token: string };
-
-  // JWT без явного expires_in в ответе — держим кэш короткий (10 минут),
-  // безопаснее перелогиниться лишний раз, чем словить протухший токен.
-  cachedToken = { token: body.access_token, expiresAt: Date.now() + 10 * 60_000 };
-  return body.access_token;
-}
+  | {
+      ok: true;
+      crmLeadId: string;
+      duplicate: boolean;
+      attachmentsAttached: number;
+      attachmentsDuplicatesSkipped: number;
+    }
+  | { ok: false; stage: "lead" | "attachments"; error: string };
 
 function splitContact(contact: string): { email?: string; phone?: string } {
   const emailPattern = /[^\s@]+@[^\s@]+\.[^\s@]+/i;
@@ -64,111 +50,97 @@ function splitContact(contact: string): { email?: string; phone?: string } {
   return { phone: contact };
 }
 
-async function createClient(token: string, input: CrmLeadInput): Promise<string> {
+async function submitLead(
+  input: CrmLeadInput,
+): Promise<{ leadId: string; duplicate: boolean }> {
   const { email, phone } = splitContact(input.contact);
-  const res = await fetch(`${CRM_BASE_URL}/clients`, {
+  const res = await fetch(`${CRM_BASE_URL}/public/leads/website`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    headers: {
+      "Content-Type": "application/json",
+      "X-Webhook-Secret": CRM_WEBHOOK_SECRET as string,
+    },
     body: JSON.stringify({
-      // Форма даёт опциональное поле "имя"; если клиент его не заполнил,
-      // используем contact (телефон/email) как name — честно, не
-      // выдумываем имя клиента.
-      name: input.name || input.contact,
-      email,
-      phone,
-      postal_code: input.postcode,
-      lead_status: "Kalt" satisfies LeadStatus,
-      source: "grandmont-website",
-      notes: input.description,
+      external_id: input.leadId,
+      name: input.name || null,
+      email: email || null,
+      phone: phone || null,
+      message: input.description,
+      service: input.service,
+      postcode: input.postcode,
+      locale: input.locale,
+      utm_source: input.utmSource || null,
+      utm_medium: input.utmMedium || null,
+      utm_campaign: input.utmCampaign || null,
+      page_url: input.pageUrl || null,
     }),
   });
-  if (!res.ok) throw new Error(`CRM client create failed: HTTP ${res.status} — ${await res.text()}`);
-  const body = (await res.json()) as { id: string };
-  return body.id;
+  if (!res.ok) throw new Error(`CRM lead webhook failed: HTTP ${res.status} — ${await res.text()}`);
+  const body = (await res.json()) as { lead_id: string; duplicate?: boolean };
+  return { leadId: body.lead_id, duplicate: Boolean(body.duplicate) };
 }
 
-async function createObject(token: string, clientId: string, input: CrmLeadInput): Promise<string> {
-  const res = await fetch(`${CRM_BASE_URL}/objects`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-    body: JSON.stringify({
-      title: `${input.serviceTitleDe} — ${input.postcode}`,
-      client_id: clientId,
-      postal_code: input.postcode,
-      status: "Anfrage" satisfies ObjectStatus,
-      gewerke: [input.service],
-    }),
-  });
-  if (!res.ok) throw new Error(`CRM object create failed: HTTP ${res.status} — ${await res.text()}`);
-  const body = (await res.json()) as { id: string };
-  return body.id;
-}
-
-async function uploadPhoto(token: string, objectId: string, photoPath: string): Promise<boolean> {
+async function submitAttachments(
+  crmLeadId: string,
+  photoPaths: string[],
+): Promise<{ attached: number; duplicatesSkipped: number }> {
   const { readFile } = await import("node:fs/promises");
   const path = await import("node:path");
-  try {
+
+  const form = new FormData();
+  for (const photoPath of photoPaths) {
     const buffer = await readFile(photoPath);
-    const form = new FormData();
-    form.append("file", new Blob([buffer], { type: "image/jpeg" }), path.basename(photoPath));
-    const res = await fetch(`${CRM_BASE_URL}/objects/${objectId}/photos`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: form,
-    });
-    return res.ok;
-  } catch {
-    return false;
+    form.append("files", new Blob([buffer], { type: "image/jpeg" }), path.basename(photoPath));
   }
+
+  const res = await fetch(`${CRM_BASE_URL}/public/leads/${crmLeadId}/attachments`, {
+    method: "POST",
+    headers: { "X-Webhook-Secret": CRM_WEBHOOK_SECRET as string },
+    body: form,
+  });
+  if (!res.ok) throw new Error(`CRM attachments webhook failed: HTTP ${res.status} — ${await res.text()}`);
+  const body = (await res.json()) as { attached: number; duplicates_skipped: number };
+  return { attached: body.attached, duplicatesSkipped: body.duplicates_skipped };
 }
 
 /**
- * Отправляет уже сохранённый лид в CRM: client → object → фото (по
- * одному, best-effort — падение одной фотографии не роняет весь пуш).
- * Idempotency: вызывающий код (route.ts) должен передавать этот вызов
- * только для лидов, у которых ещё нет crmClientId в metadata.json —
- * сам adapter не хранит состояние между вызовами.
+ * Отправляет уже сохранённый website-лид в CRM: lead webhook →
+ * attachments webhook (если есть фото). Idempotent на CRM-стороне по
+ * external_id (lead) и sha256 (attachments) — повторный вызов с тем же
+ * leadId и теми же байтами фото не создаёт дублей.
  */
 export async function pushLeadToCrm(input: CrmLeadInput): Promise<CrmPushResult> {
-  if (!CRM_SERVICE_EMAIL || !CRM_SERVICE_PASSWORD) {
-    return { ok: false, stage: "auth", error: "CRM credentials not configured" };
+  if (!CRM_WEBHOOK_SECRET) {
+    return { ok: false, stage: "lead", error: "CRM_WEBHOOK_SECRET not configured" };
   }
 
-  let token: string;
+  let crmLeadId: string;
+  let duplicate: boolean;
   try {
-    token = await getAuthToken();
+    const result = await submitLead(input);
+    crmLeadId = result.leadId;
+    duplicate = result.duplicate;
   } catch (error) {
-    return { ok: false, stage: "auth", error: error instanceof Error ? error.message : String(error) };
+    return { ok: false, stage: "lead", error: error instanceof Error ? error.message : String(error) };
   }
 
-  let clientId: string;
-  try {
-    clientId = await createClient(token, input);
-  } catch (error) {
-    return { ok: false, stage: "client", error: error instanceof Error ? error.message : String(error) };
+  let attachmentsAttached = 0;
+  let attachmentsDuplicatesSkipped = 0;
+  if (input.photoPaths.length > 0) {
+    try {
+      const result = await submitAttachments(crmLeadId, input.photoPaths);
+      attachmentsAttached = result.attached;
+      attachmentsDuplicatesSkipped = result.duplicatesSkipped;
+    } catch (error) {
+      // Lead уже создан/найден на этом этапе — не теряем это в ошибке,
+      // но вложения не прикреплены в этом вызове.
+      return {
+        ok: false,
+        stage: "attachments",
+        error: `${error instanceof Error ? error.message : String(error)} (CRM lead ${crmLeadId} уже создан)`,
+      };
+    }
   }
 
-  let objectId: string;
-  try {
-    objectId = await createObject(token, clientId, input);
-  } catch (error) {
-    // Клиент уже создан в CRM на этом этапе — не теряем это в ошибке,
-    // но сам объект не создан. Вызывающий код должен залогировать
-    // clientId вместе с ошибкой, чтобы не плодить дублей при retry.
-    return {
-      ok: false,
-      stage: "object",
-      error: `${error instanceof Error ? error.message : String(error)} (client ${clientId} уже создан)`,
-    };
-  }
-
-  let photosUploaded = 0;
-  let photosFailed = 0;
-  for (const photoPath of input.photoPaths) {
-    const success = await uploadPhoto(token, objectId, photoPath);
-    if (success) photosUploaded += 1;
-    else photosFailed += 1;
-  }
-
-  return { ok: true, clientId, objectId, photosUploaded, photosFailed };
+  return { ok: true, crmLeadId, duplicate, attachmentsAttached, attachmentsDuplicatesSkipped };
 }
