@@ -53,7 +53,16 @@
 body {
   background: var(--color-bg-primary);
   color: var(--color-text-primary);
-  padding-bottom: env(safe-area-inset-bottom);
+  /* Mobile sticky CTA bar (MobileStickyCTA.tsx) is fixed at the viewport
+     bottom below the lg breakpoint; without this the last section/form on
+     every page renders underneath it instead of above it. */
+  padding-bottom: calc(4.25rem + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 768px) {
+  body {
+    padding-bottom: 0;
+  }
 }
 
 /* Grandmont typography contract.

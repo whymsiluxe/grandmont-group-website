@@ -1,94 +1,123 @@
-# CRM_INTEGRATION_NOTES.md — интеграция реализована (Phase 5)
+# CRM_INTEGRATION_NOTES.md — webhook-интеграция (2026-09-25)
 
-Status 2026-09-25: adapter написан и задеплоен (`src/lib/crm/client.ts`),
-подтверждён end-to-end тестовым лидом на живом стеке, **включая фото**
-(см. ниже) — полный пайплайн website→local storage→CRM client→CRM
-object→CRM photo подтверждён рабочим. Тестовые данные удалены после
-проверки.
+Status 2026-09-25: старый adapter (service-account login → Client → Object →
+per-file photo upload) **удалён и заменён** webhook-based adapter
+(`src/lib/crm/client.ts`), после hardening-раунда на CRM-стороне
+(идемпотентность, orphan-файлы, rollback ownership, hmac secret-check,
+magic-byte MIME validation — см. `grandmont-group-crm` repo history).
 
-## Auth
+## Модель
 
-`POST /api/auth/login` — email+password → JWT. Bearer, кэшируется в
-памяти процесса на 10 минут (без явного `expires_in` в ответе CRM).
-
-## Реальная цепочка (подтверждена, не предположение)
-
-`POST /api/clients` (name/email/phone/postal_code/lead_status/source/notes)
-→ `POST /api/objects` (title/client_id/postal_code/status="Anfrage"/gewerke)
-→ `POST /api/objects/{id}/photos` по одному файлу (multipart, нет batch-эндпоинта).
-
-- `name` в ClientCreate обязателен, а у формы сайта нет отдельного поля
-  "имя" — честно используется `contact` (телефон/email) как name, не
-  выдумываем.
-- `lead_status` явно ставится `"Kalt"` (дефолт API — `"Warm"`, для
-  свежего лида это неверно).
-- `objects.status` дефолтится в `"Anfrage"` — совпадает с первым шагом
-  REQ-пайплайна (Neue Anfrage), подтверждено, не предположение.
-- Нет lookup-by-external-id эндпоинта для idempotency-дедупликации —
-  результат пуша записывается в `metadata.json` самого лида
-  (`crm: {pushed, clientId, objectId}` или `{pushed:false, stage, error}`),
-  ручной retry проверяет это перед повторной отправкой.
-
-## ✅ БАГ CRM НАЙДЕН И ПОФИКШЕН (не в этом репо, фикс в grandmont-group-crm)
-
-**Было: `POST /api/objects/{object_id}/photos` возвращал 500 на любой файл.**
-
-Подтверждено end-to-end тестом 2026-09-25: client (`6ab5a751f6d8f7bb52c7a0bc`)
-и object (`6ab5a751f6d8f7bb52c7a0bd`) создались корректно, фото — нет.
-
-Причина (из `journalctl -u grandmont-group-crm` на VPS):
 ```
-File "backend/storage_service.py", line 22, in init_storage
-    raise RuntimeError("EMERGENT_LLM_KEY missing")
+Browser → website backend (storeLead, local filesystem) → CRM lead webhook → CRM lead attachments webhook
 ```
 
-`backend/storage_service.py` требует `EMERGENT_LLM_KEY` в `.env` — этой
-переменной там нет. Похоже CRM изначально строился под Emergent-платформу
-(S3-подобное object storage через их API-ключ) и при переносе на
-self-hosted VPS эта часть не была доведена до конца — не связано с
-website-интеграцией, найдено ею.
+- **no auto Client**
+- **no auto Object**
+- **no service-account auth**
+- **no browser → CRM call** (website backend всегда посредник, browser никогда не видит CRM URL/secret)
 
-**Текущее поведение адаптера при этом баге:** photo upload — per-file,
-падение одного файла не роняет весь push (object уже создан к этому
-моменту). `metadata.json` лида фиксирует `photosFailed` явно, ничего не
-скрывается и не выдаёт себя за успех.
+Конверсия Lead → Client/Object делается вручную в самой CRM позже, не
+автоматически при intake.
 
-**Фикс (2026-09-25, в `grandmont-group-crm`):** `storage_service.py`
-переписан на локальное filesystem-хранилище
-(`backend/storage/`, chmod 600 на файлах, path-traversal защита в
-`_resolve()`). `EMERGENT_LLM_KEY` не заводили — self-hosted VPS не
-Emergent-managed. Backup старого файла:
-`storage_service.py.bak-pre-local-storage-20260925`. Сервис рестартнут.
+## Эндпоинты
 
-**Проверено:** `POST /api/objects/{id}/photos` → 200 (было 500), файл
-реально лежит на диске, путь записан в объект. `GET /api/files/{path}`
-→ 200, содержимое совпадает байт-в-байт с загруженным.
+`POST {CRM_BASE_URL}/public/leads/website`
+Header: `X-Webhook-Secret: <secret>`
+Body (JSON):
+```json
+{
+  "external_id": "...",
+  "name": "...",
+  "email": null,
+  "phone": "...",
+  "message": "...",
+  "service": "...",
+  "postcode": "...",
+  "locale": "de",
+  "utm_source": "...",
+  "utm_medium": "...",
+  "utm_campaign": "...",
+  "page_url": "..."
+}
+```
+`name` is **required** (`str`, not `Optional`) on the CRM side — the
+website form's name field is optional for the user, so `client.ts`
+falls back to `contact` (phone/email) when the user left it blank,
+same fallback the old service-account adapter used.
+Возвращает `{ lead_id, duplicate }`. Идемпотентно по `external_id` —
+повторный вызов с тем же `external_id` не создаёт второй Lead.
 
-**Полный E2E повторно прогнан 2026-09-25 (после фикса)** через реальный
-`POST /api/leads` на живом website: lead сохранён локально → CRM login →
-client создан (`name` теперь из формы, не `contact` — см. ниже) →
-object создан (`status: "Anfrage"`) → фото загружено (`photosUploaded:
-1, photosFailed: 0`) → `GET /api/files/{path}` скачал файл, byte-count
-совпал с сохранённым. Тестовые lead/client/object удалены после
-проверки (VPS `rm -rf` на lead-директории + CRM `DELETE` на
-client/object, оба вернули 404 при повторном GET).
+`POST {CRM_BASE_URL}/public/leads/{lead_id}/attachments`
+Header: `X-Webhook-Secret: <secret>`
+multipart field `files` (может быть несколько), MIME определяется CRM
+по magic-byte сигнатуре, не по Content-Type клиента.
+Возвращает `{ attached, duplicates_skipped }`. Идемпотентно по
+sha256-содержимому файла — повторная отправка тех же байтов не создаёт
+дубль attachment.
 
-## Открытые вопросы — закрыты
+## Secret
 
-- ~~Website lead → client сразу или после ревью человеком?~~ → сразу,
-  `lead_status: Kalt` — это и есть шаг "Neue Anfrage", подтверждено рабочим
-  пайплайном CRM (`objects.status` enum начинается с того же "Anfrage").
-- ~~Фото на client или на object?~~ → на object, подтверждено схемой.
-- `/api/files/{path}` GET — не исследовано (не нужно для intake-потока,
-  это про отдачу уже загруженных файлов обратно).
+- CRM-сторона: `WEBSITE_WEBHOOK_SECRET`
+- Website-сторона: `CRM_WEBHOOK_SECRET` (server-only env, VPS)
+- Оба должны содержать одно и то же значение.
+- Никогда не в `NEXT_PUBLIC_*`, client bundle, `metadata.json`, логах, git.
 
-## Что дальше
+## Photos — что именно отправляется
 
-- `/api/quotes` (создание Angebot) — вне scope intake-adapter, отдельная
-  downstream-задача (REQ: финальная цена контролируется человеком).
-- Идемпотентность: adapter пока не умеет искать существующий lead в CRM
-  по external ID — повторная отправка той же формы может создать
-  дубль client/object. Терпимо для старта, нужен upsert/lookup позже.
-- Security: service-аккаунт сейчас admin-level в CRM — для продакшна
-  стоит завести отдельную роль с доступом только к
-  create/read Client, create/read/update Object, upload Object photos.
+Не оригиналы пользователя. `storeLead()` в `/api/leads/route.ts` уже
+прогоняет каждое фото через `sharp().rotate().jpeg()` — нормализация
+ориентации, JPEG re-encode, EXIF/GPS metadata стриппится этим же
+re-encode. Именно эти уже сохранённые байты (`photoPaths`, пути на
+диске в приватном хранилище) уходят в CRM как `files`, MIME всегда
+`image/jpeg`. Это canonical copy: провалидирован (magic-byte signature
+check уже прошёл в route.ts до сохранения), нормализован, без EXIF.
+
+## external_id / идемпотентность
+
+`external_id` = website `leadId` (тот же ID, что в имени директории
+приватного хранилища и в ответе клиенту как `leadId`). При retry
+(ручном или автоматическом) используется тот же `external_id` —
+CRM отвечает `duplicate: true`, второй Lead не создаётся; то же для
+attachments — те же JPEG-байты дают тот же sha256, CRM отвечает
+`duplicates_skipped`, физический файл не дублируется.
+
+## metadata.json — что записывается после push
+
+```json
+"crm": {
+  "pushed": true,
+  "leadId": "<crm lead id>",
+  "duplicate": false,
+  "attachmentsAttached": 3,
+  "attachmentsDuplicatesSkipped": 0,
+  "pushedAt": "2026-09-25T..."
+}
+```
+или при ошибке:
+```json
+"crm": {
+  "pushed": false,
+  "stage": "lead" | "attachments",
+  "error": "...",
+  "attemptedAt": "2026-09-25T..."
+}
+```
+
+Ошибка CRM push **не отменяет** уже сохранённую локально заявку — клиент
+получает успешный ответ формы независимо от результата CRM push.
+`stage: "lead"` означает лид не дошёл до CRM вообще; `stage:
+"attachments"` означает CRM lead уже создан/найден, но фото не
+прикреплены в этом вызове — при ручном retry по тому же external_id
+Lead не задублируется, фото допришлются.
+
+## Что дальше (не в scope этого intake-adapter)
+
+- Downstream conversion Lead → Client/Object — ручная операция в самой
+  CRM, вне этого адаптера.
+- `delete_lead` cleanup физических attachment-файлов — известный,
+  некритичный, отдельный lifecycle-фикс на CRM-стороне (не блокирует
+  intake flow).
+- Production-grade rate limiting (сейчас in-memory Map на website
+  API route) — нужен перед реальным рекламным трафиком, не для текущего
+  этапа.
