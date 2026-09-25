@@ -38,7 +38,7 @@ export function ServiceSection({
 
 export function BulletList({ items, light }: { items: string[]; light?: boolean }) {
   return (
-    <ul className="grid gap-3 sm:grid-cols-2">
+    <ul className="grid gap-3">
       {items.map((item) => (
         <li
           key={item}
