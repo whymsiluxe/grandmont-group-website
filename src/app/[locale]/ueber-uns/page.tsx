@@ -133,7 +133,7 @@ export default async function UeberUnsPage({ params }: { params: Promise<{ local
           <FadeIn>
             <Link
               href={`/${locale}/kontakt`}
-              className="inline-flex rounded-full bg-(--color-accent) px-8 py-4 text-sm font-medium text-(--color-bg-primary)"
+              className="inline-flex rounded-full bg-(--color-accent) px-8 py-4 text-sm font-medium text-(--color-bg-primary) transition-transform hover:scale-[1.03]"
             >
               {copy.cta}
             </Link>

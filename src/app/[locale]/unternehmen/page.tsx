@@ -158,7 +158,7 @@ export default async function UnternehmenPage({ params }: { params: Promise<{ lo
               </ul>
               <Link
                 href={`/${locale}/kontakt`}
-                className="mt-10 inline-flex rounded-full bg-(--color-accent) px-8 py-4 text-sm font-medium text-(--color-bg-primary)"
+                className="mt-10 inline-flex rounded-full bg-(--color-accent) px-8 py-4 text-sm font-medium text-(--color-bg-primary) transition-transform hover:scale-[1.03]"
               >
                 {copy.cta}
               </Link>

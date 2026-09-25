@@ -128,7 +128,7 @@ export default async function FaqPage({ params }: { params: Promise<{ locale: st
                   data-event="cta_offer_click"
                   data-event-location="faq"
                   href={`/${locale}/kontakt`}
-                  className="inline-flex rounded-full bg-(--color-accent) px-8 py-4 text-sm font-medium text-(--color-bg-primary)"
+                  className="inline-flex rounded-full bg-(--color-accent) px-8 py-4 text-sm font-medium text-(--color-bg-primary) transition-transform hover:scale-[1.03]"
                 >
                   {copy.ctaLink}
                 </Link>
