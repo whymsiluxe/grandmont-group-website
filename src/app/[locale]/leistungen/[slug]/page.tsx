@@ -10,26 +10,24 @@ import { findApprovedService, listApprovedServices } from "@/lib/cms/content-sou
 import { siteConfig } from "@/lib/seo/site-config";
 import { breadcrumbSchema, faqSchema, serviceSchema } from "@/lib/seo/structured-data";
 
-const COPY: Record<Locale, { included: string; forWhom: string; outcomes: string; process: string; reference: string; referenceBody: string; pricing: string; faq: string; cta: string; allServices: string }> = {
+const COPY: Record<Locale, { overview: string; included: string; forWhom: string; outcomes: string; process: string; pricing: string; faq: string; cta: string; allServices: string }> = {
   de: {
-    included: "Was ist enthalten",
+    overview: "Leistung im Überblick",
+    included: "Enthalten",
     forWhom: "Für wen",
     outcomes: "Was Sie bekommen",
     process: "So läuft es ab",
-    reference: "Projektbeispiele",
-    referenceBody: "Echte Referenzen und Fotos werden nach Freigabe über das CMS gepflegt. Bis dahin zeigen wir keine erfundenen Projekte oder Zahlen.",
     pricing: "Preis & Kalkulationsprinzip",
     faq: "Häufige Fragen",
     cta: "Kostenloses Angebot anfragen",
     allServices: "Alle Leistungen",
   },
   en: {
-    included: "What's included",
+    overview: "Service at a glance",
+    included: "Included",
     forWhom: "Who it's for",
     outcomes: "What you get",
     process: "How it works",
-    reference: "Project examples",
-    referenceBody: "Real references and photos will be maintained via the CMS after approval. Until then, we do not show invented projects or numbers.",
     pricing: "Pricing principle",
     faq: "FAQ",
     cta: "Request a free quote",
@@ -98,37 +96,38 @@ export default async function ServicePage({
         serviceSlug={service.slug}
       />
 
-      <ServiceSection title={copy.included} light>
-        <BulletList items={service.included[locale]} light />
-        <p className="mt-6 max-w-2xl text-sm italic text-black/50">{service.scopeNote[locale]}</p>
-      </ServiceSection>
-
-      <ServiceSection title={copy.forWhom}>
-        <BulletList items={service.forWhom[locale]} />
-      </ServiceSection>
-
-      <ServiceSection title={copy.outcomes} light>
-        <BulletList items={service.outcomes[locale]} light />
+      <ServiceSection title={copy.overview} light>
+        <div className="grid gap-10 lg:grid-cols-3">
+          <div>
+            <h3 className="mb-5 text-lg font-medium">{copy.included}</h3>
+            <BulletList items={service.included[locale]} light />
+            <p className="mt-6 text-sm italic text-black/50">{service.scopeNote[locale]}</p>
+          </div>
+          <div>
+            <h3 className="mb-5 text-lg font-medium">{copy.forWhom}</h3>
+            <BulletList items={service.forWhom[locale]} light />
+          </div>
+          <div>
+            <h3 className="mb-5 text-lg font-medium">{copy.outcomes}</h3>
+            <BulletList items={service.outcomes[locale]} light />
+          </div>
+        </div>
       </ServiceSection>
 
       <ServiceSection title={copy.process}>
         <Ablauf locale={locale} />
       </ServiceSection>
 
-      <ServiceSection title={copy.reference} light>
-        <ProseBlock light>{copy.referenceBody}</ProseBlock>
+      <ServiceSection title={copy.pricing} light>
+        <ProseBlock light>{service.pricing[locale]}</ProseBlock>
       </ServiceSection>
 
-      <ServiceSection title={copy.pricing}>
-        <ProseBlock>{service.pricing[locale]}</ProseBlock>
-      </ServiceSection>
-
-      <ServiceSection title={copy.faq} light>
-        <div className="grid gap-6 sm:grid-cols-2">
+      <ServiceSection title={copy.faq}>
+        <div className="grid gap-x-12 gap-y-8 sm:grid-cols-2">
           {service.faq[locale].map((item) => (
-            <div key={item.question}>
-              <h3 className="mb-2 text-sm font-medium text-(--color-text-on-light)">{item.question}</h3>
-              <p className="text-sm text-black/60">{item.answer}</p>
+            <div key={item.question} className="border-t border-white/10 pt-5">
+              <h3 className="mb-2 text-base font-medium text-(--color-text-primary)">{item.question}</h3>
+              <p className="text-sm leading-6 text-(--color-text-muted)">{item.answer}</p>
             </div>
           ))}
         </div>
