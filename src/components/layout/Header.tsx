@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Locale } from "@/i18n/config";
+import { listPublishedArticles, listPublishedProjects } from "@/lib/cms/content-source";
 import { Container } from "./Container";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 
@@ -22,6 +23,7 @@ const NAV_LINKS: Record<Locale, { label: string; href: string }[]> = {
   de: [
     { label: "Leistungen", href: "/leistungen" },
     { label: "Projekte", href: "/projekte" },
+    { label: "Ratgeber", href: "/ratgeber" },
     { label: "Für Unternehmen", href: "/unternehmen" },
     { label: "FAQ", href: "/faq" },
     { label: "Über uns", href: "/ueber-uns" },
@@ -30,6 +32,7 @@ const NAV_LINKS: Record<Locale, { label: string; href: string }[]> = {
   en: [
     { label: "Services", href: "/leistungen" },
     { label: "Projects", href: "/projekte" },
+    { label: "Guides", href: "/ratgeber" },
     { label: "For businesses", href: "/unternehmen" },
     { label: "FAQ", href: "/faq" },
     { label: "About us", href: "/ueber-uns" },
@@ -37,8 +40,13 @@ const NAV_LINKS: Record<Locale, { label: string; href: string }[]> = {
   ],
 };
 
-export function Header({ locale }: { locale: Locale }) {
-  const navLinks = NAV_LINKS[locale];
+export async function Header({ locale }: { locale: Locale }) {
+  const [projects, articles] = await Promise.all([listPublishedProjects(), listPublishedArticles()]);
+  const navLinks = NAV_LINKS[locale].filter((item) => {
+    if (item.href === "/projekte") return projects.length > 0;
+    if (item.href === "/ratgeber") return articles.length > 0;
+    return true;
+  });
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-(--color-bg-primary)/80 backdrop-blur">

@@ -94,14 +94,15 @@ export default async function KontaktPage({
 
             <FadeIn delay={0.1}>
               <div className="space-y-8">
-                <div className="border-t border-black/15 pt-8">
-                  <h2 className="text-2xl font-light">{copy.directTitle}</h2>
-                  <div className="mt-5 space-y-3 text-sm text-black/60">
-                    {siteConfig.phone ? <p>{siteConfig.phone}</p> : null}
-                    {siteConfig.email ? <p>{siteConfig.email}</p> : null}
-                    {!siteConfig.phone && !siteConfig.email ? <p>Kontaktangaben werden vor Veröffentlichung final eingetragen.</p> : null}
+                {siteConfig.phone || siteConfig.email ? (
+                  <div className="border-t border-black/15 pt-8">
+                    <h2 className="text-2xl font-light">{copy.directTitle}</h2>
+                    <div className="mt-5 space-y-3 text-sm text-black/60">
+                      {siteConfig.phone ? <p>{siteConfig.phone}</p> : null}
+                      {siteConfig.email ? <p>{siteConfig.email}</p> : null}
+                    </div>
                   </div>
-                </div>
+                ) : null}
 
                 <div className="border-t border-black/15 pt-8">
                   <h2 className="text-2xl font-light">{copy.areaTitle}</h2>

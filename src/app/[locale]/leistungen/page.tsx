@@ -9,12 +9,12 @@ import { listGroupedApprovedServices } from "@/lib/cms/content-source";
 const COPY: Record<Locale, { title: string; sub: string; cta: string }> = {
   de: {
     title: "Leistungen",
-    sub: "Veröffentlichte Leistungen mit bestätigtem Leistungsumfang. Rechtlich offene Arbeiten erscheinen erst nach Freigabe.",
+    sub: "Montage und Objektservice für Privat- und Gewerbekunden in Chemnitz und Umgebung.",
     cta: "Details ansehen",
   },
   en: {
     title: "Services",
-    sub: "Published services with confirmed scope. Legally pending work appears only after approval.",
+    sub: "Assembly and property services for private and business customers in Chemnitz and the surrounding region.",
     cta: "View details",
   },
 };
