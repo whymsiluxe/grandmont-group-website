@@ -33,4 +33,19 @@ test.describe("homepage smoke", () => {
     );
     expect(overflow).toBe(false);
   });
+
+  test("mobile menu closes after selecting a link", async ({ page }) => {
+    // Header is outside {children} in the locale layout, so it never
+    // remounts on client-side navigation — the native <details> menu used
+    // to stay open (covering the destination page) after tapping a link.
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/de");
+    const details = page.locator("header details");
+    await details.locator("summary").click();
+    await expect(details).toHaveJSProperty("open", true);
+
+    await details.getByRole("link", { name: "Leistungen", exact: true }).click();
+    await expect(page).toHaveURL(/\/de\/leistungen$/);
+    await expect(details).toHaveJSProperty("open", false);
+  });
 });

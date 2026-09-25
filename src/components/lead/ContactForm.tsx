@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import type { ApprovedService } from "@/lib/services/approved-services";
@@ -63,7 +63,7 @@ const COPY: Record<
     hints: {
       postcode: "PLZ oder Ort im Einsatzgebiet, z. B. Chemnitz.",
       description: "Mindestens 20 Zeichen: Was soll gemacht werden, wo, und gibt es Besonderheiten?",
-      photos: "1 bis 10 Fotos, je max. 8 MB. JPG, PNG, WebP, HEIC/HEIF.",
+      photos: "1 bis 10 Fotos, je max. 8 MB. JPG, PNG oder WebP (iPhone-Fotos im HEIC-Format bitte vorher als JPEG sichern).",
       name: "Damit wir Sie beim Rückruf richtig ansprechen können.",
       contact: "Telefonnummer oder E-Mail, damit wir Rückfragen stellen können.",
     },
@@ -88,7 +88,7 @@ const COPY: Record<
     hints: {
       postcode: "Postcode or city in the service area, e.g. Chemnitz.",
       description: "At least 20 characters: what needs to be done, where, and any special details?",
-      photos: "1 to 10 photos, max. 8 MB each. JPG, PNG, WebP, HEIC/HEIF.",
+      photos: "1 to 10 photos, max. 8 MB each. JPG, PNG or WebP (please save iPhone HEIC photos as JPEG first).",
       name: "So we can address you correctly when we call back.",
       contact: "Phone number or email so we can ask follow-up questions.",
     },
@@ -108,6 +108,11 @@ export function ContactForm({
   const [state, setState] = useState<FormState>("idle");
   const [message, setMessage] = useState("");
   const [result, setResult] = useState<LeadResponse | null>(null);
+  // Reused across retries of the same failed attempt (network error → user
+  // clicks submit again with the same content) so the server treats it as
+  // one lead instead of duplicates; a fresh id is minted for any attempt
+  // that doesn't follow an error, i.e. a genuinely new submission.
+  const submissionIdRef = useRef(crypto.randomUUID());
 
   const acceptedServices = useMemo(() => services.map((service) => service.slug), [services]);
   const initialServiceValue = initialService && acceptedServices.includes(initialService) ? initialService : "";
@@ -118,9 +123,12 @@ export function ContactForm({
     setMessage("");
     setResult(null);
 
+    if (state !== "error") submissionIdRef.current = crypto.randomUUID();
+
     const form = event.currentTarget;
     const data = new FormData(form);
     data.set("locale", locale);
+    data.set("submissionId", submissionIdRef.current);
     data.set("landingPath", `${window.location.pathname}${window.location.search}`);
     if (document.referrer) data.set("referrer", document.referrer);
 
@@ -214,7 +222,7 @@ export function ContactForm({
             type="file"
             multiple
             required
-            accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+            accept="image/jpeg,image/png,image/webp"
             aria-describedby="lead-photos-hint"
             className="border-b border-black/20 bg-transparent py-3 text-base font-normal file:mr-4 file:rounded-lg file:border-0 file:bg-black/5 file:px-4 file:py-2 file:text-sm focus:border-black/50 focus:outline-none"
           />

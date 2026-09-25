@@ -64,4 +64,55 @@ test.describe("lead form", () => {
       expect(body.ok).toBe(false);
     }
   });
+
+  test("retrying after a network failure resends the same idempotency key; a fresh submit mints a new one", async ({
+    page,
+  }) => {
+    await page.goto("/de/kontakt");
+    await page.locator('select[name="service"]').selectOption("moebelmontage");
+    await page.locator('input[name="postcode"]').fill("09111 Chemnitz");
+    await page
+      .locator('textarea[name="description"]')
+      .fill("Kleiderschrank im Schlafzimmer aufbauen, drei Elemente, kein Aufzug.");
+    await page.locator('input[name="photos"]').setInputFiles(TEST_PHOTO);
+    await page.locator('input[name="contact"]').fill("test-e2e@example.com");
+
+    function extractSubmissionId(body: string) {
+      const match = body.match(/name="submissionId"[\s\S]*?\r\n\r\n([0-9a-f-]{36})/i);
+      return match?.[1];
+    }
+
+    const submissionIds: string[] = [];
+    let requestCount = 0;
+    await page.route("**/api/leads", async (route) => {
+      requestCount += 1;
+      const body = (await route.request().postDataBuffer())?.toString("utf-8") || "";
+      const id = extractSubmissionId(body);
+      if (id) submissionIds.push(id);
+
+      if (requestCount === 1) {
+        // Simulate the request never reaching the server (dropped
+        // connection, mobile network blip) — the client sees this as a
+        // failure and the user retries.
+        await route.abort("failed");
+      } else {
+        await route.fulfill({
+          status: 503,
+          contentType: "application/json",
+          body: JSON.stringify({ ok: false, message: "storage not configured" }),
+        });
+      }
+    });
+
+    await page.locator('button[type="submit"]').click();
+    await expect(page.getByRole("status")).toBeVisible();
+
+    // Retry of the SAME failed attempt — same content, same idempotency key.
+    await page.locator('button[type="submit"]').click();
+    await expect(page.getByRole("status")).toBeVisible();
+
+    expect(submissionIds).toHaveLength(2);
+    expect(submissionIds[0]).toMatch(/^[0-9a-f-]{36}$/i);
+    expect(submissionIds[1]).toBe(submissionIds[0]);
+  });
 });
