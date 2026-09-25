@@ -14,6 +14,13 @@ export default defineConfig({
   use: {
     baseURL: "http://localhost:3000",
     trace: "retain-on-failure",
+    // Opt-in override for sandboxes/CI images that pre-install a Chromium
+    // binary under a Playwright revision that doesn't match this project's
+    // pinned @playwright/test version (so the default chrome-headless-shell
+    // lookup 404s). No effect unless the env var is set.
+    launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+      ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH }
+      : undefined,
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {

@@ -33,4 +33,47 @@ test.describe("homepage smoke", () => {
     );
     expect(overflow).toBe(false);
   });
+
+  test("no horizontal overflow at 375px viewport (embedded contact form)", async ({ page }) => {
+    // Regression: <fieldset>/<select> UA-default min-width: min-content
+    // forced the embedded ContactForm wider than its column at narrow
+    // viewports, making the whole page horizontally scrollable.
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto("/de");
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+    );
+    expect(overflow).toBe(false);
+  });
+
+  test("trust strip renders factual propositions", async ({ page }) => {
+    await page.goto("/de");
+    await expect(page.getByText("Chemnitz & Region")).toBeVisible();
+  });
+
+  test("FAQ accordion reveals an answer on click", async ({ page }) => {
+    await page.goto("/de");
+    // Scoped to the FAQ section specifically — the header's mobile-nav
+    // menu is also a <details> element earlier in the DOM.
+    const faqSection = page.locator("section", { hasText: "Häufige Fragen" });
+    const firstItem = faqSection.locator("details").first();
+    await expect(firstItem).not.toHaveJSProperty("open", true);
+    await firstItem.locator("summary").click();
+    await expect(firstItem).toHaveJSProperty("open", true);
+    await expect(firstItem.locator("p")).toBeVisible();
+  });
+
+  test("lead form is embedded directly on the homepage", async ({ page }) => {
+    await page.goto("/de");
+    const kontaktSection = page.locator("#kontakt");
+    await kontaktSection.scrollIntoViewIfNeeded();
+    await expect(kontaktSection.locator('select[name="service"]')).toBeVisible();
+    await expect(kontaktSection.locator('button[type="submit"]')).toBeVisible();
+  });
+
+  test("hero secondary CTA links to services", async ({ page }) => {
+    await page.goto("/de");
+    await page.getByRole("link", { name: "Leistungen ansehen" }).click();
+    await expect(page).toHaveURL(/\/de\/leistungen$/);
+  });
 });

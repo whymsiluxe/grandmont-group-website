@@ -88,11 +88,11 @@ export default async function KontaktPage({
       <section className="bg-(--color-bg-light) py-20 text-(--color-text-on-light) lg:py-28">
         <Container>
           <div className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr]">
-            <FadeIn>
+            <FadeIn className="min-w-0">
               <ContactForm locale={locale} services={approvedServices} initialService={initialService} />
             </FadeIn>
 
-            <FadeIn delay={0.1}>
+            <FadeIn delay={0.1} className="min-w-0">
               <div className="space-y-8">
                 {siteConfig.phone || siteConfig.email ? (
                   <div className="border-t border-black/15 pt-8">

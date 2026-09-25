@@ -43,23 +43,36 @@ export const homeFaqItems: Record<Locale, { q: string; a: string }[]> = {
   ],
 };
 
+// Compact accordion list instead of a padded 2-col card grid — a different
+// grammar (list, not tiles) from Advantages/ServicesGrid right before it,
+// and native <details> keeps it accessible with no extra JS.
 export function FAQ({ locale }: { locale: Locale }) {
-  const items = homeFaqItems[locale].slice(0, 4);
+  const items = homeFaqItems[locale].slice(0, 5);
 
   return (
-    <section className="bg-(--color-bg-primary) py-24 lg:py-32">
+    <section className="bg-(--color-bg-primary) py-20 lg:py-24">
       <Container>
         <FadeIn>
-          <h2 className="mb-16 text-3xl font-light text-(--color-text-primary) lg:text-5xl">
+          <h2 className="mb-10 text-2xl font-light text-(--color-text-primary) lg:mb-12 lg:text-4xl">
             {HEADING[locale]}
           </h2>
         </FadeIn>
 
-        <div className="grid gap-px overflow-hidden rounded-none bg-white/10 sm:grid-cols-2">
+        <div className="divide-y divide-white/10 border-t border-white/10">
           {items.map((item, i) => (
-            <FadeIn key={item.q} delay={i * 0.04} className="bg-(--color-bg-surface) p-6">
-              <h3 className="mb-2 text-sm font-medium text-(--color-text-primary)">{item.q}</h3>
-              <p className="text-sm text-(--color-text-muted)">{item.a}</p>
+            <FadeIn key={item.q} delay={i * 0.03}>
+              <details className="group py-5">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-sm font-medium text-(--color-text-primary) marker:hidden">
+                  {item.q}
+                  <span
+                    aria-hidden
+                    className="shrink-0 text-lg font-light text-(--color-accent) transition-transform duration-200 group-open:rotate-45"
+                  >
+                    +
+                  </span>
+                </summary>
+                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-(--color-text-muted)">{item.a}</p>
+              </details>
             </FadeIn>
           ))}
         </div>

@@ -153,7 +153,13 @@ export function ContactForm({
     <form aria-busy={state === "sending"} onSubmit={submit} className="rounded-lg border border-black/10 bg-white p-6 lg:p-10">
       <h2 className="mb-10 text-3xl font-light">{locale === "de" ? "Foto-Anfrage" : "Photo request"}</h2>
 
-      <fieldset className="grid gap-6" disabled={state === "sending"}>
+      {/* min-w-0 (+ [&_*]:min-w-0): <fieldset>, <select> and the file
+          <input> all carry a UA-default min-width: min-content that
+          resists min-w-0 on ancestors alone, letting their intrinsic
+          content width force this wider than its container — and the
+          page horizontally scrollable — at narrow viewports. Clearing it
+          through the whole subtree is what actually fixes it. */}
+      <fieldset className="grid min-w-0 gap-6 [&_*]:min-w-0" disabled={state === "sending"}>
         <label className="grid gap-2 text-sm font-medium">
           {copy.service}
           <select
