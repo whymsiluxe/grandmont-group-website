@@ -2,9 +2,9 @@ import type { Locale } from "@/i18n/config";
 import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/motion/FadeIn";
 
-const HEADING: Record<Locale, string> = {
-  de: "Warum Grandmont Group",
-  en: "Why Grandmont Group",
+const COPY: Record<Locale, { eyebrow: string; heading: string }> = {
+  de: { eyebrow: "Warum Grandmont Group", heading: "Verlässlich von der ersten Anfrage bis zur Übergabe." },
+  en: { eyebrow: "Why Grandmont Group", heading: "Reliable from the first request to the handover." },
 };
 
 const ITEMS: Record<Locale, { title: string; body: string }[]> = {
@@ -23,25 +23,30 @@ const ITEMS: Record<Locale, { title: string; body: string }[]> = {
 };
 
 export function Advantages({ locale }: { locale: Locale }) {
+  const copy = COPY[locale];
   const items = ITEMS[locale];
 
   return (
     <section className="bg-(--color-bg-light) py-24 text-(--color-text-on-light) lg:py-32">
       <Container>
-        <FadeIn>
-          <h2 className="mb-16 text-3xl font-light lg:text-5xl">{HEADING[locale]}</h2>
-        </FadeIn>
+        <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+          <FadeIn>
+            <p className="mb-6 text-xs font-medium tracking-[0.08em] text-(--color-accent) uppercase">
+              {copy.eyebrow}
+            </p>
+            <h2 className="max-w-md text-3xl font-light leading-[1.1] lg:text-5xl">{copy.heading}</h2>
+          </FadeIn>
 
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          {items.map((item, i) => (
-            <FadeIn key={item.title} delay={i * 0.08}>
-              <p className="mb-3 text-xs font-medium tracking-[0.08em] text-(--color-accent) uppercase">
-                {String(i + 1).padStart(2, "0")}
-              </p>
-              <h3 className="mb-2 text-lg">{item.title}</h3>
-              <p className="text-sm text-black/60">{item.body}</p>
-            </FadeIn>
-          ))}
+          <div className="grid gap-8 sm:grid-cols-2">
+            {items.map((item, i) => (
+              <FadeIn key={item.title} delay={i * 0.06}>
+                <div className="border-t border-black/15 pt-5">
+                  <h3 className="text-lg font-medium">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-black/60">{item.body}</p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
         </div>
       </Container>
     </section>

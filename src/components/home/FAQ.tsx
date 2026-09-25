@@ -14,7 +14,6 @@ export const homeFaqItems: Record<Locale, { q: string; a: string }[]> = {
       q: "Wie schnell bekomme ich einen Termin?",
       a: "In der Regel innerhalb weniger Tage — je nach Auftragslage auch kurzfristig.",
     },
-    { q: "Arbeiten Sie auch kurzfristig?", a: "Ja, sprechen Sie uns bei dringendem Bedarf direkt an." },
     {
       q: "Kann ich Fotos meiner Möbel senden?",
       a: "Ja, per Foto-Anfrage können Sie Bilder und eine kurze Beschreibung direkt hochladen.",
@@ -23,9 +22,10 @@ export const homeFaqItems: Record<Locale, { q: string; a: string }[]> = {
       q: "Wie wird der Preis berechnet?",
       a: "Nach Aufwand, Umfang und Material — die genauen Faktoren erläutern wir auf jeder Leistungsseite.",
     },
+    { q: "Welche Regionen bedienen Sie?", a: "Chemnitz und die umliegende Region — siehe Einsatzgebiet." },
+    { q: "Arbeiten Sie auch kurzfristig?", a: "Ja, sprechen Sie uns bei dringendem Bedarf direkt an." },
     { q: "Arbeiten Sie auch für Unternehmen?", a: "Ja, siehe unseren Bereich „Für Unternehmen“." },
     { q: "Erstellen Sie Rechnungen?", a: "Ja, für jeden Auftrag." },
-    { q: "Welche Regionen bedienen Sie?", a: "Chemnitz und die umliegende Region — siehe Einsatzgebiet." },
     {
       q: "Kann ich mehrere Leistungen gleichzeitig buchen?",
       a: "Ja, beschreiben Sie einfach alle gewünschten Arbeiten in Ihrer Anfrage.",
@@ -33,18 +33,18 @@ export const homeFaqItems: Record<Locale, { q: string; a: string }[]> = {
   ],
   en: [
     { q: "How quickly can I get an appointment?", a: "Usually within a few days — sooner if needed." },
-    { q: "Do you also work on short notice?", a: "Yes, just reach out directly for urgent requests." },
     { q: "Can I send photos of my furniture?", a: "Yes, upload photos and a short description via our photo request." },
     { q: "How is the price calculated?", a: "Based on scope, effort and materials — factors are explained on each service page." },
+    { q: "Which regions do you serve?", a: "Chemnitz and the surrounding region — see our service area." },
+    { q: "Do you also work on short notice?", a: "Yes, just reach out directly for urgent requests." },
     { q: "Do you also work with businesses?", a: "Yes, see our business section." },
     { q: "Do you issue invoices?", a: "Yes, for every job." },
-    { q: "Which regions do you serve?", a: "Chemnitz and the surrounding region — see our service area." },
     { q: "Can I book multiple services at once?", a: "Yes, just describe everything you need in your request." },
   ],
 };
 
 export function FAQ({ locale }: { locale: Locale }) {
-  const items = homeFaqItems[locale];
+  const items = homeFaqItems[locale].slice(0, 4);
 
   return (
     <section className="bg-(--color-bg-primary) py-24 lg:py-32">

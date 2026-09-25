@@ -8,7 +8,6 @@ import { Advantages } from "@/components/home/Advantages";
 import { listApprovedServices } from "@/lib/cms/content-source";
 import { Work } from "@/components/home/Work";
 import { Process } from "@/components/home/Process";
-import { ServiceArea } from "@/components/home/ServiceArea";
 import { FAQ, homeFaqItems } from "@/components/home/FAQ";
 import { ContactCTA } from "@/components/home/ContactCTA";
 
@@ -33,7 +32,6 @@ export default async function HomePage({
       <Advantages locale={locale} />
       <Work locale={locale} />
       <Process locale={locale} />
-      <ServiceArea locale={locale} />
       <FAQ locale={locale} />
       <ContactCTA locale={locale} />
     </main>
