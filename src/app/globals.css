@@ -46,8 +46,8 @@
   --color-text-on-light: var(--color-text-on-light);
   --color-accent: var(--color-accent);
   --color-accent-hover: var(--color-accent-hover);
-  --font-sans: var(--font-primary);
-  --font-display: var(--font-display);
+  --font-sans: var(--font-grandmont);
+  --font-display: var(--font-grandmont);
 }
 
 body {
@@ -56,14 +56,34 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Space Grotesk on every heading — Inter stays for body copy/UI text.
-   Global rule instead of per-component classes: the display font applies
-   to all headings uniformly by construction, not by remembering to add
-   a class in every new section component. */
+/* Grandmont typography contract.
+   Sui is the approved brand face. It is intentionally listed first; the
+   repository currently contains no licensed Sui webfont files, so
+   Space Grotesk is the controlled fallback until those assets are supplied.
+   One family stack is used everywhere to prevent the previous visual drift. */
+html,
+body {
+  font-family: "Sui", var(--font-grandmont), sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+button,
+input,
+textarea,
+select,
+nav {
+  font-family: inherit;
+}
+
 h1,
 h2,
 h3 {
-  font-family: var(--font-display);
+  letter-spacing: -0.035em;
 }
 
 @media (prefers-reduced-motion: reduce) {
