@@ -19,6 +19,7 @@ const MAX_CONTACT_LENGTH = 160;
 const MAX_DESCRIPTION_LENGTH = 1800;
 const MAX_ATTRIBUTION_LENGTH = 500;
 const MIN_PHONE_DIGITS = 6;
+const SUBMISSION_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DEFAULT_LEAD_RETENTION_DAYS = 90;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
@@ -96,6 +97,21 @@ function hasPlausibleContact(value: string) {
   return digits.length >= MIN_PHONE_DIGITS;
 }
 
+// The client mints one UUID per submission attempt and resends the same
+// value on a retry of that same attempt (network failure, not a fresh
+// form fill-out). Keying the lead directory — and therefore the CRM
+// external_id in pushLeadToCrm — off that value means a retried request
+// lands on the exact same lead instead of creating a duplicate. Falls
+// back to a server-generated id when the field is missing or malformed
+// (older cached client bundle, non-browser client) so the endpoint still
+// works without it; the pattern check also keeps the value safe to use
+// as a filesystem path segment.
+function resolveLeadId(data: FormData) {
+  const submissionId = textValue(data, "submissionId");
+  if (SUBMISSION_ID_PATTERN.test(submissionId)) return `lead_${submissionId.toLowerCase()}`;
+  return `lead_${Date.now()}_${randomUUID()}`;
+}
+
 function attributionValue(data: FormData, key: string) {
   return textValue(data, key).slice(0, MAX_ATTRIBUTION_LENGTH);
 }
@@ -118,13 +134,20 @@ function compactAttribution(attribution: LeadAttribution) {
   return Object.fromEntries(Object.entries(attribution).filter(([, value]) => Boolean(value)));
 }
 
-async function hasValidImageSignature(file: File) {
+// "heic" is its own outcome, not folded into "valid": the installed sharp
+// build (prebuilt libvips, no HEVC decoder — see node_modules/sharp
+// format table, heif input is AVIF-only) cannot actually decode HEIC/HEIF,
+// so accepting the signature here would let the file through validation
+// only to blow up inside storeLead()'s sharp() call, which the caller
+// then reports as a generic "storage not configured" 503 — misleading for
+// what is, for a lot of iPhone users, the default camera format.
+async function classifyImageSignature(file: File): Promise<"valid" | "heic" | "invalid"> {
   const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
-  if (VALID_IMAGE_PREFIXES.some((prefix) => prefix.every((byte, index) => bytes[index] === byte))) return true;
+  if (VALID_IMAGE_PREFIXES.some((prefix) => prefix.every((byte, index) => bytes[index] === byte))) return "valid";
   const signature = new TextDecoder("latin1").decode(bytes);
-  const isWebp = signature.startsWith("RIFF") && signature.slice(8, 12) === "WEBP";
-  const isHeic = signature.includes("ftypheic") || signature.includes("ftypheif") || signature.includes("ftypmif1");
-  return isWebp || isHeic;
+  if (signature.startsWith("RIFF") && signature.slice(8, 12) === "WEBP") return "valid";
+  if (signature.includes("ftypheic") || signature.includes("ftypheif") || signature.includes("ftypmif1")) return "heic";
+  return "invalid";
 }
 
 function configuredStorageDir() {
@@ -146,6 +169,7 @@ function leadRetentionDays() {
 }
 
 async function storeLead(params: {
+  leadId: string;
   locale: string;
   service: string;
   postcode: string;
@@ -158,8 +182,14 @@ async function storeLead(params: {
   const storageDir = configuredStorageDir();
   if (!storageDir) return null;
 
-  const leadId = `lead_${Date.now()}_${randomUUID()}`;
-  const leadDir = path.join(storageDir, leadId);
+  const { leadId } = params;
+  // storageDir is validated absolute and outside public/ (configuredStorageDir
+  // above); leadId is either a UUID from resolveLeadId's regex-checked
+  // submissionId or a server-generated id, never user-controlled path
+  // segments. turbopackIgnore avoids Next's output tracer conservatively
+  // bundling the whole project just because this join isn't statically
+  // resolvable to a literal.
+  const leadDir = path.join(/* turbopackIgnore: true */ storageDir, leadId);
   const retentionDays = leadRetentionDays();
   const deleteAfter = new Date(Date.now() + retentionDays * MS_PER_DAY).toISOString();
   await mkdir(leadDir, { recursive: true, mode: 0o700 });
@@ -378,16 +408,36 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, message: errorMessage }, { status: 400 });
   }
 
+  const heicMessage =
+    locale === "en"
+      ? "HEIC/HEIF photos aren't supported yet — please switch to JPG, PNG or WebP (on iPhone: Settings > Camera > Formats > Most Compatible, or choose \"Save as JPEG\" when picking a file)."
+      : "HEIC/HEIF-Fotos werden noch nicht unterstützt — bitte JPG, PNG oder WebP verwenden (am iPhone: Einstellungen > Kamera > Formate > Meist kompatibel, oder beim Auswählen „Als JPEG sichern“).";
+
   for (const photo of photos) {
-    if (!(await hasValidImageSignature(photo))) {
+    const signature = await classifyImageSignature(photo);
+    if (signature === "heic") {
+      return NextResponse.json({ ok: false, message: heicMessage }, { status: 400 });
+    }
+    if (signature === "invalid") {
       return NextResponse.json({ ok: false, message: errorMessage }, { status: 400 });
     }
   }
 
+  const leadId = resolveLeadId(data);
   let storeResult: Awaited<ReturnType<typeof storeLead>> = null;
 
   try {
-    storeResult = await storeLead({ locale, service, postcode, description, name, contact, photos, attribution });
+    storeResult = await storeLead({
+      leadId,
+      locale,
+      service,
+      postcode,
+      description,
+      name,
+      contact,
+      photos,
+      attribution,
+    });
   } catch {
     storeResult = null;
   }
@@ -400,7 +450,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, message }, { status: 503 });
   }
 
-  const { leadId, leadDir, photoPaths } = storeResult;
+  const { leadDir, photoPaths } = storeResult;
 
   const notificationSent = await notifyTeam({
     leadId,
