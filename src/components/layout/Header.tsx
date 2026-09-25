@@ -3,6 +3,7 @@ import type { Locale } from "@/i18n/config";
 import { listPublishedArticles, listPublishedProjects } from "@/lib/cms/content-source";
 import { Container } from "./Container";
 import { LocaleSwitcher } from "./LocaleSwitcher";
+import { MobileNav } from "./MobileNav";
 
 const CONTACT_LABEL: Record<Locale, string> = {
   de: "Angebot anfragen",
@@ -84,33 +85,12 @@ export async function Header({ locale }: { locale: Locale }) {
           className="hidden items-center gap-2 text-xs font-medium tracking-[0.08em] text-(--color-text-muted) uppercase lg:flex"
         />
 
-        <details className="group relative lg:hidden">
-          <summary
-            aria-label={MENU_LABEL[locale]}
-            className="flex h-10 w-10 list-none cursor-pointer items-center justify-center text-(--color-text-primary) marker:hidden"
-          >
-            <span className="block h-px w-5 bg-current transition-transform group-open:rotate-45" />
-            <span className="absolute block h-px w-5 translate-y-2 bg-current transition-transform group-open:-translate-y-0 group-open:-rotate-45" />
-          </summary>
-          <nav
-            aria-label={NAV_LABEL[locale]}
-            className="absolute right-0 top-12 min-w-64 rounded-lg border border-white/10 bg-(--color-bg-surface) p-3 shadow-lg"
-          >
-            {navLinks.map((item) => (
-              <Link
-                key={item.href}
-                href={`/${locale}${item.href}`}
-                className="block rounded-lg px-4 py-3 text-sm text-(--color-text-muted) transition-colors hover:bg-white/5 hover:text-(--color-text-primary)"
-              >
-                {item.label}
-              </Link>
-            ))}
-            <LocaleSwitcher
-              locale={locale}
-              className="mt-2 flex gap-2 border-t border-white/10 px-4 pt-3 text-xs font-medium tracking-[0.08em] text-(--color-text-muted) uppercase"
-            />
-          </nav>
-        </details>
+        <MobileNav
+          locale={locale}
+          navLinks={navLinks}
+          menuLabel={MENU_LABEL[locale]}
+          navLabel={NAV_LABEL[locale]}
+        />
       </Container>
     </header>
   );
