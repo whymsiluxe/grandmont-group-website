@@ -94,13 +94,13 @@ export async function Header({ locale }: { locale: Locale }) {
           </summary>
           <nav
             aria-label={NAV_LABEL[locale]}
-            className="absolute right-0 top-12 min-w-64 rounded-2xl border border-white/10 bg-(--color-bg-surface) p-3 shadow-2xl"
+            className="absolute right-0 top-12 min-w-64 rounded-lg border border-white/10 bg-(--color-bg-surface) p-3 shadow-lg"
           >
             {navLinks.map((item) => (
               <Link
                 key={item.href}
                 href={`/${locale}${item.href}`}
-                className="block rounded-xl px-4 py-3 text-sm text-(--color-text-muted) transition-colors hover:bg-white/5 hover:text-(--color-text-primary)"
+                className="block rounded-lg px-4 py-3 text-sm text-(--color-text-muted) transition-colors hover:bg-white/5 hover:text-(--color-text-primary)"
               >
                 {item.label}
               </Link>

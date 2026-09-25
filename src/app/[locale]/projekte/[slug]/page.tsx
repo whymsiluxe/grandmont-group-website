@@ -112,7 +112,7 @@ export default async function ProjectDetailPage({
         <Container>
           <FadeIn>
             <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-              <div className="overflow-hidden rounded-2xl bg-white shadow-sm">
+              <div className="overflow-hidden rounded-lg bg-white">
                 {cover ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -125,13 +125,13 @@ export default async function ProjectDetailPage({
                   />
                 ) : null}
               </div>
-              <dl className="grid gap-3 rounded-2xl border border-black/10 bg-white p-6">
+              <dl className="grid gap-3 rounded-lg border border-black/10 bg-white p-6">
                 {[
                   [copy.service, service?.title[locale] ?? project.serviceSlug],
                   [copy.location, project.location],
                   [copy.duration, project.duration[locale]],
                 ].map(([label, value]) => (
-                  <div key={label} className="rounded-xl bg-black/[0.03] p-4">
+                  <div key={label} className="rounded-lg bg-black/[0.03] p-4">
                     <dt className="text-xs font-medium tracking-[0.08em] text-black/40 uppercase">{label}</dt>
                     <dd className="mt-2 text-lg text-black">{value}</dd>
                   </div>
@@ -147,7 +147,7 @@ export default async function ProjectDetailPage({
                 [copy.solution, project.solution[locale]],
                 [copy.result, project.result[locale]],
               ].map(([title, body]) => (
-                <article key={title} className="rounded-2xl border border-black/10 bg-white p-8">
+                <article key={title} className="rounded-lg border border-black/10 bg-white p-8">
                   <h2 className="text-2xl font-light text-black">{title}</h2>
                   <p className="mt-5 text-sm leading-6 text-black/60">{body}</p>
                 </article>
@@ -167,7 +167,7 @@ export default async function ProjectDetailPage({
                     height={item.height}
                     alt={item.alt[locale]}
                     loading="lazy"
-                    className="aspect-[4/3] rounded-2xl object-cover"
+                    className="aspect-[4/3] rounded-lg object-cover"
                   />
                 ))}
               </div>
@@ -175,7 +175,7 @@ export default async function ProjectDetailPage({
           ) : null}
 
           <FadeIn delay={0.2}>
-            <div className="mt-16 rounded-2xl bg-(--color-bg-primary) p-8 text-(--color-text-primary) lg:p-10">
+            <div className="mt-16 rounded-lg bg-(--color-bg-primary) p-8 text-(--color-text-primary) lg:p-10">
               <h2 className="text-3xl font-light">{copy.ctaTitle}</h2>
               <Link
                 href={`/${locale}/kontakt?service=${project.serviceSlug}`}

@@ -7,7 +7,7 @@ export function ProjectCard({ project, locale }: { project: Project; locale: Loc
   const cover = project.media.find((item) => item.kind === "cover") ?? project.media[0];
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm">
+    <article className="overflow-hidden rounded-lg border border-black/10 bg-white">
       {cover ? (
         <div className="aspect-[4/3] bg-black/5">
           {/* eslint-disable-next-line @next/next/no-img-element */}

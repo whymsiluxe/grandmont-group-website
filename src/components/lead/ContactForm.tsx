@@ -150,14 +150,10 @@ export function ContactForm({
   }
 
   return (
-    <form
-      aria-busy={state === "sending"}
-      onSubmit={submit}
-      className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm lg:p-8"
-    >
-      <h2 className="mb-8 text-3xl font-light">{locale === "de" ? "Foto-Anfrage" : "Photo request"}</h2>
+    <form aria-busy={state === "sending"} onSubmit={submit} className="rounded-lg border border-black/10 bg-white p-6 lg:p-10">
+      <h2 className="mb-10 text-3xl font-light">{locale === "de" ? "Foto-Anfrage" : "Photo request"}</h2>
 
-      <fieldset className="grid gap-5" disabled={state === "sending"}>
+      <fieldset className="grid gap-6" disabled={state === "sending"}>
         <label className="grid gap-2 text-sm font-medium">
           {copy.service}
           <select
@@ -166,7 +162,7 @@ export function ContactForm({
             name="service"
             required
             defaultValue={initialServiceValue}
-            className="rounded-xl border border-black/15 bg-(--color-bg-light) px-4 py-3 text-base font-normal"
+            className="border-b border-black/20 bg-transparent py-3 text-base font-normal focus:border-black/50 focus:outline-none"
           >
             <option value="">{copy.servicePlaceholder}</option>
             {services.map((service) => (
@@ -187,7 +183,7 @@ export function ContactForm({
             autoComplete="postal-code"
             inputMode="text"
             aria-describedby="lead-postcode-hint"
-            className="rounded-xl border border-black/15 bg-(--color-bg-light) px-4 py-3 text-base font-normal"
+            className="border-b border-black/20 bg-transparent py-3 text-base font-normal focus:border-black/50 focus:outline-none"
           />
           <span id="lead-postcode-hint" className="text-xs font-normal text-black/45">
             {copy.hints.postcode}
@@ -202,7 +198,7 @@ export function ContactForm({
             minLength={20}
             maxLength={1800}
             aria-describedby="lead-description-hint"
-            className="min-h-36 rounded-xl border border-black/15 bg-(--color-bg-light) px-4 py-3 text-base font-normal"
+            className="min-h-32 border-b border-black/20 bg-transparent py-3 text-base font-normal focus:border-black/50 focus:outline-none"
           />
           <span id="lead-description-hint" className="text-xs font-normal text-black/45">
             {copy.hints.description}
@@ -220,42 +216,36 @@ export function ContactForm({
             required
             accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
             aria-describedby="lead-photos-hint"
-            className="rounded-xl border border-black/15 bg-(--color-bg-light) px-4 py-3 text-base font-normal"
+            className="border-b border-black/20 bg-transparent py-3 text-base font-normal file:mr-4 file:rounded-lg file:border-0 file:bg-black/5 file:px-4 file:py-2 file:text-sm focus:border-black/50 focus:outline-none"
           />
           <span id="lead-photos-hint" className="text-xs font-normal text-black/45">
             {copy.hints.photos}
           </span>
         </label>
 
-        <label className="grid gap-2 text-sm font-medium">
-          {copy.name}
-          <input
-            name="name"
-            maxLength={160}
-            autoComplete="name"
-            aria-describedby="lead-name-hint"
-            className="rounded-xl border border-black/15 bg-(--color-bg-light) px-4 py-3 text-base font-normal"
-          />
-          <span id="lead-name-hint" className="text-xs font-normal text-black/45">
-            {copy.hints.name}
-          </span>
-        </label>
+        <div className="grid gap-6 sm:grid-cols-2">
+          <label className="grid gap-2 text-sm font-medium">
+            {copy.name}
+            <input
+              name="name"
+              maxLength={160}
+              autoComplete="name"
+              className="border-b border-black/20 bg-transparent py-3 text-base font-normal focus:border-black/50 focus:outline-none"
+            />
+          </label>
 
-        <label className="grid gap-2 text-sm font-medium">
-          {copy.contact}
-          <input
-            name="contact"
-            required
-            minLength={5}
-            maxLength={160}
-            inputMode="text"
-            aria-describedby="lead-contact-hint"
-            className="rounded-xl border border-black/15 bg-(--color-bg-light) px-4 py-3 text-base font-normal"
-          />
-          <span id="lead-contact-hint" className="text-xs font-normal text-black/45">
-            {copy.hints.contact}
-          </span>
-        </label>
+          <label className="grid gap-2 text-sm font-medium">
+            {copy.contact}
+            <input
+              name="contact"
+              required
+              minLength={5}
+              maxLength={160}
+              inputMode="text"
+              className="border-b border-black/20 bg-transparent py-3 text-base font-normal focus:border-black/50 focus:outline-none"
+            />
+          </label>
+        </div>
 
         <input
           type="text"
@@ -285,7 +275,7 @@ export function ContactForm({
         </p>
 
         {state === "success" && result?.status ? (
-          <div className="rounded-xl border border-emerald-700/15 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
+          <div className="rounded-lg border border-emerald-700/15 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
             <p className="font-medium">{result.status === "stored" ? copy.stored : copy.validated}</p>
             {result.leadId ? (
               <p className="mt-1 text-xs text-emerald-950/70">

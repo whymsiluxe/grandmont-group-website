@@ -70,7 +70,7 @@ export default async function LeistungenPage({
                 <div id={group.id} className="scroll-mt-24 border-t border-black/15 pt-8">
                   <h2 className="text-3xl font-light">{group.label[locale]}</h2>
                   <p className="mt-3 max-w-md text-sm text-black/60">{group.description[locale]}</p>
-                  <div className="mt-8 grid gap-px overflow-hidden rounded-2xl bg-black/10">
+                  <div className="mt-8 grid gap-px overflow-hidden rounded-lg bg-black/10">
                     {group.services.map((service) => (
                       <Link
                         key={service.slug}

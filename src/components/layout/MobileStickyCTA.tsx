@@ -17,7 +17,7 @@ export function MobileStickyCTA({ locale }: { locale: Locale }) {
   return (
     <nav
       aria-label={ctaLabel}
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-(--color-bg-light)/95 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-2xl backdrop-blur md:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-(--color-bg-light)/95 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-lg backdrop-blur md:hidden"
     >
       <div
         className="mx-auto grid max-w-sm gap-2"

@@ -6,7 +6,7 @@ export function ArticleCard({ article, locale }: { article: Article; locale: Loc
   const service = getArticleService(article);
 
   return (
-    <article className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
+    <article className="rounded-lg border border-black/10 bg-white p-6">
       {service ? (
         <div className="flex flex-wrap gap-2 text-xs text-black/50">
           <span className="rounded-full bg-black/[0.04] px-3 py-1">{service.title[locale]}</span>

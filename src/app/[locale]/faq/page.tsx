@@ -93,30 +93,30 @@ export default async function FaqPage({ params }: { params: Promise<{ locale: st
           <div className="grid gap-16">
             <FadeIn>
               <h2 className="mb-8 text-3xl font-light">{copy.general}</h2>
-              <div className="grid gap-px overflow-hidden rounded-2xl bg-black/10 sm:grid-cols-2">
+              <div className="grid gap-x-12 gap-y-8 sm:grid-cols-2">
                 {generalItems.map((item) => (
-                  <article key={item.question} className="bg-white p-6">
-                    <h3 className="mb-2 text-sm font-medium">{item.question}</h3>
-                    <p className="text-sm text-black/60">{item.answer}</p>
-                  </article>
+                  <div key={item.question} className="border-t border-black/10 pt-5">
+                    <h3 className="mb-2 text-base font-medium">{item.question}</h3>
+                    <p className="text-sm leading-6 text-black/60">{item.answer}</p>
+                  </div>
                 ))}
               </div>
             </FadeIn>
 
             <FadeIn delay={0.08}>
               <h2 className="mb-8 text-3xl font-light">{copy.services}</h2>
-              <div className="grid gap-6 lg:grid-cols-2">
+              <div className="grid gap-x-12 gap-y-8 sm:grid-cols-2">
                 {serviceItems.map((item) => (
-                  <article key={`${item.serviceSlug}-${item.question}`} className="rounded-2xl bg-white p-6 shadow-sm">
+                  <div key={`${item.serviceSlug}-${item.question}`} className="border-t border-black/10 pt-5">
                     <Link
                       href={`/${locale}/leistungen/${item.serviceSlug}`}
-                      className="mb-4 inline-flex text-xs font-medium tracking-[0.08em] text-(--color-accent) uppercase"
+                      className="mb-3 inline-flex text-xs font-medium tracking-[0.08em] text-(--color-accent) uppercase"
                     >
                       {item.serviceTitle}
                     </Link>
-                    <h3 className="mb-2 text-sm font-medium">{item.question}</h3>
-                    <p className="text-sm text-black/60">{item.answer}</p>
-                  </article>
+                    <h3 className="mb-2 text-base font-medium">{item.question}</h3>
+                    <p className="text-sm leading-6 text-black/60">{item.answer}</p>
+                  </div>
                 ))}
               </div>
             </FadeIn>

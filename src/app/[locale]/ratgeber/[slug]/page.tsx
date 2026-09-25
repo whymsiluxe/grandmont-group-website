@@ -116,7 +116,7 @@ export default async function ArticlePage({
         <Container>
           <FadeIn>
             <div className="grid gap-6 lg:grid-cols-[0.75fr_1.25fr]">
-              <aside className="rounded-2xl border border-black/10 bg-white p-6">
+              <aside className="rounded-lg border border-black/10 bg-white p-6">
                 <dl className="space-y-4">
                   {service ? (
                     <div>
@@ -136,7 +136,7 @@ export default async function ArticlePage({
                 </dl>
               </aside>
 
-              <article className="rounded-2xl border border-black/10 bg-white p-8 lg:p-10">
+              <article className="rounded-lg border border-black/10 bg-white p-8 lg:p-10">
                 <div className="space-y-6">
                   {/* Payload's ratgeber.body is a single Lexical richText blob with no
                       heading/body structure — each entry here is one flattened block of
@@ -154,7 +154,7 @@ export default async function ArticlePage({
           </FadeIn>
 
           <FadeIn delay={0.15}>
-            <div className="mt-16 rounded-2xl bg-(--color-bg-primary) p-8 text-(--color-text-primary) lg:p-10">
+            <div className="mt-16 rounded-lg bg-(--color-bg-primary) p-8 text-(--color-text-primary) lg:p-10">
               <h2 className="text-3xl font-light">{copy.ctaTitle}</h2>
               <Link
                 href={`/${locale}/kontakt${article.serviceSlug ? `?service=${article.serviceSlug}` : ""}`}
