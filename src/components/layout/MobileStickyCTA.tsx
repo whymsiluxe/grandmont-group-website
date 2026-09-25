@@ -12,13 +12,17 @@ export function MobileStickyCTA({ locale }: { locale: Locale }) {
   const hasPhone = siteConfig.phone.length > 0;
   const hasWhatsApp = siteConfig.whatsapp.length > 0;
   const ctaLabel = locale === "de" ? "Schnellkontakt" : "Quick contact";
+  const columns = 1 + (hasPhone ? 1 : 0) + (hasWhatsApp ? 1 : 0);
 
   return (
     <nav
       aria-label={ctaLabel}
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-(--color-bg-light)/95 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-2xl backdrop-blur md:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-(--color-bg-light)/95 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-lg backdrop-blur md:hidden"
     >
-      <div className="mx-auto grid max-w-sm grid-cols-3 gap-2">
+      <div
+        className="mx-auto grid max-w-sm gap-2"
+        style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+      >
         {hasPhone ? (
           <a
             aria-label={locale === "de" ? "Grandmont Group anrufen" : "Call Grandmont Group"}
@@ -29,14 +33,7 @@ export function MobileStickyCTA({ locale }: { locale: Locale }) {
           >
             {copy.call}
           </a>
-        ) : (
-          <span
-            aria-disabled="true"
-            className="rounded-full border border-black/10 px-3 py-3 text-center text-xs font-medium text-black/30"
-          >
-            {copy.call}
-          </span>
-        )}
+        ) : null}
 
         {hasWhatsApp ? (
           <a
@@ -48,14 +45,7 @@ export function MobileStickyCTA({ locale }: { locale: Locale }) {
           >
             {copy.whatsapp}
           </a>
-        ) : (
-          <span
-            aria-disabled="true"
-            className="rounded-full border border-black/10 px-3 py-3 text-center text-xs font-medium text-black/30"
-          >
-            {copy.whatsapp}
-          </span>
-        )}
+        ) : null}
 
         <Link
           aria-label={locale === "de" ? "Angebot anfragen" : "Request a quote"}

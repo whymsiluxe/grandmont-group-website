@@ -9,12 +9,12 @@ import { listGroupedApprovedServices } from "@/lib/cms/content-source";
 const COPY: Record<Locale, { title: string; sub: string; cta: string }> = {
   de: {
     title: "Leistungen",
-    sub: "Veröffentlichte Leistungen mit bestätigtem Leistungsumfang. Rechtlich offene Arbeiten erscheinen erst nach Freigabe.",
+    sub: "Montage und Objektservice für Privat- und Gewerbekunden in Chemnitz und Umgebung.",
     cta: "Details ansehen",
   },
   en: {
     title: "Services",
-    sub: "Published services with confirmed scope. Legally pending work appears only after approval.",
+    sub: "Assembly and property services for private and business customers in Chemnitz and the surrounding region.",
     cta: "View details",
   },
 };
@@ -70,7 +70,7 @@ export default async function LeistungenPage({
                 <div id={group.id} className="scroll-mt-24 border-t border-black/15 pt-8">
                   <h2 className="text-3xl font-light">{group.label[locale]}</h2>
                   <p className="mt-3 max-w-md text-sm text-black/60">{group.description[locale]}</p>
-                  <div className="mt-8 grid gap-px overflow-hidden rounded-2xl bg-black/10">
+                  <div className="mt-8 grid gap-px overflow-hidden rounded-lg bg-black/10">
                     {group.services.map((service) => (
                       <Link
                         key={service.slug}

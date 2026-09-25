@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Locale } from "@/i18n/config";
+import { listPublishedArticles, listPublishedProjects } from "@/lib/cms/content-source";
 import { siteConfig } from "@/lib/seo/site-config";
 import { Container } from "./Container";
 
@@ -21,8 +22,9 @@ const COPY: Record<
   },
 };
 
-export function Footer({ locale }: { locale: Locale }) {
+export async function Footer({ locale }: { locale: Locale }) {
   const copy = COPY[locale];
+  const [projects, articles] = await Promise.all([listPublishedProjects(), listPublishedArticles()]);
 
   return (
     <footer className="border-t border-white/10 bg-(--color-bg-surface)">
@@ -54,12 +56,16 @@ export function Footer({ locale }: { locale: Locale }) {
             <Link href={`/${locale}/unternehmen`} className="transition-colors hover:text-(--color-text-primary)">
               {locale === "de" ? "Für Unternehmen" : "For businesses"}
             </Link>
-            <Link href={`/${locale}/projekte`} className="transition-colors hover:text-(--color-text-primary)">
-              {locale === "de" ? "Projekte" : "Projects"}
-            </Link>
-            <Link href={`/${locale}/ratgeber`} className="transition-colors hover:text-(--color-text-primary)">
-              {locale === "de" ? "Ratgeber" : "Guides"}
-            </Link>
+            {projects.length > 0 ? (
+              <Link href={`/${locale}/projekte`} className="transition-colors hover:text-(--color-text-primary)">
+                {locale === "de" ? "Projekte" : "Projects"}
+              </Link>
+            ) : null}
+            {articles.length > 0 ? (
+              <Link href={`/${locale}/ratgeber`} className="transition-colors hover:text-(--color-text-primary)">
+                {locale === "de" ? "Ratgeber" : "Guides"}
+              </Link>
+            ) : null}
             <Link href={`/${locale}/faq`} className="transition-colors hover:text-(--color-text-primary)">
               FAQ
             </Link>

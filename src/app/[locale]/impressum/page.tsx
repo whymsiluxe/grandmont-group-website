@@ -139,7 +139,7 @@ export default async function ImpressumPage({ params }: { params: Promise<{ loca
               {copy.sections.map((section) => (
                 <div key={section.title}>
                   <h2 className="mb-4 text-2xl font-light">{section.title}</h2>
-                  <dl className="grid gap-px overflow-hidden rounded-2xl bg-black/10">
+                  <dl className="grid gap-px overflow-hidden rounded-lg bg-black/10">
                     {section.rows.map((row) => (
                       <div key={row.label} className="grid gap-1 bg-(--color-bg-light) p-5 sm:grid-cols-[220px_1fr] sm:gap-6">
                         <dt className="text-sm font-medium text-black/50">{row.label}</dt>
