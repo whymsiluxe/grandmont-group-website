@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Space_Grotesk, Inter } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import { locales, isLocale, type Locale } from "@/i18n/config";
 import { siteDescriptions, titleTemplates, siteConfig } from "@/lib/seo/site-config";
 import { Header } from "@/components/layout/Header";
@@ -8,19 +8,13 @@ import { Footer } from "@/components/layout/Footer";
 import { MobileStickyCTA } from "@/components/layout/MobileStickyCTA";
 import "../globals.css";
 
-// Space Grotesk: display font (ThoughtLab-direction geometric sans, per
-// DESIGN_SYSTEM.md §2) — light weight at large sizes for headings/eyebrows.
+// One typeface on purpose. The previous Space Grotesk + Inter split made
+// the site feel like several unrelated visual systems and also collided with
+// Tailwind's --font-display theme token. Space Grotesk is now the single
+// Grandmont typeface for display, body copy and UI.
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin", "latin-ext"],
-  variable: "--font-display",
-  display: "swap",
-});
-
-// Inter stays for body copy: Space Grotesk has no dedicated text optical
-// size and reads worse at small sizes / long-form paragraphs.
-const inter = Inter({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-primary",
+  variable: "--font-grandmont",
   display: "swap",
 });
 
@@ -77,7 +71,7 @@ export default async function LocaleLayout({
   if (!isLocale(locale)) notFound();
 
   return (
-    <html lang={locale} className={`${inter.variable} ${spaceGrotesk.variable}`}>
+    <html lang={locale} className={spaceGrotesk.variable}>
       <body className="min-h-full flex flex-col antialiased font-sans">
         <a
           href="#main-content"
