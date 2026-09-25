@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { HeroDepthScene } from "@/components/home/HeroDepthScene";
 import type { Locale } from "@/i18n/config";
@@ -13,6 +14,7 @@ const COPY: Record<
     heading: string[];
     sub: string;
     cta: string;
+    secondaryCta: string;
   }
 > = {
   de: {
@@ -20,14 +22,23 @@ const COPY: Record<
     heading: ["Montage &", "Handwerk mit", "Anspruch."],
     sub: "Von der Möbelmontage bis zum Objektservice — saubere Ausführung, klare Kommunikation, verlässliche Termine.",
     cta: "Kostenloses Angebot anfragen",
+    secondaryCta: "Leistungen ansehen",
   },
   en: {
     eyebrow: "Grandmont Group — Chemnitz",
     heading: ["Assembly &", "craftsmanship,", "done right."],
     sub: "From furniture assembly to facility services — clean execution, clear communication, reliable schedules.",
     cta: "Request a free quote",
+    secondaryCta: "View services",
   },
 };
+
+// The hero's image slot: pass the cover photo of a real, approved project
+// (e.g. the same one FeaturedProject uses) to switch from the abstract
+// fallback scene to a photographic treatment. `meta` is a short caption for
+// that specific photo (service + location), not the site-wide trust strip
+// copy — deliberately different content so the two don't repeat each other.
+export type HeroImage = { src: string; alt: string; meta?: string };
 
 const EASE: Transition["ease"] = [0.16, 1, 0.3, 1];
 
@@ -38,7 +49,7 @@ const EASE: Transition["ease"] = [0.16, 1, 0.3, 1];
 // the display type itself instead of a fabricated 3D object. When real
 // hero photography exists, this becomes foreground/background depth on the
 // image; the scroll-driven structure underneath does not need to change.
-export function Hero({ locale }: { locale: Locale }) {
+export function Hero({ locale, image }: { locale: Locale; image?: HeroImage }) {
   const copy = COPY[locale];
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
@@ -49,6 +60,7 @@ export function Hero({ locale }: { locale: Locale }) {
 
   const headingScale = useTransform(scrollYProgress, [0, 1], [1, reduceMotion ? 1 : 1.18]);
   const headingY = useTransform(scrollYProgress, [0, 1], [0, reduceMotion ? 0 : -40]);
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1, reduceMotion ? 1 : 1.12]);
   const fade = useTransform(scrollYProgress, [0, 0.7], [1, reduceMotion ? 1 : 0]);
 
   return (
@@ -56,12 +68,26 @@ export function Hero({ locale }: { locale: Locale }) {
       ref={sectionRef}
       className="relative flex min-h-[100vh] items-end overflow-hidden bg-(--color-bg-primary)"
     >
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-[linear-gradient(160deg,#14120f_0%,#1a1816_55%,#0c0b0a_100%)]"
-      />
-
-      {reduceMotion ? null : <HeroDepthScene scrollYProgress={scrollYProgress} />}
+      {image ? (
+        <>
+          <motion.div aria-hidden className="absolute inset-0" style={{ scale: imageScale }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={image.src} alt="" className="size-full object-cover" />
+          </motion.div>
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,9,8,0.55)_0%,rgba(10,9,8,0.35)_35%,rgba(10,9,8,0.92)_100%)]"
+          />
+        </>
+      ) : (
+        <>
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-[linear-gradient(160deg,#14120f_0%,#1a1816_55%,#0c0b0a_100%)]"
+          />
+          {reduceMotion ? null : <HeroDepthScene scrollYProgress={scrollYProgress} />}
+        </>
+      )}
 
       <Container className="relative z-10 pb-20 pt-40 lg:pb-28">
         <motion.p
@@ -75,7 +101,9 @@ export function Hero({ locale }: { locale: Locale }) {
 
         <motion.h1
           style={{ scale: headingScale, y: headingY }}
-          className="max-w-[22ch] text-[clamp(2.5rem,10vw,7rem)] font-light leading-[0.94] tracking-tight text-(--color-display)"
+          className={`max-w-[22ch] font-light leading-[0.94] tracking-tight text-(--color-display) ${
+            image ? "text-[clamp(2.25rem,7.5vw,5.25rem)]" : "text-[clamp(2.5rem,10vw,7rem)]"
+          }`}
         >
           {copy.heading.map((line, i) => (
             <span key={line} className="block overflow-hidden">
@@ -103,15 +131,34 @@ export function Hero({ locale }: { locale: Locale }) {
           className="mt-12 flex flex-col items-start gap-8 sm:flex-row sm:items-end sm:justify-between"
         >
           <p className="max-w-md text-base text-(--color-text-muted)">{copy.sub}</p>
-          <a
-            data-event="cta_offer_click"
-            data-event-location="home_hero"
-            href="#kontakt"
-            className="inline-flex items-center gap-2 rounded-full bg-(--color-accent) px-6 py-3 text-sm font-medium text-(--color-bg-primary) transition-transform hover:scale-[1.03]"
-          >
-            {copy.cta}
-          </a>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link
+              data-event="cta_offer_click"
+              data-event-location="home_hero"
+              href="#kontakt"
+              className="inline-flex items-center gap-2 rounded-full bg-(--color-accent) px-6 py-3 text-sm font-medium text-(--color-bg-primary) transition-transform hover:scale-[1.03]"
+            >
+              {copy.cta}
+            </Link>
+            <Link
+              href={`/${locale}/leistungen`}
+              className="inline-flex items-center gap-2 text-sm font-medium text-(--color-text-primary) underline underline-offset-4 decoration-white/30 transition-colors hover:decoration-white/70"
+            >
+              {copy.secondaryCta}
+            </Link>
+          </div>
         </motion.div>
+
+        {image?.meta ? (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: reduceMotion ? 0.01 : 0.6, delay: reduceMotion ? 0 : 0.8, ease: EASE }}
+            className="mt-8 text-xs font-medium tracking-[0.06em] text-(--color-text-muted) uppercase"
+          >
+            {image.meta}
+          </motion.p>
+        ) : null}
       </Container>
 
       <div
