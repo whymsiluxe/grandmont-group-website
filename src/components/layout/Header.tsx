@@ -1,6 +1,5 @@
 import Link from "next/link";
 import type { Locale } from "@/i18n/config";
-import { listGroupedApprovedServices } from "@/lib/cms/content-source";
 import { Container } from "./Container";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 
@@ -14,17 +13,12 @@ const NAV_LABEL: Record<Locale, string> = {
   en: "Main navigation",
 };
 
-const SERVICES_NAV_LABEL: Record<Locale, string> = {
-  de: "Leistungsbereiche",
-  en: "Service categories",
-};
-
 const MENU_LABEL: Record<Locale, string> = {
   de: "Menü öffnen",
   en: "Open menu",
 };
 
-const MOBILE_LINKS: Record<Locale, { label: string; href: string }[]> = {
+const NAV_LINKS: Record<Locale, { label: string; href: string }[]> = {
   de: [
     { label: "Leistungen", href: "/leistungen" },
     { label: "Projekte", href: "/projekte" },
@@ -43,9 +37,8 @@ const MOBILE_LINKS: Record<Locale, { label: string; href: string }[]> = {
   ],
 };
 
-export async function Header({ locale }: { locale: Locale }) {
-  const groups = await listGroupedApprovedServices();
-  const mobileLinks = MOBILE_LINKS[locale];
+export function Header({ locale }: { locale: Locale }) {
+  const navLinks = NAV_LINKS[locale];
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-(--color-bg-primary)/80 backdrop-blur">
@@ -57,14 +50,14 @@ export async function Header({ locale }: { locale: Locale }) {
           Grandmont Group
         </Link>
 
-        <nav aria-label={SERVICES_NAV_LABEL[locale]} className="hidden items-center gap-8 lg:flex">
-          {groups.map((item) => (
+        <nav aria-label={NAV_LABEL[locale]} className="hidden items-center gap-6 lg:flex">
+          {navLinks.filter((item) => item.href !== "/kontakt").map((item) => (
             <Link
-              key={item.id}
-              href={`/${locale}/leistungen#${item.id}`}
+              key={item.href}
+              href={`/${locale}${item.href}`}
               className="text-sm text-(--color-text-muted) transition-colors hover:text-(--color-text-primary)"
             >
-              {item.label[locale]}
+              {item.label}
             </Link>
           ))}
         </nav>
@@ -95,7 +88,7 @@ export async function Header({ locale }: { locale: Locale }) {
             aria-label={NAV_LABEL[locale]}
             className="absolute right-0 top-12 min-w-64 rounded-2xl border border-white/10 bg-(--color-bg-surface) p-3 shadow-2xl"
           >
-            {mobileLinks.map((item) => (
+            {navLinks.map((item) => (
               <Link
                 key={item.href}
                 href={`/${locale}${item.href}`}
