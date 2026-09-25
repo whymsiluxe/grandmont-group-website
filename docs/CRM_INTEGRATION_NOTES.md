@@ -41,6 +41,10 @@ Body (JSON):
   "page_url": "..."
 }
 ```
+`name` is **required** (`str`, not `Optional`) on the CRM side — the
+website form's name field is optional for the user, so `client.ts`
+falls back to `contact` (phone/email) when the user left it blank,
+same fallback the old service-account adapter used.
 Возвращает `{ lead_id, duplicate }`. Идемпотентно по `external_id` —
 повторный вызов с тем же `external_id` не создаёт второй Lead.
 

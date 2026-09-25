@@ -62,7 +62,10 @@ async function submitLead(
     },
     body: JSON.stringify({
       external_id: input.leadId,
-      name: input.name || null,
+      // CRM's WebsiteLeadIn requires name (str, not Optional) — the form's
+      // name field is optional for the user, so fall back to contact
+      // (phone/email) the same way the old adapter did, not a fabricated value.
+      name: input.name || input.contact,
       email: email || null,
       phone: phone || null,
       message: input.description,
