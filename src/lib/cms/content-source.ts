@@ -1,8 +1,14 @@
 import type { Locale } from "@/i18n/config";
 import type { Article } from "@/lib/articles/articles";
 import type { Project, ProjectMedia } from "@/lib/projects/projects";
-import { serviceGroups, type ApprovedService, type ServiceGroupId } from "@/lib/services/approved-services";
 import {
+  approvedServices as staticApprovedServices,
+  serviceGroups,
+  type ApprovedService,
+  type ServiceGroupId,
+} from "@/lib/services/approved-services";
+import {
+  CmsUnavailableError,
   fetchArticlesBothLocales,
   fetchPortfolioBothLocales,
   fetchServicesBothLocales,
@@ -38,8 +44,28 @@ function toApprovedService(deRow: PayloadService, enRow: PayloadService | undefi
   };
 }
 
+// The website's lead form must stay usable even when the CMS is down —
+// a visitor's photo request shouldn't fail just because the admin panel
+// backend hiccuped. When the CMS is unreachable (down/timeout/malformed
+// response — see CmsUnavailableError in payload-client.ts), fall back to
+// the existing static approved-service catalog in
+// src/lib/services/approved-services.ts rather than surfacing an empty
+// list, which would make listApprovedServices() reject every submission.
+// This never widens what's publishable: the static list only contains
+// services already cleared in SERVICE_MATRIX.md, so it can't expose an
+// unpublished/unapproved CMS row — it's a strict subset behavior, not a
+// bypass. When the CMS answers normally with zero approved rows (a real
+// "nothing published yet" state, not an outage), that empty result is
+// returned as-is, not overridden.
 async function loadApprovedServices(): Promise<ApprovedService[]> {
-  const { de, en } = await fetchServicesBothLocales();
+  let de: PayloadService[];
+  let en: PayloadService[];
+  try {
+    ({ de, en } = await fetchServicesBothLocales());
+  } catch (error) {
+    if (error instanceof CmsUnavailableError) return staticApprovedServices;
+    throw error;
+  }
   const enBySlug = new Map(en.map((row) => [row.slug, row]));
   return de
     .filter((row) => row.status === "published" && row.ownerApproved && row.legalApproved)
@@ -155,7 +181,18 @@ function toProject(deRow: PayloadPortfolioItem, enRow: PayloadPortfolioItem | un
 }
 
 async function loadPublishedProjects(): Promise<Project[]> {
-  const { de, en } = await fetchPortfolioBothLocales();
+  let de: PayloadPortfolioItem[];
+  let en: PayloadPortfolioItem[];
+  try {
+    ({ de, en } = await fetchPortfolioBothLocales());
+  } catch (error) {
+    // Unlike services, portfolio has no lead-form dependency and no static
+    // fallback content to show honestly — an unreachable CMS degrades to
+    // the existing empty-state UI (see PR #4: empty project collection is
+    // an accepted, correctly-handled state), not fabricated project data.
+    if (error instanceof CmsUnavailableError) return [];
+    throw error;
+  }
   const enBySlug = new Map(en.map((row) => [row.slug, row]));
   return de
     // The CMS's own access control (clearedPortfolioRead) already filters
@@ -200,7 +237,16 @@ function toArticle(deRow: PayloadArticle, enRow: PayloadArticle | undefined): Ar
 }
 
 async function loadPublishedArticles(): Promise<Article[]> {
-  const { de, en } = await fetchArticlesBothLocales();
+  let de: PayloadArticle[];
+  let en: PayloadArticle[];
+  try {
+    ({ de, en } = await fetchArticlesBothLocales());
+  } catch (error) {
+    // Same rationale as portfolio above: no static fallback content, no
+    // lead-form dependency — degrade to the existing empty-state UI.
+    if (error instanceof CmsUnavailableError) return [];
+    throw error;
+  }
   const enBySlug = new Map(en.map((row) => [row.slug, row]));
   return de
     // Same note as projects: publishedFlagRead already gates this

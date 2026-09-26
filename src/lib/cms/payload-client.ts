@@ -1,4 +1,11 @@
 const CMS_URL = process.env.CMS_URL || "http://127.0.0.1:3010";
+// Bounds how long a page/route waits on the CMS before treating it as
+// unreachable — without this, a hung CMS (not down, just not responding)
+// would hang every page/API route that reads services/portfolio/articles
+// indefinitely instead of falling back.
+const CMS_FETCH_TIMEOUT_MS = 5_000;
+
+export class CmsUnavailableError extends Error {}
 
 async function fetchCollection<T>(
   collection: string,
@@ -13,14 +20,23 @@ async function fetchCollection<T>(
       // Content changes only via CMS edits, not per-request — safe to cache
       // and revalidate on a short interval rather than refetch every render.
       next: { revalidate: 60 },
+      signal: AbortSignal.timeout(CMS_FETCH_TIMEOUT_MS),
     });
-    if (!res.ok) return [];
+    if (!res.ok) throw new CmsUnavailableError(`CMS ${collection} responded HTTP ${res.status}`);
     const json = await res.json();
-    return json.docs ?? [];
-  } catch {
-    // CMS unreachable (down, network error, CI with no CMS running) —
-    // degrade to empty rather than taking the whole build/page down.
-    return [];
+    if (!json || !Array.isArray(json.docs)) throw new CmsUnavailableError(`CMS ${collection} returned malformed body`);
+    return json.docs;
+  } catch (error) {
+    // CMS unreachable, timed out, or returned something malformed (down,
+    // network error, CI with no CMS running) — this is distinct from the
+    // CMS legitimately answering "zero rows", which returns normally above.
+    // Callers that need a fallback (approved services) catch this specific
+    // error type; callers that are fine degrading to empty (portfolio,
+    // articles) don't need to change.
+    if (error instanceof CmsUnavailableError) throw error;
+    throw new CmsUnavailableError(
+      `CMS ${collection} fetch failed: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 }
 
