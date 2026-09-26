@@ -1,6 +1,10 @@
 export const siteConfig = {
   name: "Grandmont Group",
-  legalName: "Grandmont Group UG",
+  // REGISTRATION_PENDING: target legal name/form prepared for Impressum/Datenschutz/footer.
+  // Official Handelsregister registration of this legal name is NOT yet confirmed —
+  // verify against the actual registration before production launch.
+  legalName: "Grandmont Group UG (haftungsbeschränkt)",
+  legalForm: "Unternehmergesellschaft (haftungsbeschränkt)",
   defaultLocale: "de" as const,
   locales: ["de", "en"] as const,
   city: "Chemnitz",
@@ -20,7 +24,8 @@ export const siteConfig = {
   phone: "",
   whatsapp: "",
   email: "",
-  // placeholder — реальный домен не зарегистрирован, заменить перед деплоем
+  // DOMAIN_COMPAT_PENDING: placeholder — реальный домен Grandmont Group не выбран/не зарегистрирован,
+  // заменить перед production-запуском. Staging живёт на grandmont.promonta.fun (намеренно не canonical).
   url: "https://grandmont-group.de",
 } as const;
 
