@@ -18,6 +18,17 @@
 
 const CRM_BASE_URL = process.env.CRM_BASE_URL || "https://crm.promonta.fun/api";
 const CRM_WEBHOOK_SECRET = process.env.CRM_WEBHOOK_SECRET;
+// The website's local lead store (storeLead() in route.ts) is already the
+// durable boundary — it succeeds before this module is ever called. These
+// timeouts exist purely so a hung/slow CRM can't make the visitor's form
+// request hang indefinitely; a bounded failure here is recorded in
+// metadata.json (see pushLeadToCrmAndRecord in route.ts) for manual retry,
+// it never loses the lead. 8s for the JSON lead call, 15s for the
+// attachment upload (multipart, larger payload, slower on a typical
+// connection) — conservative enough not to trip on a normal photo batch,
+// short enough that a visitor isn't left waiting on a dead backend.
+const CRM_LEAD_TIMEOUT_MS = 8_000;
+const CRM_ATTACHMENTS_TIMEOUT_MS = 15_000;
 
 export type CrmLeadInput = {
   leadId: string; // website leadId — передаётся как external_id, ключ идемпотентности на CRM-стороне
@@ -60,6 +71,7 @@ async function submitLead(
       "Content-Type": "application/json",
       "X-Webhook-Secret": CRM_WEBHOOK_SECRET as string,
     },
+    signal: AbortSignal.timeout(CRM_LEAD_TIMEOUT_MS),
     body: JSON.stringify({
       external_id: input.leadId,
       // CRM's WebsiteLeadIn requires name (str, not Optional) — the form's
@@ -99,6 +111,7 @@ async function submitAttachments(
   const res = await fetch(`${CRM_BASE_URL}/public/leads/${crmLeadId}/attachments`, {
     method: "POST",
     headers: { "X-Webhook-Secret": CRM_WEBHOOK_SECRET as string },
+    signal: AbortSignal.timeout(CRM_ATTACHMENTS_TIMEOUT_MS),
     body: form,
   });
   if (!res.ok) throw new Error(`CRM attachments webhook failed: HTTP ${res.status} — ${await res.text()}`);

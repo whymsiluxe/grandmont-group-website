@@ -23,6 +23,7 @@ const SUBMISSION_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-
 const DEFAULT_LEAD_RETENTION_DAYS = 90;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const TELEGRAM_TIMEOUT_MS = 5_000;
 const RATE_LIMIT_MAX_REQUESTS = 12;
 const EMAIL_PATTERN = /[^\s@]+@[^\s@]+\.[^\s@]+/i;
 const VALID_IMAGE_PREFIXES = [
@@ -276,6 +277,7 @@ async function notifyTeam(params: {
   const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: "POST",
     headers: { "content-type": "application/json" },
+    signal: AbortSignal.timeout(TELEGRAM_TIMEOUT_MS),
     body: JSON.stringify({
       chat_id: chatId,
       text,

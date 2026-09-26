@@ -32,6 +32,36 @@ jobs:
           # which is enough to prove the build itself doesn't break.
           CMS_URL: http://127.0.0.1:3010
 
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      # Smoke suite for the critical public path (homepage, lead form,
+      # service publication gate) against a local `next start` — no
+      # production CMS or CRM. CMS_URL points at an unreachable local port
+      # on purpose: content-source.ts's CmsUnavailableError fallback (see
+      # src/lib/cms/content-source.ts) makes the approved-service catalog
+      # come from the static list instead, which is exactly the path this
+      # job proves works. The lead form's actual submission never depends
+      # on CRM being reachable either — a CRM push failure is recorded in
+      # metadata.json, not surfaced to the visitor (see docs/CRM_INTEGRATION_NOTES.md) —
+      # so no CRM_WEBHOOK_SECRET or other production secret is needed here.
+      - name: Playwright smoke suite
+        run: npx playwright test
+        env:
+          CMS_URL: http://127.0.0.1:59999
+
   cms:
     runs-on: ubuntu-latest
     defaults:
