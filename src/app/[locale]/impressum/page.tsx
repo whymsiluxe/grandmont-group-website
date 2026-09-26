@@ -23,7 +23,7 @@ const COPY: Record<
         title: "Anbieter",
         rows: [
           { label: "Firma", value: siteConfig.legalName },
-          { label: "Rechtsform", value: PLACEHOLDER },
+          { label: "Rechtsform", value: siteConfig.legalForm },
           { label: "Anschrift", value: PLACEHOLDER },
           { label: "Vertretungsberechtigt", value: PLACEHOLDER },
         ],
@@ -63,7 +63,7 @@ const COPY: Record<
         title: "Provider",
         rows: [
           { label: "Company", value: siteConfig.legalName },
-          { label: "Legal form", value: PLACEHOLDER },
+          { label: "Legal form", value: siteConfig.legalForm },
           { label: "Address", value: PLACEHOLDER },
           { label: "Represented by", value: PLACEHOLDER },
         ],

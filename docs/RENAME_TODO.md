@@ -21,6 +21,14 @@
 
 Билд проверен после правок (`npm run build`) — чисто, `/de`/`/en` остались SSG.
 
+## Legal/branding completeness — 2026-09-26
+
+- `siteConfig.legalName` → `Grandmont Group UG (haftungsbeschränkt)` (было `Grandmont Group UG`); добавлен `siteConfig.legalForm` = `Unternehmergesellschaft (haftungsbeschränkt)`. Используется в Impressum (Firma + Rechtsform), Datenschutz (Verantwortlicher) и Footer (©).
+- **Официальная регистрация юр.имени в Handelsregister ещё НЕ подтверждена** — значения подготовлены в коде (маркер `REGISTRATION_PENDING` в `site-config.ts`), но не утверждать, что фирма уже зарегистрирована. Адрес/Vertretung/Register/USt-ID в Impressum остаются placeholder до регистрации.
+- Повторный полный grep (`promonta`/`pro-monta`, регистронезависимо): упоминаний старого бренда как бренда Grandmont Group не найдено. Оставшиеся совпадения — только инфраструктура на старом apex `promonta.fun` (`crm.promonta.fun`, staging `grandmont.promonta.fun`, SSH-пользователь `promonta@` на VPS) и явные упоминания отдельного бизнеса Promonta в docs. Намеренно не трогались (совместимость до выбора нового домена).
+- Ссылок на `promonta-bau.de` (отдельный исключённый проект) в репо нет.
+- Домен: `siteConfig.url` остаётся placeholder (маркер `DOMAIN_COMPAT_PENDING`) — финальный домен не выбран, миграция домена не входит в эту волну.
+
 ## Инфраструктура — ЗАВЕРШЕНО (2026-09-24)
 
 - [x] **GitHub репозиторий** — переименован, перенесён на `github.com/whymsiluxe/grandmont-group-website`.
